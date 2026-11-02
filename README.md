@@ -208,7 +208,7 @@ Statt IDs zeigt die Website Namen an, und Mitglieder werden über eine Suche aus
 
 Der Bot läuft auf derselben Oracle-VM wie die anderen pm2-Prozesse (`gambino-bot`, `chud-bot`, `hugosmp-bot`, `hugopredict`), aber vollständig getrennt: eigener Ordner `/home/ubuntu/Yamamoto-Bot`, eigener pm2-Prozess `yamamoto-bot`, eigene Datenbank `data/yamamoto.sqlite`, eigener Dashboard-Port **3090** (Gambino: 3080), eigener Deploy-Timer `yamamoto-autodeploy`. Die Skripte fassen nur `yamamoto-bot` an.
 
-**Ersteinrichtung (einmalig, von Hand):**
+**Ersteinrichtung (einmalig):** am einfachsten `cd /home/ubuntu && git clone https://github.com/dannedotexe/Yamamoto-Bot.git && bash Yamamoto-Bot/deploy/install.sh` – fragt Token (verdeckt), Client-ID und Server-ID ab, legt die `.env` an, installiert, registriert die Befehle und startet `yamamoto-bot`. Von Hand:
 
 ```sh
 cd /home/ubuntu
