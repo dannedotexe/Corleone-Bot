@@ -79,10 +79,20 @@ const ICONS = {
 const icon = name => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ICONS[name] ?? ICONS.overview}"/></svg>`;
 const NAV_GROUPS = [["", ["overview"]], ["Mein Bereich", ["mine", "mypayouts", "myevents", "mytasks", "myabsence"]], ["Familie", ["members", "activity", "applications", "events", "tasks"]], ["Support", ["tickets"]], ["Finanzen", ["finance", "payouts", "sanctions"]], ["Community", ["announcements", "polls", "suggestions", "giveaways"]], ["Auswertung", ["stats", "audit"]], ["Verwaltung", ["status", "settings"]]];
 
+// Sitzung abgelaufen: Anmeldung zeigen statt neu zu laden (ein Neuladen könnte sich endlos wiederholen,
+// wenn /api/me noch klappt, eine andere Anfrage aber „nicht angemeldet“ meldet).
+let sessionLost = false;
+function showLogin(text = "Bitte melde dich erneut an.") {
+  if (sessionLost) return;
+  sessionLost = true;
+  if ($("dialog")?.open) $("dialog").close();
+  $("boot")?.remove();
+  dashboard.classList.add("hidden"); login.classList.remove("hidden"); message.textContent = text;
+}
 async function api(path, options = {}) {
   const response = await fetch(path, { credentials: "same-origin", ...options, headers: { ...(options.body ? { "Content-Type": "application/json" } : {}), ...(options.headers ?? {}) } });
   const data = response.status === 204 ? {} : await response.json().catch(() => ({}));
-  if (response.status === 401) { location.reload(); throw new Error("Bitte melde dich erneut an."); }
+  if (response.status === 401) { showLogin(); throw new Error("Bitte melde dich erneut an."); }
   if (response.status === 403 && path !== "/api/me") recheckAccess();
   if (!response.ok) throw new Error(data.error || "Die Aktion konnte nicht ausgeführt werden.");
   if (data.names) Object.assign(state.names, data.names);
@@ -678,7 +688,7 @@ async function start() {
 async function recheckAccess() {
   const response = await fetch("/api/me", { credentials: "same-origin" }).catch(() => null);
   if (!response) return;
-  if (response.status === 401) return location.reload();
+  if (response.status === 401) return showLogin();
   if (!response.ok) return;
   const next = await response.json();
   if (JSON.stringify(next.capabilities) === JSON.stringify(state.me.capabilities)) return;
@@ -731,6 +741,10 @@ if ("serviceWorker" in navigator && window.isSecureContext) {
     if (!hadController || reloaded) return;
     const busy = document.querySelector("dialog[open]") || document.querySelector("#settings-view .setting.dirty") || document.activeElement?.matches?.("input,textarea,select");
     if (busy) { state.reloadPending = true; return; }
+    // Schutz gegen Neulade-Schleifen: höchstens ein automatisches Neuladen pro Minute.
+    let last = 0; try { last = Number(sessionStorage.getItem("sw-reload-at")) || 0; } catch {}
+    if (Date.now() - last < 60_000) return;
+    try { sessionStorage.setItem("sw-reload-at", String(Date.now())); } catch {}
     reloaded = true; location.reload();
   });
   window.addEventListener("load", () => { navigator.serviceWorker.register("/sw.js").catch(() => {}); });
