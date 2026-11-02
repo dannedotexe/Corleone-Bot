@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="color-scheme" content="dark light"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Yamamoto">
+  <meta name="theme-color" content="#000000"><meta name="description" content="Yamamoto – Dashboard"><title>Yamamoto · Dashboard</title>
+  <link rel="icon" href="/brand/logo"><link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><link id="theme-css" rel="stylesheet" href="/assets/style.css"><link id="design-css" rel="stylesheet"><script src="/assets/theme.js"></script><script src="/assets/app.js" defer></script><script type="module" src="/assets/admin.js"></script><script type="module" src="/assets/people.js"></script><script type="module" src="/assets/announce.js"></script><script type="module" src="/assets/polls.js"></script><script type="module" src="/assets/mine.js"></script><script type="module" src="/assets/tasks.js"></script><script type="module" src="/assets/calendar.js"></script><script type="module" src="/assets/eventlogs.js"></script><script type="module" src="/assets/suggestions.js"></script><script type="module" src="/assets/ui.js"></script>
+</head>
+<body>
+  <div id="progress" class="progress" aria-hidden="true"></div>
+  <div id="boot" class="boot" aria-live="polite"><span></span>Lädt …</div>
+  <section id="login" class="login-screen hidden">
+    <main class="login-card">
+      <img class="login-banner" src="/assets/yamamoto-banner.png" alt="Yamamoto">
+      <h1>Dashboard</h1>
+      <p class="login-lead">Dein Konto, deine Events und alles fürs Team – melde dich mit Discord an.</p>
+      <a class="discord-btn" href="/login"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.32 4.37A19.8 19.8 0 0 0 15.4 2.85a13.9 13.9 0 0 0-.63 1.29 18.4 18.4 0 0 0-5.53 0 13 13 0 0 0-.64-1.29 19.7 19.7 0 0 0-4.92 1.52C.53 9.05-.32 13.6.1 18.09a19.9 19.9 0 0 0 6.03 3.05 14.7 14.7 0 0 0 1.29-2.1 12.9 12.9 0 0 1-2.03-.97c.17-.12.34-.25.5-.38a14.2 14.2 0 0 0 12.2 0c.16.13.33.26.5.38-.65.39-1.33.71-2.04.98.37.74.8 1.44 1.29 2.1a19.8 19.8 0 0 0 6.04-3.06c.5-5.2-.84-9.71-3.56-13.72ZM8.02 15.33c-1.18 0-2.16-1.09-2.16-2.42s.96-2.42 2.16-2.42c1.21 0 2.18 1.1 2.16 2.42 0 1.33-.96 2.42-2.16 2.42Zm7.97 0c-1.18 0-2.15-1.09-2.15-2.42s.95-2.42 2.15-2.42c1.21 0 2.18 1.1 2.16 2.42 0 1.33-.95 2.42-2.16 2.42Z"/></svg><span>Mit Discord anmelden</span></a>
+      <p id="message" class="message" role="alert"></p>
+      <p class="login-note">Zugang für alle Familienmitglieder. Was du siehst, richtet sich nach deinem Rang. Es wird kein eigenes Passwort gespeichert.</p>
+    </main>
+    <footer class="login-foot">YAMAMOTO <span>·</span> GRAND-RP</footer>
+  </section>
+  <div id="dashboard" class="app hidden">
+    <aside id="sidebar" class="sidebar" aria-label="Navigation">
+      <a class="brand" href="/"><img class="brand-mark" src="/brand/logo" alt=""><span><b>YAMAMOTO</b><small>DASHBOARD</small></span></a>
+      <nav id="tabs" class="nav"></nav>
+      <div class="sidebar-foot"><div class="me"><span id="staff-avatar" class="avatar">Y</span><div><b id="staff-name">Yamamoto</b><small id="staff-role">Dashboard</small></div></div><button class="logout-btn appearance-btn" type="button" data-action="appearance" aria-label="Darstellung" title="Darstellung (Hell/Dunkel, Design)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18 M12 3v18 M12 7.5h5.6 M12 12h9 M12 16.5h5.6"/></svg></button><button id="logout" class="logout-btn" type="button" aria-label="Abmelden" title="Abmelden"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9"/></svg></button></div>
+    </aside>
+    <div id="scrim" class="scrim"></div>
+    <nav id="tabbar" class="tabbar" aria-label="Schnellnavigation"></nav>
+    <main class="content">
+      <header class="topbar"><button id="menu-toggle" class="icon-btn" type="button" aria-label="Menü öffnen" aria-controls="sidebar" aria-expanded="false"><span></span><span></span><span></span></button><div class="crumb"><b id="page-title">Übersicht</b></div><div class="live"><i></i>Live<span id="updated-at"></span></div></header>
+
+      <section id="tab-mine" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">MEIN BEREICH</div><h2>Mein Konto</h2><p>Dein Guthaben, deine Buchungen und was als Nächstes ansteht.</p></div></div>
+        <div id="my-stats" class="stats"></div>
+        <section id="app-panel" class="panel"><div class="panel-head"><div><div class="eyebrow">HANDY</div><h2>📲 Yamamoto-App & Benachrichtigungen</h2></div></div><div id="app-install"></div><div id="push-body" class="push-body"></div></section>
+        <section class="panel"><div class="panel-head"><div><div class="eyebrow">FÜR DICH</div><h2>Zu tun & als Nächstes</h2></div></div><div id="my-todo" class="rows"></div></section>
+        <div class="columns"><section class="panel"><div class="panel-head"><div><div class="eyebrow">FAMILIENKONTO</div><h2>Buchungen</h2></div></div><div id="my-transactions" class="rows scroll"></div></section>
+          <section class="panel"><div class="panel-head"><div><div class="eyebrow">DISZIPLIN</div><h2>Sanktionen & Verwarnungen</h2></div></div><div id="my-discipline" class="rows scroll"></div></section></div>
+        <section class="panel"><div class="panel-head"><div><div class="eyebrow">RANG</div><h2>Rang-Historie</h2></div></div><div id="my-ranks" class="rows scroll"></div></section>
+      </section>
+
+      <section id="tab-mypayouts" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">MEIN BEREICH</div><h2>Auszahlungsliste</h2><p>Wer wie viel ausgezahlt bekommt – sortiert nach dem Betrag nach Sanktionen. Deine Zeile ist markiert.</p></div><span id="my-payout-sum" class="muted"></span></div>
+        <section class="panel"><div id="my-payout-list" class="rows"></div></section>
+      </section>
+
+      <section id="tab-myevents" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">MEIN BEREICH</div><h2>Meine Events</h2><p>Deine Anmeldungen, deine Bilanz und der Kalender.</p></div></div>
+        <div id="my-event-stats" class="stats"></div>
+        <div class="columns"><section class="panel"><div class="panel-head"><div><div class="eyebrow">EVENTS</div><h2>Deine Events</h2></div></div><div id="my-events" class="rows scroll"></div></section>
+          <section class="panel"><div class="panel-head"><div><div class="eyebrow">EVENT-TEILNAHMEN</div><h2>Rangliste</h2></div><select id="my-board-period" data-segmented aria-label="Zeitraum"><option value="week">Diese Woche</option><option value="month">Dieser Monat</option><option value="all">Gesamt</option></select></div><div id="my-board" class="rows"></div></section></div>
+        <section class="panel calendar-panel"><div class="panel-head"><div><div class="eyebrow">KALENDER</div><h2 id="my-calendar-title">Diese Woche</h2></div><div class="cal-nav"><button type="button" class="action" data-action="cal-prev" data-target="my" aria-label="Vorherige Woche">‹</button><button type="button" class="action" data-action="cal-today" data-target="my">Heute</button><button type="button" class="action" data-action="cal-next" data-target="my" aria-label="Nächste Woche">›</button></div></div><div id="my-calendar" class="calendar"></div></section>
+      </section>
+
+      <section id="tab-mytasks" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">MEIN BEREICH</div><h2>Meine Aufgaben</h2><p>Deine Logs, deine Stufe und was du damit verdient hast. Neue Logs reichst du in Discord in deinem Logbuch ein.</p></div></div>
+        <section id="my-tasks-panel" class="panel level-panel"><div class="level-card"><div id="my-level-badge" class="level-badge"></div><div class="level-body"><div class="eyebrow">AUFGABEN</div><h2 id="my-level-title">Stufe</h2><div class="level-bar"><i id="my-level-fill"></i></div><p id="my-level-next" class="subtle"></p></div></div><div id="my-tasks-stats" class="stats compact"></div><div id="my-tasks" class="rows scroll"></div></section>
+        <p id="my-tasks-empty" class="muted" hidden>Für dich gibt es noch keine Aufgaben-Daten.</p>
+      </section>
+
+      <section id="tab-myabsence" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">MEIN BEREICH</div><h2>Abmeldung</h2><p>Urlaub, krank oder nur kurz weg? Melde dich hier ab. Den Grund sieht nur das Team.</p></div><div class="section-tools"><button class="secondary" data-action="my-short" id="my-short-label">⏱️ Kurz weg</button><button class="primary-btn" data-action="my-absence" id="my-absence-label">Abmelden</button></div></div>
+        <section class="panel"><div class="panel-head"><div><div class="eyebrow">ABMELDUNGEN</div><h2>Deine Abmeldungen</h2></div></div><div id="my-absences" class="rows scroll"></div></section>
+      </section>
+
+      <section id="tab-overview" class="tab-panel">
+        <div class="hero"><div><div class="eyebrow">YAMAMOTO · GRAND-RP</div><h1 id="greeting">Willkommen</h1><p>Das Wichtigste auf einen Blick.</p></div><div id="quick-actions" class="quick"></div></div>
+        <div id="stats" class="stats"></div>
+        <div class="columns"><section class="panel"><div class="panel-head"><div><div class="eyebrow">ZU ERLEDIGEN</div><h2>Was jetzt ansteht</h2></div></div><div id="todo" class="todo"></div></section>
+          <section class="panel"><div class="panel-head"><div><div class="eyebrow">ALS NÄCHSTES</div><h2>Anstehende Events</h2></div><button type="button" class="link-btn" data-tab="events">Alle Events →</button></div><div id="events" class="rows"></div></section></div>
+        <div class="columns"><section class="panel"><div class="panel-head"><div><div class="eyebrow">AKTIVITÄT</div><h2>Letzte Aktionen</h2></div><button type="button" class="link-btn needs-staff" data-tab="audit">Protokoll →</button></div><div id="activity" class="rows"></div></section>
+          <section id="finance-panel" class="panel hidden"><div class="panel-head"><div><div class="eyebrow">LEITUNG & FINANZEN</div><h2>Familienkonto</h2></div><button type="button" class="link-btn" data-tab="finance">Zum Konto →</button></div><div id="finance" class="finance"></div><p class="subtle">Persönliche Guthaben und Sanktionsdetails bleiben rollenbeschränkt.</p></section></div>
+      </section>
+
+      <section id="tab-applications" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">ANTRÄGE</div><h2>Bewerbungen & Rang-Anträge</h2><p>Übernehmen, kommentieren und entscheiden. Antragsteller werden privat benachrichtigt.</p></div><div class="section-tools"><select id="applications-filter" aria-label="Filter"><option value="open">Offen & in Prüfung</option><option value="closed">Abgeschlossen</option></select><input class="search" data-target="applications-list" type="search" placeholder="Suchen …" aria-label="Suchen"></div></div>
+        <div id="applications-list" class="queue"></div>
+      </section>
+
+      <section id="tab-members" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">VERIFIZIERUNG</div><h2>Mitglieder</h2><p id="members-info">Mitglieder verifizieren sich im Verifizierungs-Panel mit Ingame-ID, Vor- und Nachname. Der Discord-Name wird zu „Vorname Nachname | ID“.</p></div><div class="section-tools"><a class="action" href="/api/export/members.xlsx" download title="Als Excel-Tabelle herunterladen">Excel</a><input class="search" data-target="members-list" type="search" placeholder="Name oder ID suchen …" aria-label="Suchen"><button class="secondary needs-sanctions" data-action="verify-reminder-test" title="Schickt dir die Erinnerungs-DM für nicht Verifizierte als Vorschau">📨 Erinnerung testen</button><button class="secondary needs-sanctions" data-action="verify-manual">+ Manuell verifizieren</button><button class="primary-btn" data-action="profile-find">Profil öffnen …</button></div></div>
+        <section id="unverified-panel" class="panel" hidden><div class="panel-head"><div><div class="eyebrow">VERIFIZIERUNG</div><h2 id="unverified-title">Nicht verifiziert</h2></div></div><p class="subtle">Auf dem Server, aber ohne Verifizierung. Sie bekommen automatisch Erinnerungs-DMs (Einstellungen → Abmeldungen & Aktivität).</p><div id="unverified-list" class="rows scroll"></div></section>
+        <div id="members-list" class="table"></div>
+      </section>
+
+      <section id="tab-activity" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">FAMILIE</div><h2>Abmeldungen & Aktivität</h2><p id="activity-info">Wer gerade abgemeldet ist, wer länger inaktiv ist und wer bei Events am aktivsten ist.</p></div><div class="section-tools"><a class="action" href="/api/export/absences.xlsx" download title="Als Excel-Tabelle herunterladen">Excel: Abmeldungen</a><button class="primary-btn needs-absences" data-action="absence-create">+ Abmeldung eintragen</button></div></div>
+        <div id="activity-stats" class="stats"></div>
+        <div class="columns"><section class="panel"><div class="panel-head"><div><div class="eyebrow">ABGEMELDET</div><h2>Gerade weg</h2></div></div><div id="absences-current" class="rows"></div><h3 class="subhead">Geplant</h3><div id="absences-upcoming" class="rows"></div></section>
+          <section class="panel"><div class="panel-head"><div><div class="eyebrow">RANGLISTE</div><h2>Aktivste Mitglieder</h2></div><select id="leaderboard-filter" aria-label="Zeitraum"><option value="week">Diese Woche</option><option value="month">Dieser Monat</option><option value="all">Gesamt</option></select></div><div id="leaderboard" class="rows"></div></section></div>
+        <section class="panel"><div class="panel-head"><div><div class="eyebrow">INAKTIVITÄT</div><h2 id="inactive-title">Inaktive Mitglieder</h2><p id="inactive-info" class="subtle"></p></div><input class="search" data-target="inactive-list" type="search" placeholder="Suchen …" aria-label="Suchen"></div><div id="inactive-list" class="table"></div></section>
+        <h3 class="subhead">Zuletzt beendet</h3>
+        <div id="absences-recent" class="rows panel"></div>
+      </section>
+
+      <section id="tab-announcements" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">COMMUNITY</div><h2>Ankündigungen</h2><p>Text und/oder Karte schreiben, Vorschau prüfen und sofort oder zu einem späteren Zeitpunkt posten. Erwähnt werden nur die Rollen, die du auswählst.</p></div></div>
+        <section class="panel"><div class="texts-grid"><form id="announce-form" class="event-form" novalidate></form><div><div class="sub-label">Vorschau</div><div id="announce-preview" class="dc-preview"></div></div></div></section>
+        <div id="infocards-wrap" class="hidden"><div class="subhead-row"><h3 class="subhead">Info-Karten</h3><button type="button" class="action" data-action="infocard-new">Neue Info-Karte</button></div><p class="subtle">Feste Karten wie Sanktionsliste oder Vergütungen. Der Bot postet sie und bearbeitet beim Speichern die vorhandene Nachricht – kein Webhook nötig.</p><div id="infocards-list" class="queue grid2"></div></div>
+        <h3 class="subhead">Geplant & gesendet</h3>
+        <div id="announce-list" class="queue grid2"></div>
+      </section>
+
+      <section id="tab-suggestions" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">COMMUNITY</div><h2>Bot-Vorschläge</h2><p>Was die Mitglieder im Vorschlags-Channel geschrieben haben. Status setzen aktualisiert die Karte in Discord und schickt der Person eine DM. „Kopieren“ kopiert alle offenen und angenommenen Vorschläge als Text.</p></div><div class="section-tools"><select id="sug-filter" data-segmented aria-label="Filter"><option value="todo">Offen & angenommen</option><option value="all">Alle</option></select><button class="primary-btn" data-action="sug-copy">📋 Kopieren</button></div></div>
+        <div id="sug-list" class="queue"></div>
+      </section>
+      <section id="tab-polls" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">COMMUNITY</div><h2>Abstimmungen</h2><p>Vorlage wählen, Frage eingeben, starten. Stimmen lassen sich bis zum Ende ändern; vor Ablauf pingt der Bot alle, die noch fehlen. Das Ergebnis wird automatisch gepostet.</p></div><div class="section-tools"><a class="action" href="/api/export/polls.xlsx" download>Excel</a></div></div>
+        <section class="panel"><form id="poll-form" class="event-form poll-form" novalidate></form></section>
+        <h3 class="subhead">Laufende & beendete Abstimmungen</h3>
+        <div id="poll-list" class="queue grid2"></div>
+      </section>
+
+      <section id="tab-status" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">VERWALTUNG</div><h2>Systemstatus</h2><p>Läuft der Bot, wann kam das letzte Update, gibt es ein aktuelles Backup? Aktualisiert sich beim Öffnen.</p></div><div class="section-tools"><button class="secondary needs-leaders" data-action="weekly-report-send">Wochenbericht jetzt senden</button><button class="secondary" data-action="status-refresh">Neu laden</button></div></div>
+        <div id="status-cards" class="stats status-cards"></div>
+        <section class="panel"><div class="panel-head"><div><div class="eyebrow">DETAILS</div><h2>System</h2></div></div><div id="status-details" class="kv"></div></section>
+        <section class="panel"><div class="panel-head"><div><div class="eyebrow">KONFIGURATION</div><h2>Hinweise</h2></div></div><div id="status-warnings" class="rows"></div></section>
+        <section class="panel"><div class="panel-head"><div><div class="eyebrow">SICHERHEIT</div><h2>Rollen-Sicherungen</h2></div><button class="secondary" data-action="roles-snapshot">Jetzt sichern</button></div><p id="snapshots-info" class="subtle"></p><div id="snapshots-list" class="rows"></div></section>
+        <section class="panel"><div class="panel-head"><div><div class="eyebrow">SICHERHEIT</div><h2>Website-Zugriffe</h2></div><input class="search" data-target="access-list" type="search" placeholder="Name oder IP suchen …" aria-label="Zugriffe durchsuchen"></div><p id="access-info" class="subtle"></p><div id="access-shared" class="rows"></div><div id="access-list" class="table"></div></section>
+      </section>
+
+      <section id="tab-tickets" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">SUPPORT</div><h2>Tickets</h2><p>Übernehmen, schließen (mit Transkript) und wieder öffnen.</p></div><div class="section-tools"><select id="tickets-filter" aria-label="Filter"><option value="open">Offen</option><option value="closed">Geschlossen</option></select><input class="search" data-target="tickets-list" type="search" placeholder="Suchen …" aria-label="Suchen"></div></div>
+        <div id="tickets-list" class="queue grid2"></div>
+      </section>
+
+      <section id="tab-events" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">EVENT-TEAM</div><h2>Familien-Events</h2><p>Planen, bearbeiten, Anwesenheit dokumentieren, beenden oder absagen.</p></div><div class="section-tools"><a class="action" href="/api/export/events.xlsx" download title="Als Excel-Tabelle herunterladen">Excel: Teilnahmen</a><select id="events-filter" data-segmented aria-label="Filter"><option value="upcoming">Geplant</option><option value="past">Vergangen</option></select><button class="secondary needs-events" data-action="state-control">🚩 Staatliche Kontrolle</button><button class="primary-btn needs-events" data-action="event-create">+ Neues Event</button></div></div>
+        <section class="panel calendar-panel"><div class="panel-head"><div><div class="eyebrow">KALENDER</div><h2 id="calendar-title">Diese Woche</h2></div><div class="cal-nav"><button type="button" class="action" data-action="cal-prev" aria-label="Vorherige Woche">‹</button><button type="button" class="action" data-action="cal-today">Heute</button><button type="button" class="action" data-action="cal-next" aria-label="Nächste Woche">›</button></div></div><div id="calendar" class="calendar"></div><p class="subtle cal-legend"><span class="cal-dot k-event"></span>Event <span class="cal-dot k-series"></span>Aktivität <span class="cal-dot k-control"></span>Staatliche Kontrolle <span class="cal-dot k-planned"></span>geplant (wird automatisch angekündigt)</p></section>
+        <section class="panel evlogs-panel"><div class="panel-head"><div><div class="eyebrow">NACHWEISE AUS DEM FORUM</div><h2 id="evlogs-title">📸 Event-Logs</h2><p class="subtle">Alle Bilder aus „event-logs“ pro Tag, nach Event sortiert. Bild anklicken = groß öffnen. Unter jedem Bild: einem anderen Event zuordnen (verschieben) oder löschen.</p></div><div class="cal-nav"><button type="button" class="action" data-action="evlogs-prev" aria-label="Vorheriger Tag">‹</button><button type="button" class="action" data-action="evlogs-today">Heute</button><button type="button" class="action" id="evlogs-next" data-action="evlogs-next" aria-label="Nächster Tag">›</button></div></div><div id="evlogs" class="evlogs"></div></section>
+        <section class="panel kills-panel"><div class="panel-head"><div><div class="eyebrow">EVENTS</div><h2>🎯 Kill-Bestenliste</h2></div><select id="kills-period" data-segmented aria-label="Zeitraum"><option value="week">Woche</option><option value="month">Monat</option><option value="all">Gesamt</option></select></div><div id="kills-board" class="rows"></div></section>
+        <section class="panel series-panel"><div class="panel-head"><div><div class="eyebrow">AUTOMATISCH</div><h2>Wiederkehrende Aktivitäten</h2><p class="subtle">Aktive Aktivitäten mit festen Zeiten werden vor Beginn automatisch als Event mit Anmeldung im Event-Channel angekündigt. Flexible Aktivitäten erscheinen nur in der Aktivitäten-Übersicht.</p></div><div class="section-tools"><button class="secondary needs-events" data-action="series-board">Übersicht in Discord posten</button><button class="primary-btn needs-events" data-action="series-create">+ Aktivität</button></div></div><div id="series-list" class="series-list"></div></section>
+        <h3 class="subhead">Termine</h3>
+        <div id="events-list" class="queue grid2"></div>
+      </section>
+
+      <section id="tab-tasks" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">FAMILIE · AUFGABEN-LOGS</div><h2>Aufgaben prüfen</h2><p>Mitglieder posten den Screenshot einfach in ihr Logbuch im Forum und wählen im Menü die Aufgabe (alternativ <b>/log</b>). Bestätigen bucht die Belohnung sofort aufs Familienkonto – genau einmal. Tipp: Screenshot anklicken zum Vergrößern.</p></div><div class="section-tools"><button class="primary-btn" data-action="task-quick">⚡ Schnell prüfen</button><a class="action" href="/api/export/taskmonths.xlsx" download title="Pro Monat und Mitglied: Logs, Stück, Belohnung">Excel: Monatsabrechnung</a><a class="action" href="/api/export/tasks.xlsx" download>Excel: Alle Logs</a><button class="secondary needs-tasktypes" data-action="tasktype-create">+ Aufgabe</button></div></div>
+        <div id="tasks-stats" class="stats"></div>
+        <h3 class="subhead">Wartet auf Prüfung</h3>
+        <div id="tasks-pending" class="task-queue"></div>
+        <section id="tasks-held-wrap" class="panel" hidden><div class="panel-head"><div><div class="eyebrow">INVITES</div><h2>Wartet auf Bedingung</h2><p class="subtle">Bestätigt – die Belohnung bucht der Bot automatisch, sobald die eingeladene Person lange genug da ist und bei genug Events war (verfällt nach 30 Tagen).</p></div></div><div id="tasks-held" class="rows"></div></section>
+        <div class="columns"><section class="panel"><div class="panel-head"><div><div class="eyebrow">BESTENLISTE</div><h2>Top-Farmer</h2></div><select id="tasks-board-period" data-segmented aria-label="Zeitraum"><option value="week">Woche</option><option value="month">Monat</option><option value="all">Gesamt</option></select></div><div id="tasks-board" class="rows"></div></section>
+          <section class="panel"><div class="panel-head"><div><div class="eyebrow">PREISLISTE</div><h2>Aufgaben & Belohnungen</h2></div></div><div id="tasks-types" class="rows"></div></section></div>
+        <section class="panel logbook-panel"><div class="panel-head"><div><div class="eyebrow">FORUM</div><h2>Logbücher</h2><p class="subtle">Jedes Familienmitglied bekommt automatisch einen Post im Aufgaben- und im Event-Forum.</p></div><div class="section-tools"><button class="secondary" data-action="logbook-check">Neu prüfen</button></div></div><div id="logbook-forums" class="logbook-forums"></div></section>
+        <div class="subhead-row"><h3 class="subhead">Verlauf</h3><input class="search" data-target="tasks-history" type="search" placeholder="Mitglied oder Aufgabe suchen …" aria-label="Verlauf durchsuchen"></div>
+        <div id="tasks-history" class="table"></div>
+      </section>
+
+      <section id="tab-finance" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">FAMILIENKONTO</div><h2>Guthaben & Auszahlungen</h2><p>Brutto = noch auszuzahlendes Familienguthaben. Sanktionen werden erst bei der Auszahlung abgezogen.</p></div><div class="section-tools"><a class="action" href="/api/export/accounts.xlsx" download title="Als Excel-Tabelle herunterladen">Excel: Kontostände</a><a class="action" href="/api/export/transactions.xlsx" download title="Als Excel-Tabelle herunterladen">Excel: Buchungen</a><input class="search" data-target="accounts-list" type="search" placeholder="Mitglied suchen …" aria-label="Suchen"><button class="secondary needs-finance" data-action="credit-bulk">+ Sammelbuchung</button><button class="secondary needs-finance" data-action="account-open">+ Konto anlegen</button><button class="primary-btn needs-finance" data-action="credit">+ Gutschrift</button></div></div>
+        <div id="closures-panel" class="closures hidden"><h3 class="subhead">Konto-Löschungen bestätigen</h3><p class="subtle">Diese Mitglieder haben die Familienrolle verloren oder den Server verlassen. Erst nach deiner Bestätigung wird das Konto gelöscht.</p><div id="closures-list" class="queue grid2"></div></div>
+        <div id="finance-totals" class="stats"></div>
+        <div id="accounts-list" class="table"></div>
+      </section>
+
+      <section id="tab-payouts" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">FINANZEN · LOG</div><h2>Auszahlungen</h2><p>Jede Auszahlung mit Brutto, Sanktionsabzug, tatsächlich ausgezahltem Betrag und wer ausgezahlt hat. Einträge sind unveränderlich.</p></div><div class="section-tools"><a class="action" href="/api/export/payouts.xlsx" download title="Als Excel-Tabelle herunterladen">Excel: Auszahlungen</a><select id="payouts-filter" data-segmented aria-label="Zeitraum"><option value="7">Letzte 7 Tage</option><option value="30" selected>Letzte 30 Tage</option><option value="90">Letzte 90 Tage</option><option value="0">Alle</option></select><input class="search" data-target="payouts-list" type="search" placeholder="Mitglied suchen …" aria-label="Suchen"></div></div>
+        <div id="payouts-totals" class="stats"></div>
+        <div id="payouts-actors" class="rows"></div>
+        <div id="payouts-list" class="table"></div>
+      </section>
+
+      <section id="tab-sanctions" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">DISZIPLIN</div><h2>Sanktionen & Verwarnungen</h2><p>Sanktionen sind offene Auszahlungsabzüge. Verwarnungen haben keine Geldwirkung.</p></div><div class="section-tools"><a class="action" href="/api/export/sanctions.xlsx" download title="Als Excel-Tabelle herunterladen">Excel: Sanktionen</a><a class="action needs-warnings" href="/api/export/warnings.xlsx" download title="Als Excel-Tabelle herunterladen">Excel: Verwarnungen</a><select id="sanctions-filter" data-segmented aria-label="Filter"><option value="active">Offen & teilweise</option><option value="all">Alle</option></select><button class="secondary needs-warnings" data-action="warning-create">+ Verwarnung</button><button class="secondary needs-sanctions" data-action="sanction-bulk">+ Sammelsanktion</button><button class="primary-btn needs-sanctions" data-action="sanction-create">+ Sanktion</button></div></div>
+        <div id="sanctions-summary" class="stats"></div>
+        <div id="sanctions-list" class="queue grid2"></div>
+        <div class="subhead-row"><h3 class="subhead">Verwarnungen</h3><select id="warnings-filter" aria-label="Verwarnungen filtern"><option value="active">Nur aktive</option><option value="all">Alle (auch zurückgenommene/abgelaufene)</option></select></div>
+        <div id="warnings-list" class="queue grid2"></div>
+      </section>
+
+      <section id="tab-giveaways" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">COMMUNITY</div><h2>Giveaways</h2><p>Starten, vorzeitig auslosen oder abbrechen. Gewinner werden in Discord verkündet.</p></div><div class="section-tools"><button class="primary-btn" data-action="giveaway-create">+ Giveaway starten</button></div></div>
+        <div id="giveaways-list" class="queue grid2"></div>
+      </section>
+
+      <section id="tab-stats" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">AUSWERTUNG</div><h2>Statistik</h2><p id="stats-source">Quelle: Bot-Datenbank. Nur Vorgänge, die über den Bot liefen.</p></div><div class="section-tools"><select id="stats-filter" data-segmented aria-label="Zeitraum"><option value="7">Letzte 7 Tage</option><option value="30" selected>Letzte 30 Tage</option><option value="90">Letzte 90 Tage</option><option value="365">Letzte 365 Tage</option><option value="0">Gesamter Zeitraum</option></select></div></div>
+        <div id="stats-view"></div>
+      </section>
+
+      <section id="tab-audit" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">NACHVOLLZIEHBARKEIT</div><h2>Protokoll</h2><p>Wer hat wann was getan. Einträge sind unveränderlich.</p></div><div class="section-tools"><select id="audit-filter" aria-label="Bereich"><option value="">Alle relevanten</option><option value="ticket.">Tickets</option><option value="application.">Anträge</option><option value="event.">Events</option><option value="finance.">Familienkonto</option><option value="sanction.">Sanktionen</option><option value="giveaway.">Giveaways</option><option value="automod.">AutoMod</option><option value="config.">Einstellungen</option><option value="admin.">Admin-Overrides</option></select></div></div>
+        <div id="audit-list" class="rows panel"></div>
+      </section>
+
+      <section id="tab-settings" class="tab-panel hidden">
+        <div class="section-intro"><div><div class="eyebrow">LEITUNG</div><h2>Einstellungen</h2><p>Links ein Thema wählen, ändern, unten speichern. Jede Änderung gilt sofort und wird protokolliert.</p></div><div class="section-tools"><input class="search" data-target="settings-view" type="search" placeholder="Einstellung suchen …" aria-label="Einstellung suchen"></div></div>
+        <div class="settings-layout"><nav id="settings-groups" class="settings-nav" aria-label="Bereiche der Einstellungen"></nav><div class="settings-main"><div id="settings-view"></div>
+        <section id="settings-check" class="panel check-panel settings-extra" data-section="check"><div class="panel-head"><div><div class="eyebrow">LIVE-PRÜFUNG</div><h2>Passen alle Channels zu ihren Funktionen?</h2><p class="subtle">Prüft Existenz, Typ, Bot-Rechte, Sichtbarkeit (Staff-Channels privat, öffentliche für Mitglieder sichtbar) und ob der Name zur Funktion passt.</p></div><button type="button" class="primary-btn" data-action="channel-check">Jetzt prüfen</button></div><div id="channel-check"></div></section>
+        <section id="settings-texts" class="panel texts-panel settings-extra" data-section="texts"><div class="panel-head"><div><div class="eyebrow">PANEL-TEXTE</div><h2>Texte der Discord-Panels bearbeiten</h2><p class="subtle">Titel, Beschreibung, Felder, Buttons und Farbe einzeln anpassen. Nach dem Speichern wird die Nachricht in Discord direkt aktualisiert. **fett** und Zeilenumbrüche funktionieren wie in Discord; leere Felder werden ausgeblendet.</p></div></div>
+          <div id="texts-tabs" class="chips group-nav"></div>
+          <div class="texts-grid"><div id="texts-form" class="event-form"></div><div><div class="sub-label">Vorschau</div><div id="texts-preview" class="dc-preview"></div></div></div>
+          <p id="texts-hint" class="subtle"></p>
+          <div class="actions tight start"><button type="button" class="primary-btn" data-action="texts-save">Speichern & Panel aktualisieren</button><button type="button" class="action" data-action="texts-reset">Standardtexte wiederherstellen</button></div>
+        </section>
+        <section id="settings-danger" class="panel danger-zone settings-extra" data-section="danger"><div class="panel-head"><div><div class="eyebrow">GEFAHRENZONE</div><h2>Testdaten zurücksetzen</h2><p class="subtle">Löscht z. B. nach der Testphase Konten, Buchungen, Auszahlungen, Sanktionen, Verwarnungen, Tickets, Anträge, Events, Giveaways und das Protokoll. <b>Channels, Rollen, Panel-Texte, Panels und die Aktivitäten-Vorlagen bleiben erhalten.</b> Vorher wird automatisch ein Backup der Datenbank angelegt.</p></div><button type="button" class="danger" data-action="reset-open">Daten zurücksetzen …</button></div></section>
+        </div></div>
+        <div id="settings-savebar" class="settings-savebar" hidden><span id="settings-dirty">0 Änderungen</span><button type="button" class="action" data-action="settings-discard">Verwerfen</button><button type="button" class="primary-btn" data-action="settings-save-all">Speichern</button></div>
+      </section>
+
+      <footer>Alle Aktionen werden protokolliert <span>·</span> Version <b id="app-version">–</b></footer>
+    </main>
+  </div>
+  <dialog id="quick" class="qreview" aria-label="Schnell prüfen" tabindex="-1"><div class="quick-wrap"><div class="quick-shot"><img id="quick-img" alt="Screenshot"><span id="quick-loading">Screenshot lädt …</span></div>
+    <aside class="quick-side"><div class="quick-top"><span id="quick-count" class="badge"></span><button type="button" class="link-btn" data-action="quick-close">Schließen <kbd>Esc</kbd></button></div>
+      <h2 id="quick-title"></h2><div id="quick-reward" class="quick-reward"></div><div id="quick-meta" class="manage-meta"></div><div id="quick-note" class="desc"></div><div id="quick-flag" class="task-flag" hidden>⚠️ Gleicher Screenshot wie ein früheres Log – bitte genau prüfen.</div>
+      <div id="quick-main" class="quick-actions"><button type="button" class="action approve" data-action="quick-approve">✓ Bestätigen <kbd>J</kbd></button><button type="button" class="action" id="quick-qty-btn" data-action="quick-qty">Menge ändern <kbd>M</kbd></button><button type="button" class="action reject" data-action="quick-reject">Ablehnen <kbd>N</kbd></button><button type="button" class="action" data-action="quick-skip">Überspringen <kbd>→</kbd></button></div>
+      <div id="quick-qty" class="quick-panel" hidden><label>Richtige Anzahl<input id="quick-qty-input" type="number" min="1" max="999"></label><div class="quick-actions"><button type="button" class="action approve" data-action="quick-qty-save">Bestätigen <kbd>Enter</kbd></button><button type="button" class="action" data-action="quick-back">Zurück <kbd>Esc</kbd></button></div></div>
+      <div id="quick-reasons" class="quick-panel" hidden><div class="sub-label">Grund (Zahl drücken)</div><div id="quick-reason-list" class="quick-reason-list"></div><label>Eigener Grund<input id="quick-reason-input" maxlength="300" placeholder="z. B. Uhrzeit fehlt"></label><div class="quick-actions"><button type="button" class="action reject" data-action="quick-reject-save">Ablehnen <kbd>Enter</kbd></button><button type="button" class="action" data-action="quick-back">Zurück <kbd>Esc</kbd></button></div></div>
+      <p id="quick-error" class="form-error" role="alert"></p></aside></div></dialog>
+  <dialog id="dialog" class="dialog"><form id="dialog-form" method="dialog" novalidate><div id="dialog-eyebrow" class="eyebrow"></div><h2 id="dialog-title"></h2><div id="dialog-intro" class="dialog-intro"></div><div id="dialog-fields" class="event-form"></div><p id="dialog-error" class="form-error" role="alert"></p><div class="dialog-actions"><button value="cancel" class="secondary" id="dialog-cancel">Abbrechen</button><button id="dialog-submit" value="ok" class="primary-btn">OK</button></div></form></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

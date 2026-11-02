@@ -1,0 +1,28 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { testDb } from "./helpers.js";
+import { CHANNEL_LAYOUT, bindCreatedChannels, displayCategoryName, displayChannelName, loadChannelBindings } from "../src/channel-setup.js";
+
+test("PDF structure contains the five categories, plus staff rank review and bot log channels",()=>{
+  assert.deepEqual(CHANNEL_LAYOUT.map(x=>x.name),["INFORMATION","EVENTS","COMMUNITY","SUPPORT","STAFF"]);
+  assert.equal(CHANNEL_LAYOUT.reduce((n,x)=>n+x.channels.length,0),27);
+  assert.equal(CHANNEL_LAYOUT.find(x=>x.name==="STAFF").channels.some(x=>x.name==="rang-anträge"),true);
+  assert.equal(CHANNEL_LAYOUT.find(x=>x.name==="SUPPORT").channels.some(x=>x.name==="bewerbungen"),true);
+  assert.equal(CHANNEL_LAYOUT.find(x=>x.name==="STAFF").channels.some(x=>x.name==="bewerbungen"),true);
+  assert.match(CHANNEL_LAYOUT.find(x=>x.name==="SUPPORT").channels.find(x=>x.name==="ticket").topic,/privates Anliegen/);
+  assert.equal(displayCategoryName(CHANNEL_LAYOUT[0]),"📌・INFORMATION");
+  assert.equal(displayChannelName(CHANNEL_LAYOUT[0].channels[0]),"👋・willkommen");
+});
+
+test("channel binding persistence loads stored functional channels at startup",()=>{
+  const db=testDb(), config={CHANNEL_STATS:"old"};
+  const categories=new Map([["SUPPORT",{id:"support-id"}],["STAFF",{id:"staff-id"}],["EVENTS",{id:"events-id"}]]);
+  const channels=new Map([["STAFF/ticket-logs",{id:"ticket-log-id"}],["STAFF/bewerbungen",{id:"review-id"}],["STAFF/rang-anträge",{id:"rank-review-id"}],["EVENTS/event-ankündigungen",{id:"event-id"}],["STAFF/sanktions-logs",{id:"audit-id"}],["STAFF/server-statistik",{id:"stats-id"}]]);
+  bindCreatedChannels(db,"guild-id",config,categories,channels);
+  assert.equal(config.CHANNEL_TICKET_CATEGORY,"support-id");
+  assert.equal(config.CHANNEL_APPLICATION_REVIEW,"review-id");
+  assert.equal(config.CHANNEL_RANK_REVIEW,"rank-review-id");
+  const restarted={};
+  loadChannelBindings(db,"guild-id",restarted);
+  assert.equal(restarted.CHANNEL_STATS,"stats-id");
+});

@@ -1,0 +1,140 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { testDb } from "./helpers.js";
+import { createFinance } from "../src/services/finance.js";
+import { closeDuePolls, createPollService, pollPayload, validatePoll } from "../src/polls.js";
+import { createHandler } from "../src/commands.js";
+import { createDashboardApi } from "../src/dashboard-api.js";
+import { buildTable } from "../src/export.js";
+import { toXlsx } from "../src/xlsx.js";
+import { inflateRawSync } from "node:zlib";
+import { loadConfig } from "../src/config.js";
+
+const G = "10000000000000001", TZ = "Europe/Vienna", CH = "50000000000000001";
+const ROLE = { leaders: "20000000000000001", staff: "20000000000000002", finance: "20000000000000003", family: "20000000000000004" };
+const STAFF = "30000000000000001", A = "30000000000000002", B = "30000000000000003";
+const config = () => loadConfig({ DISCORD_TOKEN: "x", DISCORD_CLIENT_ID: "12345678901234567", DISCORD_GUILD_ID: G, ROLE_LEADERS: ROLE.leaders, ROLE_STAFF: ROLE.staff, ROLE_FINANCE: ROLE.finance, CHANNEL_POLLS: CH });
+
+function fakeClient() {
+  const sent = [], edits = [], replies = [];
+  const message = { id: "m1", edit: async p => { edits.push(p); }, reply: async p => { replies.push(p); } };
+  const channel = { id: CH, isTextBased: () => true, isThread: () => false, permissionsFor: () => ({ has: () => true }), send: async p => { sent.push(p); return message; }, messages: { fetch: async () => message } };
+  const guild = { id: G, members: { me: {}, cache: new Map(), fetch: async () => null }, channels: { fetch: async () => channel }, roles: { fetch: async id => ({ id }) } };
+  return { sent, edits, replies, client: { channels: { fetch: async () => channel }, guilds: { cache: new Map([[G, guild]]), fetch: async () => guild }, users: { fetch: async () => null }, ws: { ping: 1 }, user: { id: "bot" } } };
+}
+
+test("Abstimmung: Prüfung, eine Stimme pro Person, ändern/zurückziehen, anonym", () => {
+  assert.throws(() => validatePoll({ question: "Wann?", options: "Nur eine", channelId: CH, hours: 24 }), /mindestens 2/);
+  assert.throws(() => validatePoll({ question: "Wann?", options: "A;a", channelId: CH, hours: 24 }), /nur einmal/);
+  assert.throws(() => validatePoll({ question: "Wann?", options: "A;B", channelId: CH, hours: 0.01 }), /5 Minuten/);
+  assert.equal(validatePoll({ question: "Wann?", options: "A;B", channelId: CH, endsAt: "2026-10-20T18:00" }, { reference: new Date("2026-10-14T10:00:00Z"), timezone: TZ }).endsAt, "2026-10-20T16:00:00.000Z");
+  const db = testDb(), polls = createPollService(db);
+  const poll = polls.create({ guildId: G, actorId: STAFF, data: validatePoll({ question: "Treffen?", options: ["Fr", "Sa", "So"], channelId: CH, hours: 24, anonymous: true }) });
+  assert.equal(polls.vote({ pollId: poll.id, userId: A, optionIndex: 0 }).status, "voted");
+  assert.equal(polls.vote({ pollId: poll.id, userId: A, optionIndex: 0 }).status, "same");
+  assert.equal(polls.vote({ pollId: poll.id, userId: A, optionIndex: 1 }).status, "changed");
+  assert.equal(polls.vote({ pollId: poll.id, userId: B, optionIndex: 1 }).status, "voted");
+  assert.equal(polls.vote({ pollId: poll.id, userId: B, optionIndex: 9 }).status, "invalid");
+  assert.deepEqual(polls.results(poll.id), { counts: [0, 2, 0], total: 2 });
+  assert.equal(polls.voters(poll.id), null, "anonym: niemand sieht Namen");
+  assert.equal(polls.unvote({ pollId: poll.id, userId: B }).status, "removed");
+  assert.equal(polls.results(poll.id).total, 1);
+  assert.ok(polls.close({ guildId: G, id: poll.id }));
+  assert.equal(polls.close({ guildId: G, id: poll.id }), null, "nur einmal");
+  assert.equal(polls.vote({ pollId: poll.id, userId: B, optionIndex: 0 }).status, "closed");
+});
+
+test("Discord: Buttons, Zwischenstand verdeckt, Rollenbeschränkung, automatisches Ende mit Ergebnis", async () => {
+  const db = testDb(), f = fakeClient(), cfg = config();
+  const handler = createHandler({ db, finance: createFinance(db), config: cfg, client: f.client });
+  const polls = createPollService(db);
+  const poll = polls.create({ guildId: G, actorId: STAFF, data: validatePoll({ question: "Treffen?", options: "Fr;Sa", channelId: CH, hours: 1, hideResults: true, requiredRoleId: ROLE.family }) });
+  polls.setMessage(poll.id, "m1");
+  const payload = pollPayload(polls.byId(poll.id), polls.results(poll.id));
+  assert.doesNotMatch(payload.embeds[0].data.description, /%/, "Zwischenstand verdeckt");
+  assert.equal(payload.components.length, 2);
+  const click = (userId, roles, customId) => { const replies = [], updates = [], follow = []; return { replies, updates, follow, customId, guildId: G, user: { id: userId }, member: { roles: { cache: new Map(roles.map(r => [r, true])) } }, inGuild: () => true, isButton: () => true, reply: async p => { replies.push(p); }, update: async p => { updates.push(p); }, followUp: async p => { follow.push(p); } }; };
+  const outsider = click(A, [], `poll:vote:${poll.id}:0`);
+  await handler.button(outsider);
+  assert.match(JSON.stringify(outsider.replies[0]), /dürfen nur Mitglieder/);
+  const member = click(A, [ROLE.family], `poll:vote:${poll.id}:1`);
+  await handler.button(member);
+  assert.equal(member.updates.length, 1); assert.match(JSON.stringify(member.follow[0]), /Deine Stimme/);
+  assert.equal(polls.results(poll.id).counts[1], 1);
+  assert.equal(await closeDuePolls({ db, client: f.client, reference: new Date(Date.now() + 2 * 3_600_000) }), 1);
+  assert.match(f.replies[0].embeds[0].data.description, /🏆 \*\*Sa\*\* gewinnt/);
+  assert.equal(f.edits.at(-1).components.length, 0, "Buttons entfernt");
+  assert.match(f.edits.at(-1).embeds[0].data.description, /100 %/, "am Ende sichtbar");
+});
+
+test("Website: Abstimmung starten und Excel-Export mit Rechten, Text-IDs, Zahlenformaten und Formelschutz", async () => {
+  const db = testDb(), f = fakeClient(), cfg = config(), finance = createFinance(db);
+  finance.credit({ guildId: G, userId: A, actorId: STAFF, cents: 250000050, reason: "=HYPERLINK(\"x\")", key: "k1" });
+  finance.sanction({ guildId: G, userId: A, actorId: STAFF, cents: 10000, reason: "Zu spät; Funk aus" });
+  const api = createDashboardApi({ db, client: f.client, config: cfg });
+  const as = (...roles) => ({ id: STAFF, owner: false, roles: roles.map(r => ROLE[r]) });
+  const get = (m, p) => api.get(m, new URL(p, "https://x"));
+  const post = (m, p, b) => api.post(m, new URL(p, "https://x"), b);
+  assert.equal((await post(as(), "/api/polls", { question: "Treffen?", options: ["Fr", "Sa"], hours: 24 })).status, 403);
+  assert.equal((await post(as("staff"), "/api/polls", { question: "Treffen?", options: ["Fr", "Sa"], hours: 24 })).status, 200);
+  assert.equal(f.sent.length, 1);
+  assert.equal((await get(as("staff"), "/api/export/accounts.xlsx")).status, 403, "Konten nur mit Finanz-Einsicht");
+  const accounts = await get(as("finance"), "/api/export/accounts.xlsx");
+  assert.equal(accounts.status, 200);
+  assert.equal(accounts.type, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+  assert.match(accounts.headers["Content-Disposition"], /attachment; filename="yamamoto-accounts-\d{4}-\d{2}-\d{2}\.xlsx"/);
+  assert.equal(accounts.body.subarray(0, 2).toString(), "PK", "echte ZIP-/XLSX-Datei");
+  const sheet = unzipEntry(accounts.body, "xl/worksheets/sheet1.xml");
+  assert.match(sheet, new RegExp(`<t xml:space="preserve">${A}</t>`), "Discord-ID als Text, nicht als Zahl");
+  assert.match(sheet, /<c r="B2" s="2"><v>2500000\.5<\/v>/, "Betrag als Zahl mit Währungsformat");
+  const tx = unzipEntry((await get(as("finance"), "/api/export/transactions.xlsx")).body, "xl/worksheets/sheet1.xml");
+  assert.match(tx, /t="inlineStr"[^>]*><is><t xml:space="preserve">=HYPERLINK/, "Formeln bleiben reiner Text");
+  assert.doesNotMatch(tx, /<f>/);
+  assert.equal((await get(as("staff"), "/api/export/sanctions.xlsx")).status, 200);
+  assert.equal((await get(as("staff"), "/api/export/unbekannt.xlsx")).status, 404);
+  assert.equal(db.prepare("SELECT COUNT(*) n FROM audit_logs WHERE action='admin.export'").get().n, 3);
+  const table = buildTable("sanctions", { db, guildId: G, finance, name: id => id });
+  assert.equal(table.columns.find(c => c.label === "Betrag").type, "money");
+  assert.ok(toXlsx({ sheet: "Leer", columns: [{ label: "A", type: "text" }], rows: [] }).length > 500);
+});
+
+/** Liest eine Datei aus dem ZIP (für Tests). */
+function unzipEntry(buffer, name) {
+  let offset = 0;
+  while (buffer.readUInt32LE(offset) === 0x04034b50) {
+    const size = buffer.readUInt32LE(offset + 18), nameLength = buffer.readUInt16LE(offset + 26), extra = buffer.readUInt16LE(offset + 28);
+    const entry = buffer.subarray(offset + 30, offset + 30 + nameLength).toString(), start = offset + 30 + nameLength + extra;
+    if (entry === name) return inflateRawSync(buffer.subarray(start, start + size)).toString();
+    offset = start + size;
+  }
+  throw new Error(`${name} nicht gefunden`);
+}
+
+test("Abstimmung: Mehrfachauswahl, Dauer als Text, Beteiligung und Erinnerung nur an Nicht-Abstimmer", async () => {
+  const { parseDuration, eligibleVoters, remindMissingVoters } = await import("../src/polls.js");
+  assert.equal(parseDuration("30 min"), 30); assert.equal(parseDuration("2h"), 120); assert.equal(parseDuration("1,5 Std"), 90);
+  assert.equal(parseDuration("1 Tag"), 1440); assert.equal(parseDuration("3 Tage"), 4320); assert.equal(parseDuration("1 Woche"), 10080);
+  assert.throws(() => parseDuration("bald"), /Dauer nicht verstanden/);
+  const db = testDb(), polls = createPollService(db);
+  const poll = polls.create({ guildId: G, actorId: STAFF, data: validatePoll({ question: "Wann?", options: "Fr;Sa;So", channelId: CH, duration: "2h", multi: true }) });
+  assert.ok(Math.abs(new Date(poll.ends_at) - Date.now() - 2 * 3_600_000) < 5000);
+  assert.equal(polls.vote({ pollId: poll.id, userId: A, optionIndex: 0 }).status, "ticked");
+  assert.deepEqual(polls.vote({ pollId: poll.id, userId: A, optionIndex: 2 }).choices, [0, 2]);
+  assert.equal(polls.vote({ pollId: poll.id, userId: A, optionIndex: 0 }).status, "unticked");
+  polls.vote({ pollId: poll.id, userId: B, optionIndex: 2 });
+  assert.deepEqual(polls.results(poll.id), { counts: [0, 0, 2], total: 2 }, "total = Personen");
+  // Wer fehlt: Familienrolle im Cache
+  const C = "30000000000000099", fam = id => ({ id, user: { bot: false }, roles: { cache: new Map([[ROLE.family, true]]) } });
+  const replies = [];
+  const message = { reply: async p => { replies.push(p); return {}; } };
+  const client = { guilds: { cache: new Map([[G, { members: { cache: new Map([[A, fam(A)], [B, fam(B)], [C, fam(C)]]) } }]]) }, channels: { fetch: async () => ({ messages: { fetch: async () => message } }) } };
+  const cfg = { ROLE_MEMBERS: [ROLE.family] };
+  polls.setMessage(poll.id, "m1");
+  assert.equal(eligibleVoters({ client, config: cfg, poll }).length, 3);
+  const payload = pollPayload(polls.byId(poll.id), polls.results(poll.id), { turnout: { eligible: 3 } });
+  assert.match(payload.embeds[0].data.description, /\*\*2\*\* von 3 haben abgestimmt/);
+  assert.match(payload.embeds[0].data.description, /mehrere Antworten/);
+  assert.equal(await remindMissingVoters({ db, client, config: cfg, poll: polls.byId(poll.id) }), 1);
+  assert.match(replies[0].content, new RegExp(`<@${C}>`));
+  assert.deepEqual(replies[0].allowedMentions, { users: [C] }, "nur Nicht-Abstimmer werden gepingt");
+});
