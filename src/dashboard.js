@@ -24,7 +24,7 @@ const html = value => String(value ?? "").replace(/[&<>"']/g, ch => ({ "&": "&am
 export function createDashboard({ db, client, config, settings = null, series = null }) {
   if (!config.DASHBOARD_ENABLED) return { close: async () => {} };
   const state = new Map();
-  const cookieName = "yamamoto_staff";
+  const cookieName = "corleone_staff";
   const secret = config.DASHBOARD_SESSION_SECRET;
   const groups = new Proxy({}, { get: (_, key) => accessGroups(config)[key] });
   // Login: alle Staff-Stufen, reine Finanz-Einsicht und für Ticket-Kategorien zuständige Rollen (live, damit Rollenänderungen sofort gelten).
@@ -104,7 +104,7 @@ export function createDashboard({ db, client, config, settings = null, series = 
     if (!config.DASHBOARD_MEMBER_AREA) return "Die Website ist derzeit nur für das Team freigeschaltet.";
     const guild = client.guilds.cache.get(config.DISCORD_GUILD_ID) ?? await client.guilds.fetch(config.DISCORD_GUILD_ID).catch(() => null);
     const member = userId ? await guild?.members.fetch(userId).catch(() => null) : null;
-    if (!member) return "Kein Zugang: Du bist mit einem Discord-Konto angemeldet, das nicht auf dem Yamamoto-Server ist.";
+    if (!member) return "Kein Zugang: Du bist mit einem Discord-Konto angemeldet, das nicht auf dem Corleone-Server ist.";
     if (!groups.members.length) return "Kein Zugang: Die Familienrolle ist im Bot noch nicht eingestellt (Leitung: Einstellungen → Rollen → Familienmitglieder).";
     const roleName = id => guild.roles.cache.get(id)?.name ?? id;
     const own = [...member.roles.cache.keys()].filter(id => id !== guild.id).map(roleName);
@@ -352,7 +352,7 @@ export function createDashboard({ db, client, config, settings = null, series = 
       if (req.method === "GET" && url.pathname === "/brand/logo") {
         const avatar = client.user?.displayAvatarURL?.({ extension: "png", size: 256 }) ?? null;
         if (avatar) { res.writeHead(302, { Location: avatar, "Cache-Control": "no-store" }); return res.end(); }
-        res.writeHead(302, { Location: "/assets/yamamoto-profile.png", "Cache-Control": "no-store" }); return res.end();
+        res.writeHead(302, { Location: "/assets/corleone-profile.png", "Cache-Control": "no-store" }); return res.end();
       }
       if (req.method === "GET" && (url.pathname === "/" || url.pathname.startsWith("/assets/"))) {
         if (url.pathname === "/") logAccess(req, "visit", cookieUserId(req));
@@ -369,6 +369,6 @@ export function createDashboard({ db, client, config, settings = null, series = 
     }
   });
   server.on("error", error => console.error("Staff-Dashboard konnte nicht starten:", error.message));
-  server.listen(config.DASHBOARD_PORT, config.DASHBOARD_BIND, () => console.log(`Yamamoto Staff-Dashboard lauscht auf ${config.DASHBOARD_BIND}:${config.DASHBOARD_PORT}.`));
+  server.listen(config.DASHBOARD_PORT, config.DASHBOARD_BIND, () => console.log(`Corleone Staff-Dashboard lauscht auf ${config.DASHBOARD_BIND}:${config.DASHBOARD_PORT}.`));
   return { close: () => new Promise(resolve => { for (const set of liveStreams.values()) for (const res of set) res.end(); liveStreams.clear(); server.close(resolve); }), pushLive };
 }

@@ -29,7 +29,7 @@ export const LEVELS = [
   { min: 30, name: "Profi", emoji: "🥈" },
   { min: 60, name: "Elite", emoji: "🥇" },
   { min: 100, name: "Legende", emoji: "💎" },
-  { min: 200, name: "Yamamoto", emoji: "👑" },
+  { min: 200, name: "Corleone", emoji: "👑" },
 ];
 export function levelFor(count) {
   const index = LEVELS.findLastIndex(level => count >= level.min);

@@ -42,7 +42,7 @@ export function taskReviewCard(log, { profile = null, duplicate = null, imageNam
   const state = log.status;
   const held = isHeld(log);
   const embed = new EmbedBuilder().setColor(state === "approved" ? GREEN : state === "rejected" ? RED : held ? AMBER : BRAND_COLOR)
-    .setAuthor({ name: "YAMAMOTO  •  AUFGABEN-LOG" })
+    .setAuthor({ name: "CORLEONE  •  AUFGABEN-LOG" })
     .setTitle(`${state === "approved" ? "✅ " : state === "rejected" ? "❌ " : held ? "⏳ " : ""}${logTitle(log)}`.slice(0, 256))
     .setDescription([
       `**Von:** <@${log.user_id}>${profile ? ` · ${profile.level.emoji} ${profile.level.name}${profile.streak > 1 ? ` · 🔥 ${profile.streak} Tage Serie` : ""}` : ""}`,
@@ -79,7 +79,7 @@ export function taskReviewButtons(log, config = null) {
 export function myTasksView(db, config, guildId, userId) {
   const tasks = service(db, config), p = tasks.profile(guildId, userId), recent = tasks.list(guildId, { userId, limit: 6 });
   const status = { pending: "⏳", approved: "✅", rejected: "❌" };
-  return new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "YAMAMOTO  •  DEINE AUFGABEN" })
+  return new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "CORLEONE  •  DEINE AUFGABEN" })
     .setTitle(`${p.level.emoji} ${p.level.name}`)
     .setDescription(`${bar(p.level.progress)} ${p.level.next ? `${p.level.count}/${p.level.next.min} Logs bis ${p.level.next.emoji} ${p.level.next.name}` : `${p.level.count} Logs – höchste Stufe erreicht 👑`}`)
     .addFields(
@@ -228,7 +228,7 @@ export async function submitTaskLog({ i, db, client, config }) {
     throw error;
   }
   const { profile, posted } = await postReviewCard({ db, client, config, log, attachment });
-  return i.editReply({ embeds: [new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "YAMAMOTO  •  AUFGABEN-LOG" }).setTitle(`📨 ${logTitle(log)} eingereicht`)
+  return i.editReply({ embeds: [new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "CORLEONE  •  AUFGABEN-LOG" }).setTitle(`📨 ${logTitle(log)} eingereicht`)
     .setDescription(`${log.reward_cents ? `Nach der Prüfung bekommst du **${formatMoney(log.reward_cents)}** aufs Familienkonto.` : "Wird nach der Prüfung gezählt."}${config.TASK_DM_ENABLED ? " Du bekommst eine DM, sobald das Team entschieden hat." : ""}`)
     .addFields({ name: "Deine Stufe", value: levelLine(profile.level), inline: false }, { name: "🔥 Serie", value: `${profile.streak} Tage`, inline: true }, { name: "Diese Woche", value: `${nLogs(profile.week.logs)} · ${formatMoney(profile.week.earned)}`, inline: true })
     .setFooter({ text: posted ? "Wartet auf Prüfung" : "Hinweis: Der Prüf-Channel ist nicht erreichbar – das Team sieht dein Log auf der Website." })] });
@@ -260,17 +260,17 @@ export async function afterTaskDecision({ db, client, config, log, levelBefore =
   const tasks = service(db, config);
   await refreshTaskMessages({ db, client, config, log });
   if (config.TASK_DM_ENABLED && isHeld(log) && log.preapproved_by !== log.user_id) {
-    const dm = new EmbedBuilder().setColor(AMBER).setAuthor({ name: "YAMAMOTO  •  AUFGABEN-LOG" }).setTitle(`⏳ ${logTitle(log)} bestätigt`)
+    const dm = new EmbedBuilder().setColor(AMBER).setAuthor({ name: "CORLEONE  •  AUFGABEN-LOG" }).setTitle(`⏳ ${logTitle(log)} bestätigt`)
       .setDescription(`Dein Invite für <@${log.invitee_id}> ist bestätigt. ${log.reward_cents ? `Die **${formatMoney(log.reward_cents)}** kommen` : "Er zählt"} automatisch, sobald die Bedingung erfüllt ist: **${conditionText(log)}**.\n\n**Stand:** ${log.progress ?? "wird geprüft …"}`);
     await client.users.fetch(log.user_id).then(user => user.send({ embeds: [dm.setTimestamp()] })).catch(() => {});
   } else if (config.TASK_DM_ENABLED && log.status !== "pending" && log.reviewer_id !== log.user_id) {
     const p = tasks.profile(log.guild_id, log.user_id);
     const levelUp = levelBefore && p.level.name !== levelBefore;
     const dm = log.status === "approved"
-      ? new EmbedBuilder().setColor(GREEN).setAuthor({ name: "YAMAMOTO  •  AUFGABEN-LOG" }).setTitle(`✅ ${logTitle(log)} bestätigt`)
+      ? new EmbedBuilder().setColor(GREEN).setAuthor({ name: "CORLEONE  •  AUFGABEN-LOG" }).setTitle(`✅ ${logTitle(log)} bestätigt`)
         .setDescription(`${log.preapproved_at ? `Die Bedingung für <@${log.invitee_id}> ist erfüllt. ` : ""}${log.reward_cents ? `**+${formatMoney(log.reward_cents)}** sind auf deinem Familienkonto.` : "Dein Log wurde gezählt."}${levelUp ? `\n\n🎉 **Level-Up!** Du bist jetzt ${p.level.emoji} **${p.level.name}**.` : ""}`)
         .addFields({ name: "🔥 Serie", value: `${p.streak} ${p.streak === 1 ? "Tag" : "Tage"}`, inline: true }, { name: "📅 Woche", value: `${nLogs(p.week.logs)}${p.week.place ? ` · Platz ${p.week.place}` : ""}`, inline: true }, { name: "Stufe", value: levelLine(p.level) })
-      : new EmbedBuilder().setColor(RED).setAuthor({ name: "YAMAMOTO  •  AUFGABEN-LOG" }).setTitle(`❌ ${logTitle(log)} abgelehnt`).setDescription(`**Grund:** ${log.reject_reason ?? "—"}\n\nBei Fragen melde dich beim Team. Du kannst das Log mit einem passenden Screenshot neu einreichen.`);
+      : new EmbedBuilder().setColor(RED).setAuthor({ name: "CORLEONE  •  AUFGABEN-LOG" }).setTitle(`❌ ${logTitle(log)} abgelehnt`).setDescription(`**Grund:** ${log.reject_reason ?? "—"}\n\nBei Fragen melde dich beim Team. Du kannst das Log mit einem passenden Screenshot neu einreichen.`);
     await client.users.fetch(log.user_id).then(user => user.send({ embeds: [dm.setTimestamp()] })).catch(() => {});
   }
   await refreshTaskBoard({ db, client, config }).catch(error => console.warn("Aufgaben-Board konnte nicht aktualisiert werden:", error.message));
@@ -388,7 +388,7 @@ export function buildTaskBoard(db, config, guildId, reference = new Date()) {
   const tasks = service(db, config), types = tasks.listTypes(guildId);
   const week = weekStart(localDay(reference, config.TIMEZONE)), top = tasks.leaderboard(guildId, { since: week, limit: 5 }), sum = tasks.summary(guildId, reference);
   const commands = config.CHANNEL_BOT_COMMANDS ? ` in <#${config.CHANNEL_BOT_COMMANDS}>` : "";
-  const embed = new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "YAMAMOTO  •  AUFGABEN" }).setTitle("📋 Aufgaben & Belohnungen")
+  const embed = new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "CORLEONE  •  AUFGABEN" }).setTitle("📋 Aufgaben & Belohnungen")
     .setDescription(types.map(t => `${t.emoji} **${t.name}** · ${rewardLabel(t)}${t.daily_limit ? ` · max. ${t.daily_limit}×/Tag` : ""}`).join("\n").slice(0, 3500) || "Noch keine Aufgaben eingerichtet.")
     .addFields(
       { name: "🏆 Top-Farmer diese Woche", value: top.map((r, n) => `${MEDALS[n] ?? `**${n + 1}.**`} <@${r.userId}> · ${nLogs(r.logs)} · ${formatMoney(r.earned)}`).join("\n") || "Noch niemand – sei die/der Erste!" },
@@ -474,7 +474,7 @@ async function notifyInviteProgress({ client, config, log, status, before, held 
   const reward = log.reward_cents ? formatMoney(log.reward_cents) : "deinem Invite";
   const next = status.met ? (held ? `Bedingung erfüllt – die **${reward}** werden gleich gebucht.` : "Bedingung erfüllt – jetzt fehlt nur noch die Bestätigung durch das Team.")
     : `Noch **${left.join(" & ")}** bis zu ${log.reward_cents ? `deinen **${reward}**` : "deinem Invite"}.${held ? "" : " (Das Team muss den Log außerdem noch bestätigen.)"}`;
-  const embed = new EmbedBuilder().setColor(AMBER).setAuthor({ name: "YAMAMOTO  •  INVITE" }).setTitle("📈 Invite-Fortschritt")
+  const embed = new EmbedBuilder().setColor(AMBER).setAuthor({ name: "CORLEONE  •  INVITE" }).setTitle("📈 Invite-Fortschritt")
     .setDescription(`<@${log.invitee_id}> · ${progressText(status)}\n\n${next}`).setTimestamp();
   return client.users.fetch(log.user_id).then(user => user.send({ embeds: [embed] })).then(() => true).catch(() => false);
 }

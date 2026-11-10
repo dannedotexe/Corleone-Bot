@@ -21,10 +21,10 @@ test("Panel-Texte werden validiert, gespeichert, angewendet und zurückgesetzt",
   assert.throws(() => texts.update({ panel: "application", values: { title: "x".repeat(257) }, actorId: "u" }), /höchstens 256/);
   assert.throws(() => texts.update({ panel: "application", values: { color: "rot" }, actorId: "u" }), /Farbe/);
   assert.throws(() => validateTexts("ticket", { title: "", description: "" }), /Titel oder Beschreibung/);
-  texts.update({ panel: "application", values: { ...panelTexts(db, G, "application"), title: "Komm zu den Yamamoto", field2Name: "", buttonRank: "Rang-Antrag stellen", color: "#FF0000" }, actorId: "u" });
+  texts.update({ panel: "application", values: { ...panelTexts(db, G, "application"), title: "Komm zu den Corleone", field2Name: "", buttonRank: "Rang-Antrag stellen", color: "#FF0000" }, actorId: "u" });
   const embed = buildApplicationPanelPayload(panelTexts(db, G, "application"));
   const json = embed.embeds[0].toJSON();
-  assert.equal(json.title, "Komm zu den Yamamoto");
+  assert.equal(json.title, "Komm zu den Corleone");
   assert.equal(json.fields.length, 2, "leeres Feld wird ausgeblendet");
   assert.equal(json.color, 0xff0000);
   assert.equal(embed.components[0].components[1].data.label, "Rang-Antrag stellen");
@@ -57,8 +57,8 @@ test("ein bereits gepostetes Panel wird übernommen und aktualisiert statt doppe
 test("Website-Panel: Link-Button zur Dashboard-Adresse, ohne Adresse kein Panel", async () => {
   const { buildWebsitePanelPayload } = await import("../src/commands/builders.js");
   assert.equal(buildWebsitePanelPayload(""), null);
-  const p = buildWebsitePanelPayload("https://yamamoto.example/");
-  assert.equal(p.components[0].components[0].data.url, "https://yamamoto.example/");
+  const p = buildWebsitePanelPayload("https://corleone.example/");
+  assert.equal(p.components[0].components[0].data.url, "https://corleone.example/");
   assert.match(p.components[0].components[0].data.label, /Website/);
   assert.match(p.embeds[0].data.author.name, /WEBSITE/, "Panel wird über die Kopfzeile wiedererkannt");
 });

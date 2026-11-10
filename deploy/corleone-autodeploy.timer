@@ -1,11 +1,11 @@
 [Unit]
-Description=Check GitHub for Yamamoto Bot updates
+Description=Check GitHub for Corleone Bot updates
 
 [Timer]
 OnBootSec=2min
 OnUnitActiveSec=1min
 Persistent=true
-Unit=yamamoto-autodeploy.service
+Unit=corleone-autodeploy.service
 
 [Install]
 WantedBy=timers.target

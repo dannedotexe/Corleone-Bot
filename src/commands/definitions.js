@@ -4,7 +4,7 @@ import { PERIODS } from "../services/stats.js";
 import { VIEWS } from "../staff-panel.js";
 
 export function buildCommands() {
-  const money = new SlashCommandBuilder().setName("konto").setDescription("Yamamoto-Familienkonto")
+  const money = new SlashCommandBuilder().setName("konto").setDescription("Corleone-Familienkonto")
     .addSubcommand(s=>s.setName("stand").setDescription("Eigenen Kontostand sehen"))
     .addSubcommand(s=>s.setName("anlegen").setDescription("Familienkonto für ein Mitglied anlegen (Finanzrolle)").addUserOption(o=>o.setName("mitglied").setDescription("Mitglied").setRequired(true)).addStringOption(o=>o.setName("notiz").setDescription("Optionale Notiz, z. B. neues Familienmitglied").setMaxLength(300)))
     .addSubcommand(s=>s.setName("ansehen").setDescription("Kontostand eines Mitglieds (Finanzrolle)").addUserOption(o=>o.setName("mitglied").setDescription("Mitglied").setRequired(true)))

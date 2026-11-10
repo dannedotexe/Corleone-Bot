@@ -17,7 +17,7 @@ export function buildActivityBoard(seriesList, timezone, reference = new Date(),
   const flexible = active.filter(item => item.kind === "flexible");
   const embed = new EmbedBuilder().setColor(colorNumber(texts.color || "#c1121f")).setTitle(texts.title || "📆 Familien-Aktivitäten")
     .setDescription((active.length ? texts.description : texts.emptyText) || null)
-    .setFooter({ text: `YAMAMOTO  •  Zeiten in ${timezone}` }).setTimestamp();
+    .setFooter({ text: `CORLEONE  •  Zeiten in ${timezone}` }).setTimestamp();
   if (texts.author) embed.setAuthor({ name: texts.author });
   if (scheduled.length) embed.addFields({ name: texts.scheduledTitle || "🕒 Feste Termine", value: scheduled.map(({ item, next }) => `**${item.name}** · ${describeSchedule(item)}${next ? ` · nächstes <t:${unix(next)}:R>` : ""}`).join("\n").slice(0, 1024) });
   if (flexible.length) embed.addFields({ name: texts.flexibleTitle || "🔁 Flexibel verfügbar", value: flexible.map(item => `**${item.name}** · ${describeSchedule(item)}`).join("\n").slice(0, 1024) });

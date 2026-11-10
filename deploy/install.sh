@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Ersteinrichtung des Yamamoto-Bots auf der Oracle-VM – ein Befehl, fragt nur nach den Discord-Werten.
-#   cd /home/ubuntu && git clone https://github.com/dannedotexe/Yamamoto-Bot.git && bash Yamamoto-Bot/deploy/install.sh
-# Fasst nur den eigenen pm2-Prozess „yamamoto-bot“ an; andere Bots (gambino-bot usw.) bleiben unberührt.
+# Ersteinrichtung des Corleone-Bots auf der Oracle-VM – ein Befehl, fragt nur nach den Discord-Werten.
+#   cd /home/ubuntu && git clone https://github.com/dannedotexe/Yamamoto-Bot.git Corleone-Bot && bash Corleone-Bot/deploy/install.sh
+# Fasst nur den eigenen pm2-Prozess „corleone-bot“ an; andere Bots (gambino-bot usw.) bleiben unberührt.
 # Kann gefahrlos erneut ausgeführt werden (vorhandene .env bleibt, Bot wird nur neu gestartet).
 set -euo pipefail
 
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-PM2_NAME="yamamoto-bot"
+PM2_NAME="corleone-bot"
 PORT=3090
 ENV_FILE="$APP_DIR/.env"
 say() { printf '\n\033[1m▶ %s\033[0m\n' "$1"; }
@@ -24,11 +24,11 @@ if [[ -f "$ENV_FILE" ]]; then
   echo ".env ist schon vorhanden – wird nicht verändert."
 else
   snowflake() { [[ "$1" =~ ^[0-9]{17,20}$ ]]; }
-  echo "Werte aus dem Discord Developer Portal (Anwendung „Yamamoto“). Der Token wird nicht angezeigt."
+  echo "Werte aus dem Discord Developer Portal (Anwendung „Corleone“). Der Token wird nicht angezeigt."
   read -r -s -p "Bot-Token: " TOKEN; echo
   [[ ${#TOKEN} -ge 50 && "$TOKEN" != *" "* ]] || fail "Das sieht nicht wie ein Bot-Token aus."
   read -r -p "Application-/Client-ID: " CLIENT_ID; snowflake "$CLIENT_ID" || fail "Client-ID muss eine Zahl mit 17–20 Stellen sein."
-  read -r -p "Server-ID des Yamamoto-Discords: " GUILD_ID; snowflake "$GUILD_ID" || fail "Server-ID muss eine Zahl mit 17–20 Stellen sein."
+  read -r -p "Server-ID des Corleone-Discords: " GUILD_ID; snowflake "$GUILD_ID" || fail "Server-ID muss eine Zahl mit 17–20 Stellen sein."
   read -r -p "Deine Discord-User-ID (Bot-Owner, Vollzugriff; leer = keine): " OWNER_ID
   [[ -z "$OWNER_ID" ]] || snowflake "$OWNER_ID" || fail "User-ID muss eine Zahl mit 17–20 Stellen sein."
   umask 077
@@ -66,6 +66,6 @@ fi
 cat <<'MSG'
 
 Optional – automatische Updates bei jedem Push auf main:
-  sudo install -m 644 deploy/yamamoto-autodeploy.service deploy/yamamoto-autodeploy.timer /etc/systemd/system/
-  sudo systemctl daemon-reload && sudo systemctl enable --now yamamoto-autodeploy.timer
+  sudo install -m 644 deploy/corleone-autodeploy.service deploy/corleone-autodeploy.timer /etc/systemd/system/
+  sudo systemctl daemon-reload && sudo systemctl enable --now corleone-autodeploy.timer
 MSG

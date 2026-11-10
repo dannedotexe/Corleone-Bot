@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Auto-Deploy für den Yamamoto-Bot (läuft per systemd-Timer, siehe README). Fasst nur den eigenen
-# pm2-Prozess „yamamoto-bot“ an – andere Bots auf derselben VM bleiben unberührt.
+# Auto-Deploy für den Corleone-Bot (läuft per systemd-Timer, siehe README). Fasst nur den eigenen
+# pm2-Prozess „corleone-bot“ an – andere Bots auf derselben VM bleiben unberührt.
 set -euo pipefail
 
-APP_DIR="/home/ubuntu/Yamamoto-Bot"
-PM2_NAME="yamamoto-bot"
-STATE_DIR="/home/ubuntu/.local/state/yamamoto-bot"
+APP_DIR="/home/ubuntu/Corleone-Bot"
+PM2_NAME="corleone-bot"
+STATE_DIR="/home/ubuntu/.local/state/corleone-bot"
 STATE_FILE="$STATE_DIR/deployed-commit"
-LOCK_FILE="/home/ubuntu/.cache/yamamoto-bot-deploy.lock"
+LOCK_FILE="/home/ubuntu/.cache/corleone-bot-deploy.lock"
 
 mkdir -p "$STATE_DIR" "$(dirname "$LOCK_FILE")"
 exec 9>"$LOCK_FILE"
@@ -56,4 +56,4 @@ fi
 
 printf '%s\n' "$target_commit" > "$STATE_FILE.tmp"
 mv "$STATE_FILE.tmp" "$STATE_FILE"
-echo "Yamamoto-Bot erfolgreich auf $target_commit aktualisiert."
+echo "Corleone-Bot erfolgreich auf $target_commit aktualisiert."

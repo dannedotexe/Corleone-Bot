@@ -5,7 +5,7 @@ import { MessagePayload } from "discord.js";
 import { EMOJI_SET } from "./emoji-set.js";
 
 /**
- * Eigene Yamamoto-Emojis statt Standard-Emojis: Der Bot lädt sie einmalig als Bot-Emojis hoch (belegen keine
+ * Eigene Corleone-Emojis statt Standard-Emojis: Der Bot lädt sie einmalig als Bot-Emojis hoch (belegen keine
  * Server-Plätze) und ersetzt beim Senden jedes bekannte Unicode-Emoji in Text, Karten und Knöpfen.
  * Fehlt ein Emoji (Upload fehlgeschlagen), bleibt das normale Emoji stehen.
  */
@@ -19,7 +19,7 @@ const escape = text => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const PATTERN = new RegExp([...variants.keys()].sort((a, b) => b.length - a.length).map(escape).join("|"), "gu");
 
 const custom = name => (ids.has(name) ? `<:${name}:${ids.get(name)}>` : null);
-export function yamamotoText(text) {
+export function corleoneText(text) {
   if (typeof text !== "string" || !ids.size) return text;
   return text.replace(PATTERN, match => custom(variants.get(match)) ?? match);
 }
@@ -34,8 +34,8 @@ function emojiObject(emoji) {
 
 function transformEmbed(embed) {
   if (!embed) return embed;
-  const out = { ...embed, title: yamamotoText(embed.title), description: yamamotoText(embed.description) };
-  if (embed.fields) out.fields = embed.fields.map(f => ({ ...f, name: yamamotoText(f.name), value: yamamotoText(f.value) }));
+  const out = { ...embed, title: corleoneText(embed.title), description: corleoneText(embed.description) };
+  if (embed.fields) out.fields = embed.fields.map(f => ({ ...f, name: corleoneText(f.name), value: corleoneText(f.value) }));
   if (embed.footer?.text) out.footer = { ...embed.footer, text: stripped(embed.footer.text) || embed.footer.text };
   if (embed.author?.name) out.author = { ...embed.author, name: stripped(embed.author.name) || embed.author.name };
   return out;
@@ -48,14 +48,14 @@ function transformComponent(component) {
   if (Array.isArray(out.options)) out.options = out.options.map(o => (o.emoji ? { ...o, emoji: emojiObject(o.emoji) } : o));
   if (Array.isArray(out.components)) out.components = out.components.map(transformComponent);
   if (out.accessory) out.accessory = transformComponent(out.accessory);
-  if (typeof out.content === "string") out.content = yamamotoText(out.content);
+  if (typeof out.content === "string") out.content = corleoneText(out.content);
   return out;
 }
 
 /** Wendet die Ersetzung auf einen fertigen Nachrichten-Body (API-Format) an. */
 export function transformBody(body) {
   if (!body || !ids.size) return body;
-  if (typeof body.content === "string") body.content = yamamotoText(body.content);
+  if (typeof body.content === "string") body.content = corleoneText(body.content);
   if (Array.isArray(body.embeds)) body.embeds = body.embeds.map(transformEmbed);
   if (Array.isArray(body.components)) body.components = body.components.map(transformComponent);
   return body;
@@ -68,13 +68,13 @@ function patchPayloads() {
   const original = MessagePayload.prototype.resolveBody;
   MessagePayload.prototype.resolveBody = function resolveBody(...args) {
     const result = original.apply(this, args);
-    try { transformBody(this.body); } catch (error) { console.warn("Yamamoto-Emojis konnten nicht eingesetzt werden:", error.message); }
+    try { transformBody(this.body); } catch (error) { console.warn("Corleone-Emojis konnten nicht eingesetzt werden:", error.message); }
     return result;
   };
 }
 
 /** Lädt fehlende Emojis als Bot-Emojis hoch und aktiviert die Ersetzung. Gibt die Zahl neu hochgeladener zurück. */
-export async function syncYamamotoEmojis(client) {
+export async function syncCorleoneEmojis(client) {
   status.checkedAt = new Date().toISOString(); status.error = null; status.failed = 0;
   if (!client.application?.id) await client.application?.fetch?.().catch(() => {});
   const manager = client.application?.emojis;
@@ -95,7 +95,7 @@ export async function syncYamamotoEmojis(client) {
   return uploaded;
 }
 
-export const yamamotoEmojiStatus = () => ({ active: [...new Set(Object.values(EMOJI_SET).map(([name]) => name))].filter(name => ids.has(name)).length, total: new Set(Object.values(EMOJI_SET).map(([name]) => name)).size, ...status });
+export const corleoneEmojiStatus = () => ({ active: [...new Set(Object.values(EMOJI_SET).map(([name]) => name))].filter(name => ids.has(name)).length, total: new Set(Object.values(EMOJI_SET).map(([name]) => name)).size, ...status });
 
 /** Nur für Tests: Emoji-IDs direkt setzen. */
-export function setYamamotoEmojiIds(map) { ids.clear(); for (const [name, id] of Object.entries(map)) ids.set(name, id); patchPayloads(); }
+export function setCorleoneEmojiIds(map) { ids.clear(); for (const [name, id] of Object.entries(map)) ids.set(name, id); patchPayloads(); }

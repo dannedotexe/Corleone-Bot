@@ -141,7 +141,7 @@ test("Staff-Dashboard prüft Rollen und protokolliert Antrag-Übernahme und Able
     assert.match(await page.text(), /class="discord-btn" href="\/login"/);
     assert.equal((await request("/assets/app.js")).headers.get("content-type"), "text/javascript; charset=utf-8");
     assert.equal((await request("/assets/style.css")).headers.get("content-type"), "text/css; charset=utf-8");
-    const logo = await request("/assets/yamamoto-profile.png");
+    const logo = await request("/assets/corleone-profile.png");
     assert.equal(logo.headers.get("content-type"), "image/png");
     assert.deepEqual([...new Uint8Array(await logo.arrayBuffer()).slice(0, 4)], [0x89, 0x50, 0x4e, 0x47]);
   } finally {

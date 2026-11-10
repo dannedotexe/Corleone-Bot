@@ -40,7 +40,7 @@ test("Verifizierungs-Erinnerung: nur nicht Verifizierte, 2× täglich, höchsten
   assert.equal(currentSlot(config, new Date("2026-10-26T10:59:00Z")), null, "vor 12:00 nichts");
   assert.equal(currentSlot(config, now).key, "2026-10-26 12:00");
   assert.equal(currentSlot(config, new Date("2026-10-26T13:30:00Z")), null, "verpasster Termin nur 2 Std. nachgeholt");
-  const guild = { name: "Yamamoto", members: { cache: members, fetch: async () => members } };
+  const guild = { name: "Corleone", members: { cache: members, fetch: async () => members } };
   const client = { guilds: { cache: new Map([[G, guild]]), fetch: async () => guild } };
   const run = at => runVerifyReminders({ db, client, config, reference: at, wait: async () => {} });
   assert.equal((await run(now)).sent, 1);

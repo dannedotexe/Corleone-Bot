@@ -47,7 +47,7 @@ export function buildTournamentBoard(db, guildId, config, reference = new Date()
   const rows = tournamentStandings(db, guildId, window);
   const ended = reference >= window.to, unix = d => Math.floor(d.getTime() / 1000);
   const lines = rows.slice(0, 40).map((r, n) => `${MEDALS[n] ?? `**${n + 1}.**`} <@${r.userId}> · **${r.points} ${Math.abs(r.points) === 1 ? "Punkt" : "Punkte"}**${r.minus ? ` (+${r.plus} / −${r.minus})` : ""}`);
-  const embed = new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "YAMAMOTO  •  INVITE-TURNIER" })
+  const embed = new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "CORLEONE  •  INVITE-TURNIER" })
     .setTitle(ended ? "🏆 Endstand" : "🏆 Rangliste")
     .setDescription([
       ended ? `Das Turnier ist vorbei (bis <t:${unix(window.to) - 1}:D>).` : `Läuft bis <t:${unix(window.to) - 1}:D> · endet <t:${unix(window.to)}:R>`,

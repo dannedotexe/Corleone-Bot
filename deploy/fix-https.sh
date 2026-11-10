@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Repariert ein abgelaufenes/nicht erneuertes HTTPS-Zertifikat des Dashboards.
-# Aufruf auf der VM:   bash ~/Yamamoto-Bot/deploy/fix-https.sh
+# Aufruf auf der VM:   bash ~/Corleone-Bot/deploy/fix-https.sh
 # Ändert keine Konfiguration: startet nur den vorhandenen Webserver neu bzw. stößt die Zertifikats-Erneuerung an.
 set -uo pipefail
 

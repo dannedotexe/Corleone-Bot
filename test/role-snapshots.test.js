@@ -8,7 +8,7 @@ const G = "10000000000000001", A = "30000000000000001", B = "30000000000000002";
 const R = { family: "50000000000000001", rang8: "50000000000000008", bot: "50000000000000099", boss: "50000000000000010" };
 
 function fakeGuild(initial) {
-  const roles = new Map([[G, { id: G, name: "@everyone", position: 0 }], [R.family, { id: R.family, name: "| Yamamoto", position: 1 }], [R.rang8, { id: R.rang8, name: "8 - Leaderschaft", position: 2 }], [R.boss, { id: R.boss, name: "10 - Boss", position: 9 }], [R.bot, { id: R.bot, name: "Bot", position: 5, managed: true }]]);
+  const roles = new Map([[G, { id: G, name: "@everyone", position: 0 }], [R.family, { id: R.family, name: "| Corleone", position: 1 }], [R.rang8, { id: R.rang8, name: "8 - Leaderschaft", position: 2 }], [R.boss, { id: R.boss, name: "10 - Boss", position: 9 }], [R.bot, { id: R.bot, name: "Bot", position: 5, managed: true }]]);
   const state = new Map(Object.entries(initial).map(([id, list]) => [id, new Set(list)]));
   const member = id => ({ id, user: { bot: false }, roles: {
     get cache() { return new Map([...state.get(id)].map(r => [r, roles.get(r)])); },
@@ -35,7 +35,7 @@ test("Sichern und Wiederherstellen: Rang zurück, Stand davor gesichert, täglic
   assert.deepEqual(createRoleSnapshots(db).get(G, snap.id).data.members[A], [R.family, R.rang8].sort(), "verwaltete Bot-Rolle nicht gesichert");
   state.get(A).delete(R.rang8); state.get(A).delete(R.family); state.get(B).add(R.rang8);
   const preview = await restoreSnapshot({ db, client, config, snapshotId: snap.id, actorId: A });
-  assert.deepEqual(preview.changes.map(c => [c.userId, c.addNames]), [[A, ["| Yamamoto", "8 - Leaderschaft"]]]);
+  assert.deepEqual(preview.changes.map(c => [c.userId, c.addNames]), [[A, ["| Corleone", "8 - Leaderschaft"]]]);
   const done = await restoreSnapshot({ db, client, config, snapshotId: snap.id, mode: "exact", actorId: A, dryRun: false });
   assert.equal(done.ok, 2);
   assert.ok(state.get(A).has(R.rang8) && !state.get(B).has(R.rang8));

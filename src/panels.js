@@ -89,12 +89,12 @@ export async function postEventResult({ db, client, config, event }) {
   const absences = createAbsenceService(db);
   const excused = new Set(rows.filter(row => row.status === "absent" && absences.wasAbsent(event.guild_id ?? config.DISCORD_GUILD_ID, row.user_id, event.starts_at, config.TIMEZONE)).map(row => row.user_id));
   const list = status => numberedMentions(rows.filter(row => row.status === status).map(row => row.user_id), { empty: "", suffix: id => excused.has(id) ? " (abgemeldet)" : "" });
-  const embed = new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "YAMAMOTO  •  EVENT-ERGEBNIS" }).setTitle(`🏁 ${event.name}`.slice(0, 256))
+  const embed = new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "CORLEONE  •  EVENT-ERGEBNIS" }).setTitle(`🏁 ${event.name}`.slice(0, 256))
     .setDescription(`<t:${Math.floor(new Date(event.starts_at).getTime() / 1000)}:F>${event.location ? ` · ${event.location}` : ""}`)
     .addFields(
       { name: `✅ Anwesend (${rows.filter(r => r.status === "present").length})`, value: (list("present") || "—").slice(0, 1024) },
       { name: `🙋 Angemeldet (${rows.filter(r => r.status === "signed_up").length})`, value: (list("signed_up") || "—").slice(0, 1024) },
       { name: `➖ Abwesend (${rows.filter(r => r.status === "absent").length})`, value: (list("absent") || "—").slice(0, 1024) },
-    ).setFooter({ text: "YAMAMOTO  •  Anwesenheit kann vom Event-Team nachgetragen werden" }).setTimestamp();
+    ).setFooter({ text: "CORLEONE  •  Anwesenheit kann vom Event-Team nachgetragen werden" }).setTimestamp();
   return channel.send({ embeds: [embed], allowedMentions: { parse: [] } }).then(() => true).catch(() => false);
 }

@@ -1,6 +1,6 @@
-# Yamamoto Bot
+# Corleone Bot
 
-All-in-One-Discord-Bot für die Yamamoto-Familie (Grand-RP), gebaut mit discord.js 14 und SQLite (`better-sqlite3`). Secrets stehen nie im Repository: Produktivwerte gehören in die `.env` und die SQLite-Datei auf der Oracle-VM.
+All-in-One-Discord-Bot für die Corleone-Familie (Grand-RP), gebaut mit discord.js 14 und SQLite (`better-sqlite3`). Secrets stehen nie im Repository: Produktivwerte gehören in die `.env` und die SQLite-Datei auf der Oracle-VM.
 
 ## Inhalt
 
@@ -39,7 +39,7 @@ All-in-One-Discord-Bot für die Yamamoto-Familie (Grand-RP), gebaut mit discord.
 | Moderation | `/timeout` `/untimeout` (Moderation), `/kick` (Staff), `/ban` `/unban` (Leitung) | Immer mit Grund. Die Person bekommt vorher eine DM. Kick und Bann brauchen eine Bestätigung per Button (2 Minuten gültig, nur für die auslösende Person). Selbst-Moderation, Bots und Team-Mitglieder (außer durch die Leitung) sind gesperrt; die Rollen-Hierarchie wird geprüft. Jede Maßnahme landet unveränderlich in der Mitgliederhistorie und im Sanktions-Log. |
 | Willkommen | automatisch in `CHANNEL_WELCOME` | Begrüßt neue Spieler mit Erwähnung, Hinweis und Button zur Verifizierung; optional per DM (`WELCOME_DM_ENABLED`). Texte unter *Panel-Texte → Willkommensnachricht* (Platzhalter `{user}` `{name}` `{server}` `{mitglieder}` `{verifizierung}`). |
 | Status-Seite | Website *Status* | Discord-Verbindung, letztes Update (Version und Zeitpunkt), letztes Backup, Hintergrund-Aufgaben, Datenbankgröße, fehlgeschlagene Log-Zustellungen und offene Konfigurationshinweise. |
-| Testdaten zurücksetzen | Website *Einstellungen → Gefahrenzone* (nur Leitung) | Löscht wählbar Konten, Buchungen, Auszahlungen, Sanktionen, Verwarnungen, Moderation, Tickets, Anträge, Events, Giveaways, Abmeldungen, Statistik und Protokoll (Verifizierungen nur auf Wunsch). Channels, Rollen, Panel-Texte, Panels und Aktivitäten-Vorlagen bleiben. Vorher wird automatisch ein Backup `yamamoto-vor-reset-….sqlite` angelegt; zur Bestätigung muss `ZURÜCKSETZEN` eingetippt werden. Nachrichten in Discord (alte Event-Karten, Ticket-Channels) werden nicht gelöscht. |
+| Testdaten zurücksetzen | Website *Einstellungen → Gefahrenzone* (nur Leitung) | Löscht wählbar Konten, Buchungen, Auszahlungen, Sanktionen, Verwarnungen, Moderation, Tickets, Anträge, Events, Giveaways, Abmeldungen, Statistik und Protokoll (Verifizierungen nur auf Wunsch). Channels, Rollen, Panel-Texte, Panels und Aktivitäten-Vorlagen bleiben. Vorher wird automatisch ein Backup `corleone-vor-reset-….sqlite` angelegt; zur Bestätigung muss `ZURÜCKSETZEN` eingetippt werden. Nachrichten in Discord (alte Event-Karten, Ticket-Channels) werden nicht gelöscht. |
 | Abstimmungen | `/umfrage erstellen \| beenden`, Website *Abstimmungen* | Frage mit 2–10 Antworten als Buttons in `CHANNEL_POLLS` (oder gewähltem Channel). Eine Stimme pro Person, bis zum Ende änderbar oder zurückziehbar. Optional anonym (niemand sieht, wer was gewählt hat), Zwischenstand verdeckt oder nur für eine Rolle. Läuft 5 Minuten bis 30 Tage; am Ende werden die Buttons entfernt und das Ergebnis automatisch gepostet. |
 | Excel-Export | Website: Buttons „Excel …“ in Familienkonto, Sanktionen, Events, Mitglieder, Aktivität, Abstimmungen | Echte .xlsx-Dateien (ohne Zusatzbibliothek erzeugt): Kontostände, Buchungen, Sanktionen, Verwarnungen, Event-Teilnahmen, Mitglieder, Abmeldungen, Abstimmungsergebnisse. Discord-IDs als Text (keine 6,27E+17), Beträge als Zahlen im $-Format, Datum als Excel-Datum in Server-Zeit, Kopfzeile mit Filter und fixiert, passende Spaltenbreiten. Texte werden nie als Formel ausgeführt. Nur mit passendem Recht; jeder Export wird protokolliert. |
 | Ankündigungen | Website *Ankündigungen* | Text und/oder Karte (Titel, Beschreibung, Farbe, Fußzeile, Bild-Link) mit Live-Vorschau schreiben und sofort oder geplant (bis 60 Tage, Server-Zeitzone) in einen beliebigen Channel posten, Standard `CHANNEL_ANNOUNCEMENTS`. Erwähnt werden nur ausgewählte Rollen (max. 5); @everyone nur durch die Leitung. Geplante Posts gehen genau einmal raus und lassen sich abbrechen; frühere Ankündigungen dienen als Vorlage. |
@@ -57,7 +57,7 @@ Alle relevanten Aktionen landen in `audit_logs` (Actor, Ziel, Aktion, Details, Z
 
 ## Familienkonto und Sanktionsverrechnung
 
-**Fachliche Bedeutung:** Das Yamamoto-Familienguthaben (`accounts.balance_cents`) ist der Betrag, den die Familie einem Mitglied für Grand-RP-Events oder Familienaktivitäten schuldet und noch nicht ausgezahlt hat. Es ist keine Discord-Spielwährung und wird mit keiner Community-Economy verrechnet. Alle Beträge sind Ganzzahlen in Cent; Eingaben erfolgen in Dollar, z. B. `2500000` oder `12,50`.
+**Fachliche Bedeutung:** Das Corleone-Familienguthaben (`accounts.balance_cents`) ist der Betrag, den die Familie einem Mitglied für Grand-RP-Events oder Familienaktivitäten schuldet und noch nicht ausgezahlt hat. Es ist keine Discord-Spielwährung und wird mit keiner Community-Economy verrechnet. Alle Beträge sind Ganzzahlen in Cent; Eingaben erfolgen in Dollar, z. B. `2500000` oder `12,50`.
 
 | Feld | Bedeutung |
 | --- | --- |
@@ -81,7 +81,7 @@ Ablauf einer Auszahlung (`/konto auszahlen`):
 
 ## Channels und ihre Funktionen
 
-Jede Funktion hat einen eigenen, einstellbaren Channel (Website → *Einstellungen* → *Channels* oder `/einstellungen kanal`). Empfohlene Zuordnung zum Yamamoto-Layout:
+Jede Funktion hat einen eigenen, einstellbaren Channel (Website → *Einstellungen* → *Channels* oder `/einstellungen kanal`). Empfohlene Zuordnung zum Corleone-Layout:
 
 | Funktion | Einstellung | Empfohlen | Sichtbarkeit |
 | --- | --- | --- | --- |
@@ -202,64 +202,64 @@ Statt IDs zeigt die Website Namen an, und Mitglieder werden über eine Suche aus
 
 **Website-Zugriffe (IP-Adressen):** Jeder Seitenaufruf und jede Anmeldung (auch abgewiesene) wird mit IP-Adresse, Discord-Konto und Gerät gespeichert – sichtbar nur für Bot-Owner unter *Verwaltung → Status*. Mehrere Konten von derselben IP werden hervorgehoben. Aufbewahrung `ACCESS_LOG_DAYS` (Standard 30 Tage), danach automatisch gelöscht. Die echte IP muss der Reverse-Proxy im Header `X-Forwarded-For` mitschicken (Caddy macht das automatisch; nginx: `proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;`), sonst steht überall `127.0.0.1`.
 
-**Echtes HTTPS (ohne „Nicht sicher“):** Domain (z. B. kostenlos bei duckdns.org) per A-Eintrag auf die VM-IP zeigen lassen, dann auf der VM `bash deploy/setup-https.sh <domain>` ausführen. Das Skript ist für die **gemeinsame VM** gebaut: Es ergänzt in `/etc/caddy/Caddyfile` nur einen eigenen, markierten Block (`# >>> yamamoto-bot` … `# <<< yamamoto-bot`) für `<domain> → 127.0.0.1:DASHBOARD_PORT`, lässt andere Seiten (z. B. Gambino) unverändert, legt vorher ein Backup an, stellt es bei ungültiger Konfiguration wieder her und lädt Caddy nur neu (kein Neustart). Ist die Domain schon außerhalb des Blocks eingetragen oder läuft statt Caddy nginx/apache, bricht es ohne Änderung ab. Danach setzt es `DASHBOARD_PUBLIC_URL` und startet `yamamoto-bot` neu. Zum Schluss im Discord Developer Portal `https://<domain>/oauth/callback` als Redirect eintragen; in der Oracle-Konsole müssen 80 und 443 in der Security List offen sein.
+**Echtes HTTPS (ohne „Nicht sicher“):** Domain (z. B. kostenlos bei duckdns.org) per A-Eintrag auf die VM-IP zeigen lassen, dann auf der VM `bash deploy/setup-https.sh <domain>` ausführen. Das Skript ist für die **gemeinsame VM** gebaut: Es ergänzt in `/etc/caddy/Caddyfile` nur einen eigenen, markierten Block (`# >>> corleone-bot` … `# <<< corleone-bot`) für `<domain> → 127.0.0.1:DASHBOARD_PORT`, lässt andere Seiten (z. B. Gambino) unverändert, legt vorher ein Backup an, stellt es bei ungültiger Konfiguration wieder her und lädt Caddy nur neu (kein Neustart). Ist die Domain schon außerhalb des Blocks eingetragen oder läuft statt Caddy nginx/apache, bricht es ohne Änderung ab. Danach setzt es `DASHBOARD_PUBLIC_URL` und startet `corleone-bot` neu. Zum Schluss im Discord Developer Portal `https://<domain>/oauth/callback` als Redirect eintragen; in der Oracle-Konsole müssen 80 und 443 in der Security List offen sein.
 
 ## Oracle-VM: Betrieb und Aktualisierung
 
-Der Bot läuft auf derselben Oracle-VM wie die anderen pm2-Prozesse (`gambino-bot`, `chud-bot`, `hugosmp-bot`, `hugopredict`), aber vollständig getrennt: eigener Ordner `/home/ubuntu/Yamamoto-Bot`, eigener pm2-Prozess `yamamoto-bot`, eigene Datenbank `data/yamamoto.sqlite`, eigener Dashboard-Port **3090** (Gambino: 3080), eigener Deploy-Timer `yamamoto-autodeploy`. Die Skripte fassen nur `yamamoto-bot` an.
+Der Bot läuft auf derselben Oracle-VM wie die anderen pm2-Prozesse (`gambino-bot`, `chud-bot`, `hugosmp-bot`, `hugopredict`), aber vollständig getrennt: eigener Ordner `/home/ubuntu/Corleone-Bot`, eigener pm2-Prozess `corleone-bot`, eigene Datenbank `data/corleone.sqlite`, eigener Dashboard-Port **3090** (Gambino: 3080), eigener Deploy-Timer `corleone-autodeploy`. Die Skripte fassen nur `corleone-bot` an.
 
-**Ersteinrichtung (einmalig):** am einfachsten `cd /home/ubuntu && git clone https://github.com/dannedotexe/Yamamoto-Bot.git && bash Yamamoto-Bot/deploy/install.sh` – fragt Token (verdeckt), Client-ID und Server-ID ab, legt die `.env` an, installiert, registriert die Befehle und startet `yamamoto-bot`. Von Hand:
+**Ersteinrichtung (einmalig):** am einfachsten `cd /home/ubuntu && git clone https://github.com/dannedotexe/Yamamoto-Bot.git Corleone-Bot && bash Corleone-Bot/deploy/install.sh` – fragt Token (verdeckt), Client-ID und Server-ID ab, legt die `.env` an, installiert, registriert die Befehle und startet `corleone-bot`. Von Hand:
 
 ```sh
 cd /home/ubuntu
-git clone https://github.com/dannedotexe/Yamamoto-Bot.git
-cd Yamamoto-Bot
+git clone https://github.com/dannedotexe/Yamamoto-Bot.git Corleone-Bot
+cd Corleone-Bot
 cp .env.example .env && chmod 600 .env   # Token, Client-ID, Server-ID usw. eintragen
 npm install --omit=dev --no-package-lock
 npm run deploy-commands
-pm2 start npm --name yamamoto-bot -- start
+pm2 start npm --name corleone-bot -- start
 pm2 save
 ```
 
-**Automatisch (eingerichteter Timer):** `deploy/yamamoto-autodeploy.timer` prüft jede Minute `origin/main`. Bei einer neuen Version passiert Folgendes:
+**Automatisch (eingerichteter Timer):** `deploy/corleone-autodeploy.timer` prüft jede Minute `origin/main`. Bei einer neuen Version passiert Folgendes:
 
 1. Fast-Forward-Merge; bei lokalen Änderungen bricht der Dienst ab.
 2. `npm install`, falls sich `package.json` oder ein Lockfile geändert hat.
 3. Datenbank-Backup über `npm run backup`.
 4. Slash-Commands registrieren.
-5. `pm2 restart yamamoto-bot`, danach Prüfung, ob der Bot online ist.
+5. `pm2 restart corleone-bot`, danach Prüfung, ob der Bot online ist.
 
 Ein Merge nach `main` ist damit ein Produktiv-Deployment. Einmalige Einrichtung des Timers:
 
 ```sh
-sudo install -m 644 deploy/yamamoto-autodeploy.service /etc/systemd/system/yamamoto-autodeploy.service
-sudo install -m 644 deploy/yamamoto-autodeploy.timer /etc/systemd/system/yamamoto-autodeploy.timer
+sudo install -m 644 deploy/corleone-autodeploy.service /etc/systemd/system/corleone-autodeploy.service
+sudo install -m 644 deploy/corleone-autodeploy.timer /etc/systemd/system/corleone-autodeploy.timer
 sudo systemctl daemon-reload
-sudo systemctl enable --now yamamoto-autodeploy.timer
-journalctl -u yamamoto-autodeploy.service -n 50   # letzte Deploy-Läufe
+sudo systemctl enable --now corleone-autodeploy.timer
+journalctl -u corleone-autodeploy.service -n 50   # letzte Deploy-Läufe
 ```
 
 **Manuell:**
 
 ```sh
-cd /home/ubuntu/Yamamoto-Bot
+cd /home/ubuntu/Corleone-Bot
 npm run backup
 git pull --ff-only
 npm install
 npm test
 npm run deploy-commands
-pm2 restart yamamoto-bot --update-env
-pm2 logs yamamoto-bot --lines 100
+pm2 restart corleone-bot --update-env
+pm2 logs corleone-bot --lines 100
 ```
 
 Node: Der Code läuft ab Node 20.6. Node 20 ist aber End-of-Life, ein Upgrade auf eine aktuelle LTS-Version (z. B. 22) ist empfohlen; danach `npm rebuild better-sqlite3`.
 
 ## Datenbank, Migrationen und Backups
 
-- Beim Start laufen versionierte Migrationen (`MIGRATIONS` in `src/database.js`), jede in einer Transaktion und mit Name und Zeitpunkt in `schema_migrations` festgehalten. Sie sind idempotent. Version 1 ist das vollständige Yamamoto-Basisschema (frische Datenbank, keine Altlasten aus anderen Installationen). Neue Schemaänderungen kommen immer als neue Version hinzu.
+- Beim Start laufen versionierte Migrationen (`MIGRATIONS` in `src/database.js`), jede in einer Transaktion und mit Name und Zeitpunkt in `schema_migrations` festgehalten. Sie sind idempotent. Version 1 ist das vollständige Corleone-Basisschema (frische Datenbank, keine Altlasten aus anderen Installationen). Neue Schemaänderungen kommen immer als neue Version hinzu.
 - Schema: Konten, Transaktionen, Sanktionen, Sanktionsänderungen, Auszahlungs-Allocations, Erstattungen, Verwarnungen, Tickets und Transkripte, Events, Teilnehmer, Erinnerungen, Anträge, Notizen, Rollenvergaben, Giveaways und Teilnahmen, Audit-Logs und deren Zustellstatus, AutoMod-Aktionen, Mitgliederstatistik, Guild-Einstellungen. Dazu Fremdschlüssel, Unique-Constraints und Indizes.
-- **Backup:** `npm run backup` erstellt eine konsistente Online-Kopie (SQLite-Backup-API, auch bei laufendem Bot), prüft deren Integrität und behält die letzten `BACKUP_KEEP` Dateien in `BACKUP_DIR` (Rechte 600). Täglich per Cron, z. B. `crontab -e` → `15 4 * * * cd /home/ubuntu/Yamamoto-Bot && npm run --silent backup >> $HOME/yamamoto-backup.log 2>&1`. Backups zusätzlich auf ein separates, zugriffsgeschütztes Ziel kopieren, denn Transkripte und Finanzdaten sind vertraulich.
-- **Wiederherstellung:** `pm2 stop yamamoto-bot`; die aktuelle `data/yamamoto.sqlite` samt `-wal`/`-shm` beiseitelegen; die Backup-Datei als `data/yamamoto.sqlite` kopieren; `pm2 start yamamoto-bot`. Am besten vorher mit einer Kopie testen.
+- **Backup:** `npm run backup` erstellt eine konsistente Online-Kopie (SQLite-Backup-API, auch bei laufendem Bot), prüft deren Integrität und behält die letzten `BACKUP_KEEP` Dateien in `BACKUP_DIR` (Rechte 600). Täglich per Cron, z. B. `crontab -e` → `15 4 * * * cd /home/ubuntu/Corleone-Bot && npm run --silent backup >> $HOME/corleone-backup.log 2>&1`. Backups zusätzlich auf ein separates, zugriffsgeschütztes Ziel kopieren, denn Transkripte und Finanzdaten sind vertraulich.
+- **Wiederherstellung:** `pm2 stop corleone-bot`; die aktuelle `data/corleone.sqlite` samt `-wal`/`-shm` beiseitelegen; die Backup-Datei als `data/corleone.sqlite` kopieren; `pm2 start corleone-bot`. Am besten vorher mit einer Kopie testen.
 
 ## Tests
 

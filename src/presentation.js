@@ -29,17 +29,17 @@ function responseTitle(text, tone) {
     [/^Dafür brauchst du|^Nur |^Bitte |^Dieser |^Diese |^Das Event ist bereits|^Offener |^Keine |^Nicht |^Ungültig|^Unbekannter|^Der Bot ist/i, "⚠️ Bitte beachten"],
   ];
   return rules.find(([pattern]) => pattern.test(text))?.[1]
-    ?? (tone === "success" ? "✅ Vorgang abgeschlossen" : tone === "error" ? "⚠️ Aktion nicht möglich" : "ℹ️ Yamamoto Bot");
+    ?? (tone === "success" ? "✅ Vorgang abgeschlossen" : tone === "error" ? "⚠️ Aktion nicht möglich" : "ℹ️ Corleone Bot");
 }
 
 export function brandedTextEmbed(text, title = null) {
   const tone = responseTone(text);
   return new EmbedBuilder()
     .setColor(COLORS[tone])
-    .setAuthor({ name: "YAMAMOTO  •  GRAND-RP" })
+    .setAuthor({ name: "CORLEONE  •  GRAND-RP" })
     .setTitle(title ?? responseTitle(String(text), tone))
     .setDescription(String(text).slice(0, 4096))
-    .setFooter({ text: "YAMAMOTO  •  Grand-RP Familienserver" })
+    .setFooter({ text: "CORLEONE  •  Grand-RP Familienserver" })
     .setTimestamp();
 }
 
@@ -61,25 +61,25 @@ export function applicationDecisionDm({ kind, status, applicationId, reason = ""
   const label = kind === "rang" ? "Rang-Antrag" : "Familienbewerbung";
   const embed = new EmbedBuilder()
     .setColor(accepted ? COLORS.success : COLORS.error)
-    .setAuthor({ name: "YAMAMOTO  •  BEWERBUNGEN" })
+    .setAuthor({ name: "CORLEONE  •  BEWERBUNGEN" })
     .setTitle(accepted ? "✅ Antrag angenommen" : "❌ Antrag abgelehnt")
     .setDescription(accepted
       ? `Dein **${label}** wurde angenommen. Das Team meldet sich bei dir, falls noch etwas zu tun ist.`
       : `Dein **${label}** wurde geprüft und abgelehnt.`)
     .addFields({ name: "Referenz", value: `\`${shortReference(applicationId)}\``, inline: true });
   if (!accepted) embed.addFields({ name: "Begründung", value: String(reason || "Kein Grund angegeben.").slice(0, 1024), inline: false });
-  return { embeds: [embed.setFooter({ text: "YAMAMOTO  •  Private Nachricht" }).setTimestamp()] };
+  return { embeds: [embed.setFooter({ text: "CORLEONE  •  Private Nachricht" }).setTimestamp()] };
 }
 
 export function applicationSubmittedDm({ kind, applicationId }) {
   const label = kind === "rang" ? "Dein Rang-Antrag" : "Deine Familienbewerbung";
   const embed = new EmbedBuilder()
     .setColor(BRAND_COLOR)
-    .setAuthor({ name: "YAMAMOTO  •  BEWERBUNGEN" })
+    .setAuthor({ name: "CORLEONE  •  BEWERBUNGEN" })
     .setTitle("📨 Antrag sicher eingegangen")
     .setDescription(`${label} wurde an das zuständige Team weitergeleitet. Du erhältst hier eine Nachricht, sobald die Prüfung beginnt oder eine Entscheidung getroffen wurde.`)
     .addFields({ name: "Referenz", value: `\`${shortReference(applicationId)}\``, inline: true })
-    .setFooter({ text: "YAMAMOTO  •  Bitte antworte nicht auf diese Nachricht" })
+    .setFooter({ text: "CORLEONE  •  Bitte antworte nicht auf diese Nachricht" })
     .setTimestamp();
   return { embeds: [embed] };
 }
@@ -88,12 +88,12 @@ export function applicationInReviewDm({ kind, applicationId, reviewerId }) {
   const label = kind === "rang" ? "Dein Rang-Antrag" : "Deine Familienbewerbung";
   const embed = new EmbedBuilder()
     .setColor(BRAND_COLOR)
-    .setAuthor({ name: "YAMAMOTO  •  BEWERBUNGEN" })
+    .setAuthor({ name: "CORLEONE  •  BEWERBUNGEN" })
     .setTitle("🔎 Antrag wird bearbeitet")
     .setDescription(`${label} wurde von unserem Team übernommen und ist jetzt in Bearbeitung. Wir prüfen deine Angaben und melden uns, sobald es Neuigkeiten gibt.`)
     .addFields({ name: "Referenz", value: `\`${shortReference(applicationId)}\``, inline: true });
   if (reviewerId) embed.addFields({ name: "Zuständig", value: `<@${reviewerId}>`, inline: true });
-  return { embeds: [embed.setFooter({ text: "YAMAMOTO  •  Wir halten dich auf dem Laufenden" }).setTimestamp()] };
+  return { embeds: [embed.setFooter({ text: "CORLEONE  •  Wir halten dich auf dem Laufenden" }).setTimestamp()] };
 }
 
 const ACTIONS = {
@@ -222,16 +222,16 @@ export function auditLogPayload(item) {
   }
   fields.push({ name: "🕒 Zeitpunkt", value: `<t:${Math.floor(new Date(item.created_at).getTime() / 1000)}:f>`, inline: false });
   const title = ACTIONS[action] ?? `Serveraktion · ${String(action).split(".").at(-1).replaceAll("_", " ")}`;
-  return { embeds: [new EmbedBuilder().setColor(color).setAuthor({ name: "YAMAMOTO  •  AKTIONS-PROTOKOLL" })
+  return { embeds: [new EmbedBuilder().setColor(color).setAuthor({ name: "CORLEONE  •  AKTIONS-PROTOKOLL" })
     .setTitle(`${ACTION_EMOJI[action] ?? "📌"} ${title}`)
-    .addFields(fields.slice(0, 25)).setFooter({ text: "YAMAMOTO  •  Nachvollziehbar protokolliert" })
+    .addFields(fields.slice(0, 25)).setFooter({ text: "CORLEONE  •  Nachvollziehbar protokolliert" })
     .setTimestamp(new Date(item.created_at))] };
 }
 
 export function logEmbed(title, description, tone = "info") {
   return new EmbedBuilder().setColor(COLORS[tone] ?? BRAND_COLOR)
-    .setAuthor({ name: "YAMAMOTO  •  SERVER-LOG" }).setTitle(title)
-    .setDescription(String(description).slice(0, 4096)).setFooter({ text: "YAMAMOTO  •  Serverprotokoll" }).setTimestamp();
+    .setAuthor({ name: "CORLEONE  •  SERVER-LOG" }).setTitle(title)
+    .setDescription(String(description).slice(0, 4096)).setFooter({ text: "CORLEONE  •  Serverprotokoll" }).setTimestamp();
 }
 
 /** Nummerierte Liste „1. @Name“ je Zeile, passend für ein Embed-Feld (max. 1024 Zeichen, Rest als „… +N weitere“). */

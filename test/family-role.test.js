@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { ensureFamilyRole, rankRoleIds, syncFamilyRoles } from "../src/family-role.js";
 
 const FAM = "20000000000000005", BOSS = "50000000000000010", MEMBER = "50000000000000003", OTHER = "50000000000000099";
-const guild = { roles: { cache: new Map([[BOSS, { id: BOSS, name: "| 10 - Boss" }], [MEMBER, { id: MEMBER, name: "| 3 - Member" }], ["s", { id: "s", name: "| 1 -Strafrang" }], [OTHER, { id: OTHER, name: "Romano Helper" }], [FAM, { id: FAM, name: "| Yamamoto" }]]) } };
+const guild = { roles: { cache: new Map([[BOSS, { id: BOSS, name: "| 10 - Boss" }], [MEMBER, { id: MEMBER, name: "| 3 - Member" }], ["s", { id: "s", name: "| 1 -Strafrang" }], [OTHER, { id: OTHER, name: "Romano Helper" }], [FAM, { id: FAM, name: "| Corleone" }]]) } };
 const member = roles => { const cache = new Set(roles), added = []; return { guild, user: { bot: false }, added, roles: { cache, add: async id => { added.push(id); cache.add(id); } } }; };
 const config = { ROLE_MEMBERS: [FAM], FAMILY_ROLE_FROM_RANK: true, RANK_ROLES_JSON: [] };
 

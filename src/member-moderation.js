@@ -38,8 +38,8 @@ export async function performModeration({ db, guild, client, action, userId, tar
   let dm = false;
   if (["timeout", "kick", "ban"].includes(action)) {
     const text = { timeout: `Du wurdest für **${formatMinutes(minutes)}** stummgeschaltet.`, kick: "Du wurdest vom Server entfernt (Kick). Du kannst über eine neue Einladung zurückkommen.", ban: "Du wurdest vom Server gebannt." }[action];
-    const embed = new EmbedBuilder().setColor(0xe74c3c).setAuthor({ name: "YAMAMOTO  •  MODERATION" }).setTitle(`${meta.emoji} ${meta.label}`)
-      .setDescription(`${text}\n**Grund:** ${reason}`).setFooter({ text: `YAMAMOTO  •  ${guild?.name ?? "Server"}` }).setTimestamp();
+    const embed = new EmbedBuilder().setColor(0xe74c3c).setAuthor({ name: "CORLEONE  •  MODERATION" }).setTitle(`${meta.emoji} ${meta.label}`)
+      .setDescription(`${text}\n**Grund:** ${reason}`).setFooter({ text: `CORLEONE  •  ${guild?.name ?? "Server"}` }).setTimestamp();
     dm = await client.users.fetch(userId).then(user => user.send({ embeds: [embed] })).then(() => true).catch(() => false);
   }
   const auditReason = `${reason} (durch ${actorId})`.slice(0, 500);

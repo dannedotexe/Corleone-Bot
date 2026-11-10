@@ -15,10 +15,10 @@ export async function deliverWarning({ db, client, config, guildId, userId, acto
   const expiry = config.WARN_EXPIRE_DAYS > 0 ? `Verwarnungen verfallen nach ${config.WARN_EXPIRE_DAYS} Tagen.` : null;
 
   if (config.WARN_DM_ENABLED) {
-    const dm = new EmbedBuilder().setColor(0xe67e22).setAuthor({ name: "YAMAMOTO  •  VERWARNUNG" }).setTitle("⚠️ Du wurdest verwarnt")
+    const dm = new EmbedBuilder().setColor(0xe67e22).setAuthor({ name: "CORLEONE  •  VERWARNUNG" }).setTitle("⚠️ Du wurdest verwarnt")
       .setDescription(`**Grund:** ${reason}${caseRef ? `\n**Fallbezug:** ${caseRef}` : ""}`)
       .addFields({ name: "Aktive Verwarnungen", value: String(active), inline: true }, { name: "Referenz", value: `\`${warning.id.slice(0, 8)}\``, inline: true })
-      .setFooter({ text: `YAMAMOTO  •  Bei Fragen öffne ein Ticket.${expiry ? ` ${expiry}` : ""}` }).setTimestamp();
+      .setFooter({ text: `CORLEONE  •  Bei Fragen öffne ein Ticket.${expiry ? ` ${expiry}` : ""}` }).setTimestamp();
     result.dm = await client.users.fetch(userId).then(user => user.send({ embeds: [dm] })).then(() => true).catch(() => false);
   }
 
@@ -28,7 +28,7 @@ export async function deliverWarning({ db, client, config, guildId, userId, acto
     const member = await guild?.members?.fetch(userId).catch(() => null);
     if (member?.moderatable) {
       const minutes = config.WARN_TIMEOUT_MINUTES;
-      result.timeout = await member.timeout(minutes * 60_000, `Yamamoto: ${active} aktive Verwarnungen`).then(() => "applied").catch(() => "failed");
+      result.timeout = await member.timeout(minutes * 60_000, `Corleone: ${active} aktive Verwarnungen`).then(() => "applied").catch(() => "failed");
     } else result.timeout = "failed";
     audit(db, guildId, actorId, result.timeout === "applied" ? "sanction.warning_timeout" : "sanction.warning_timeout_failed", userId, { warningId: warning.id, activeWarnings: active, minutes: config.WARN_TIMEOUT_MINUTES });
   }

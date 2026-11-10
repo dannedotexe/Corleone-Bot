@@ -1,6 +1,6 @@
 /**
  * Rang-Rolle erhalten → automatisch auch die allgemeine Familienrolle (erste Rolle aus ROLE_MEMBERS).
- * Rang-Rollen: die eingestellten (RANK_ROLES_JSON) plus Server-Rollen im Yamamoto-Schema „| 10 - Boss“.
+ * Rang-Rollen: die eingestellten (RANK_ROLES_JSON) plus Server-Rollen im Corleone-Schema „| 10 - Boss“.
  */
 export const RANK_NAME = /^[\s|]*\d{1,2}\s*-\s*\S/;
 

@@ -15,7 +15,7 @@ export const DEFAULT_QUESTIONS = {
     { id: "name", label: "Dein Ingame-Name", style: "short", maxLength: 60 },
     { id: "alter", label: "Wie alt bist du?", style: "short", maxLength: 30 },
     { id: "erfahrung", label: "Deine Grand-RP-Erfahrung", style: "paragraph", maxLength: 1000 },
-    { id: "motivation", label: "Warum möchtest du zu Yamamoto?", style: "paragraph", maxLength: 1000 },
+    { id: "motivation", label: "Warum möchtest du zu Corleone?", style: "paragraph", maxLength: 1000 },
     { id: "aktivitaet", label: "Wann bist du normalerweise aktiv?", style: "paragraph", maxLength: 500 },
   ],
 };

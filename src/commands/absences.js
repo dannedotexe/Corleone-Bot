@@ -11,7 +11,7 @@ export function createAbsenceCommands({ absences, answer, client, config, db, gu
   const absenceEmbed=(row,title="🚫 Abmeldung eingetragen",note="Du zählst in dieser Zeit nicht als inaktiv; Fehlen bei Events gilt als entschuldigt.")=>fieldsEmbed(title,[
     {name:"Zeitraum",value:`**${formatDay(row.starts_on)} – ${formatDay(row.ends_on)}**`,inline:true},{name:"Grund",value:row.reason,inline:true}],note);
   async function createAbsence(i,{from,until,reason}){
-    const gate=memberGate(i);if(gate)return answer(i,{content:"Abmeldungen gibt es nur für Mitglieder der Yamamoto-Familie.",ephemeral:true});
+    const gate=memberGate(i);if(gate)return answer(i,{content:"Abmeldungen gibt es nur für Mitglieder der Corleone-Familie.",ephemeral:true});
     const row=absences.create({guildId:i.guildId,userId:i.user.id,actorId:i.user.id,startsOn:parseDay(from,config.TIMEZONE),endsOn:parseDay(until,config.TIMEZONE,new Date(),{base:parseDay(from,config.TIMEZONE)}),reason,timezone:config.TIMEZONE,maxDays:config.ABSENCE_MAX_DAYS});
     await answer(i,{...absenceEmbed(row),ephemeral:true});
     await postAbsence({db,client,config,row});

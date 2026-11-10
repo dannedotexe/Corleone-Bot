@@ -17,7 +17,7 @@ export function prizeLabel(prize) {
 /** Ergebnis-Karte nach dem Ende (ersetzt die Teilnahme-Karte). */
 export function giveawayResultPayload(row, { entries = null } = {}) {
   const winners = JSON.parse(row.winners ?? "[]"), prize = prizeLabel(row.prize);
-  const embed = new EmbedBuilder().setColor(GOLD).setAuthor({ name: "YAMAMOTO  •  GIVEAWAY" }).setTitle(`🎉 ${prize}`.slice(0, 256))
+  const embed = new EmbedBuilder().setColor(GOLD).setAuthor({ name: "CORLEONE  •  GIVEAWAY" }).setTitle(`🎉 ${prize}`.slice(0, 256))
     .setDescription(winners.length ? `Das Giveaway ist vorbei – herzlichen Glückwunsch!` : "Das Giveaway ist vorbei. Es gab keine Teilnahmen, daher wurde niemand gezogen.")
     .addFields(
       { name: "🏆 Gewinner", value: winners.length ? winners.map(id => `<@${id}>`).join("\n").slice(0, 1024) : "—", inline: true },
@@ -25,7 +25,7 @@ export function giveawayResultPayload(row, { entries = null } = {}) {
       ...(entries != null ? [{ name: "🙋 Teilnahmen", value: String(entries), inline: true }] : []),
       { name: "🕒 Beendet", value: `<t:${unix(row.ended_at ?? row.ends_at)}:f>`, inline: true },
     )
-    .setFooter({ text: "YAMAMOTO  •  Giveaway beendet" }).setTimestamp(new Date(row.ended_at ?? row.ends_at));
+    .setFooter({ text: "CORLEONE  •  Giveaway beendet" }).setTimestamp(new Date(row.ended_at ?? row.ends_at));
   return { embeds: [embed], components: [], allowedMentions: { users: winners } };
 }
 

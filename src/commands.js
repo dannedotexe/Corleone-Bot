@@ -51,7 +51,7 @@ export { ticketCard, ticketClosedCard, ticketActions, ticketClosedActions, appli
 export { buildCommands } from "./commands/definitions.js";
 
 export function createHandler({db,finance,config,client,settings=null,series=null}) {
-  client.yamamotoOwnerIds=config.BOT_OWNER_IDS??[];
+  client.corleoneOwnerIds=config.BOT_OWNER_IDS??[];
   setQuestionConfig(config);
   // Live berechnet: Rollenänderungen über Website/Discord gelten sofort.
   const groups=new Proxy({}, { get: (_, key) => accessGroups(config)[key] });
@@ -130,7 +130,7 @@ export function createHandler({db,finance,config,client,settings=null,series=nul
     if(config.CHANNEL_BOT_COMMANDS&&i.channelId!==config.CHANNEL_BOT_COMMANDS&&!hasRoleOrOwner(i,groups.anyStaff))return respond(i,`Bot-Befehle bitte im <#${config.CHANNEL_BOT_COMMANDS}> nutzen.`);
     try {
       if (i.commandName==="ping") return respond(i,`Pong! ${client.ws.ping} ms`);
-      if (i.commandName==="help") return answer(i,{...fieldsEmbed("📚 Yamamoto Bot – Befehle",[
+      if (i.commandName==="help") return answer(i,{...fieldsEmbed("📚 Corleone Bot – Befehle",[
         {name:"💰 Konto & Sanktionen",value:"`/konto` Guthaben, Gutschriften, Auszahlungen, Korrekturen und Historie\n`/sanktion` Sanktionen und Verwarnungen eintragen, ansehen, korrigieren oder aufheben"},
         {name:"📋 Aufgaben",value:"Screenshot einfach in dein Logbuch posten und die Aufgabe im Menü wählen (oder `/log`) – Belohnung nach Prüfung aufs Konto\n`/aufgaben` deine Stufe, Serie und Verdienst"},
         {name:"🚫 Abmeldung & Aktivität",value:"`/abwesend melden | beenden | liste` Urlaub oder Pause eintragen\n`/rangliste` aktivste Mitglieder nach Event-Teilnahmen"},
@@ -178,7 +178,7 @@ export function createHandler({db,finance,config,client,settings=null,series=nul
       if (i.commandName==="kills"){
         const period=i.options.getString("zeitraum")??"week",rows=killLeaderboard(db,{guildId:g,timezone:config.TIMEZONE,period,limit:10}),mine=killsOf(db,g,u);
         const medals=["🥇","🥈","🥉"],label={week:"diese Woche",month:"diesen Monat",all:"gesamt"}[period];
-        return answer(i,{embeds:[new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({name:"YAMAMOTO  •  EVENTS"}).setTitle(`🎯 Kill-Bestenliste – ${label}`)
+        return answer(i,{embeds:[new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({name:"CORLEONE  •  EVENTS"}).setTitle(`🎯 Kill-Bestenliste – ${label}`)
           .setDescription(rows.map((r,n)=>`${medals[n]??`**${n+1}.**`} <@${r.userId}> · **${r.kills}** Kills · ${r.events} Events · Bestwert ${r.best}`).join("\n")||"Noch keine Kills eingetragen. Kills trägt das Team beim Win mit Kill-Prämie ein.")
           .setFooter({text:`Du gesamt: ${mine.kills} Kills · Bestwert ${mine.best}`})],allowedMentions:{parse:[]},ephemeral:true});
       }
@@ -243,12 +243,12 @@ export function createHandler({db,finance,config,client,settings=null,series=nul
         return openVerification(i,{rename:true});
       }
       if(kind==="poll")return pollButton(i,action,id,extra);
-      if(kind==="absence"&&action==="open"){const gate=memberGate(i);if(gate)return answer(i,{content:"Abmeldungen gibt es nur für Mitglieder der Yamamoto-Familie.",ephemeral:true});return openAbsenceModal(i);}
-      if(kind==="absence"&&action==="short"){const gate=memberGate(i);if(gate)return answer(i,{content:"Abmeldungen gibt es nur für Mitglieder der Yamamoto-Familie.",ephemeral:true});return openShortAbsenceModal(i);}
+      if(kind==="absence"&&action==="open"){const gate=memberGate(i);if(gate)return answer(i,{content:"Abmeldungen gibt es nur für Mitglieder der Corleone-Familie.",ephemeral:true});return openAbsenceModal(i);}
+      if(kind==="absence"&&action==="short"){const gate=memberGate(i);if(gate)return answer(i,{content:"Abmeldungen gibt es nur für Mitglieder der Corleone-Familie.",ephemeral:true});return openShortAbsenceModal(i);}
       if(kind==="absence"&&action==="back")return endOwnAbsence(i);
       if(kind==="mod"&&action==="confirm")return confirmModeration(i,id);
       if(kind==="account"){
-        const gate=memberGate(i);if(gate&&!db.prepare("SELECT 1 FROM accounts WHERE guild_id=? AND user_id=?").get(i.guildId,i.user.id))return answer(i,{content:"Das Familienkonto gibt es nur für Mitglieder der Yamamoto-Familie. Dir fehlt die Familienrolle – bitte melde dich bei der Leitung.",ephemeral:true});
+        const gate=memberGate(i);if(gate&&!db.prepare("SELECT 1 FROM accounts WHERE guild_id=? AND user_id=?").get(i.guildId,i.user.id))return answer(i,{content:"Das Familienkonto gibt es nur für Mitglieder der Corleone-Familie. Dir fehlt die Familienrolle – bitte melde dich bei der Leitung.",ephemeral:true});
         if(action==="balance")return answer(i,balanceView(g,u));
         if(action==="history")return answer(i,historyView(g,u));
         if(action==="sanctions")return answer(i,sanctionsView(g,u));
@@ -310,7 +310,7 @@ export function createHandler({db,finance,config,client,settings=null,series=nul
         for(const s of result.switched??[])for(const userId of s.promoted)void pingSignup({db,client:pc,config,event:s.event,userId}).catch(()=>{});
         // Gleichzeitiges Event: dort abgemeldet → Karte aktualisieren, Nachgerückte von dort informieren.
         for(const s of result.switched??[]){await refreshEventPosts({db,client,config,event:s.event,cardOnly:true}).catch(()=>{});result.promoted=[...(result.promoted??[]),...s.promoted.map(userId=>({userId,event:s.event}))];}
-        for(const entry of result.promoted??[]){const userId=entry.userId??entry,ev=entry.event??result.event;void (i.client??client).users.fetch(userId).then(user=>user.send({embeds:[new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({name:"YAMAMOTO  •  EVENTS"}).setTitle("🎉 Du bist nachgerückt!").setDescription(`Für **${ev.name}** (<t:${unix(ev.starts_at)}:F>) ist ein Platz frei geworden – du stehst jetzt auf der Teilnehmerliste.\nKannst du doch nicht? Dann bitte über die Event-Karte abmelden.`).setTimestamp()]})).catch(()=>{});
+        for(const entry of result.promoted??[]){const userId=entry.userId??entry,ev=entry.event??result.event;void (i.client??client).users.fetch(userId).then(user=>user.send({embeds:[new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({name:"CORLEONE  •  EVENTS"}).setTitle("🎉 Du bist nachgerückt!").setDescription(`Für **${ev.name}** (<t:${unix(ev.starts_at)}:F>) ist ein Platz frei geworden – du stehst jetzt auf der Teilnehmerliste.\nKannst du doch nicht? Dann bitte über die Event-Karte abmelden.`).setTimestamp()]})).catch(()=>{});
         }
         const titles={joined:"✅ Anmeldung bestätigt",already:"ℹ️ Bereits angemeldet",left:"↩️ Abmeldung bestätigt",not_joined:"ℹ️ Keine aktive Anmeldung",waitlisted:"⏳ Auf der Warteliste",already_waiting:"⏳ Schon auf der Warteliste",left_waitlist:"↩️ Von der Warteliste entfernt"};
         const texts={joined:`Du stehst jetzt auf der Teilnehmerliste.${result.bumped?" ⭐ **Prio Queue:** Das Event war voll – du hast den Platz der zuletzt angemeldeten Person bekommen (sie steht jetzt vorne auf der Warteliste).":""}`,already:"Deine Anmeldung ist bereits gespeichert.",left:"Du wurdest von der Teilnehmerliste entfernt.",not_joined:"Du warst für dieses Event nicht angemeldet.",waitlisted:`Das Event ist voll – du bist **Platz ${result.position}** auf der Warteliste${result.prio?" (⭐ Prio Queue – vor allen ohne Prio)":""}. Wird ein Platz frei, rückst du automatisch nach und bekommst eine DM.`,already_waiting:`Du bist **Platz ${result.position}** auf der Warteliste.`,left_waitlist:"Du stehst nicht mehr auf der Warteliste."};
@@ -327,7 +327,7 @@ export function createHandler({db,finance,config,client,settings=null,series=nul
     const previous=verifications.byUser(i.guildId,i.user.id);
     const field=(id,label,max,value,placeholder)=>{const input=new TextInputBuilder().setCustomId(id).setLabel(label).setStyle(TextInputStyle.Short).setRequired(true).setMinLength(id==="ingame_id"?1:2).setMaxLength(max).setPlaceholder(placeholder);if(value)input.setValue(value);return new ActionRowBuilder().addComponents(input);};
     // Beim Namen ändern bleibt die Ingame-ID fest; nur Vor- und Nachname sind änderbar.
-    const modal=new ModalBuilder().setCustomId(rename?"verify:rename-submit":"verify:submit").setTitle(rename?`Namen ändern (ID ${previous.ingame_id})`.slice(0,45):"Yamamoto Verifizierung").addComponents(
+    const modal=new ModalBuilder().setCustomId(rename?"verify:rename-submit":"verify:submit").setTitle(rename?`Namen ändern (ID ${previous.ingame_id})`.slice(0,45):"Corleone Verifizierung").addComponents(
       ...(rename?[]:[field("ingame_id","Ingame-ID",10,previous?.ingame_id,"z. B. 12345")]),
       field("first_name","Vorname (Ingame)",20,previous?.first_name,"z. B. Tony"),
       field("last_name","Nachname (Ingame)",20,previous?.last_name,"z. B. Romano"),
@@ -348,14 +348,14 @@ export function createHandler({db,finance,config,client,settings=null,series=nul
     let nicknameNote="";
     if(isOwner)nicknameNote=`\n\nℹ️ Als Server-Inhaber kann Discord deinen Namen nicht durch Bots ändern. Bitte setze ihn selbst auf **${data.nickname}**.`;
     else{
-      const changed=await member.setNickname(data.nickname,"Yamamoto Verifizierung").then(()=>true).catch(error=>{console.warn("Verifizierung: Name nicht änderbar:",error.message);return false;});
+      const changed=await member.setNickname(data.nickname,"Corleone Verifizierung").then(()=>true).catch(error=>{console.warn("Verifizierung: Name nicht änderbar:",error.message);return false;});
       if(!changed){
         audit(db,i.guildId,i.user.id,"member.verification_failed",i.user.id,{name:data.nickname,reason:"Name konnte nicht geändert werden"});
         return i.editReply(presentInteractionPayload({content:"Dein Name konnte nicht geändert werden. Wahrscheinlich steht deine Rolle über der Bot-Rolle oder dem Bot fehlt „Spitznamen verwalten“. Bitte melde dich per Ticket beim Team – deine Angaben wurden nicht gespeichert."}));
       }
     }
     const roleIds=config.ROLE_VERIFIED??[],failedRoles=[];
-    for(const roleId of roleIds){if(member.roles.cache.has(roleId))continue;await member.roles.add(roleId,"Yamamoto Verifizierung").catch(error=>{failedRoles.push(roleId);console.warn("Verifizierungsrolle nicht vergeben:",error.message);});}
+    for(const roleId of roleIds){if(member.roles.cache.has(roleId))continue;await member.roles.add(roleId,"Corleone Verifizierung").catch(error=>{failedRoles.push(roleId);console.warn("Verifizierungsrolle nicht vergeben:",error.message);});}
     try{verifications.save({guildId:i.guildId,userId:i.user.id,data,roleResult:roleIds.length?(failedRoles.length?"teilweise fehlgeschlagen":"vergeben"):null});}
     catch(error){return i.editReply(presentInteractionPayload({content:error.message}));}
     for(const kind of Object.keys(LOGBOOK_FORUMS))void renameLogbook({db,client:i.client??client,guildId:i.guildId,userId:i.user.id,title:data.nickname,kind}).catch(()=>{});

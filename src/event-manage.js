@@ -36,7 +36,7 @@ export function removeParticipant(db, { guildId, eventId, userId, actorId }) {
 /** Nach Änderungen: Karte, Logbuch-Hinweise, DMs. */
 async function afterChange({ db, client, config, event, removed = [], added = [], promoted = [], actorId }) {
   await refreshEventPosts({ db, client, config, event, cardOnly: true }).catch(() => {});
-  const dm = (userId, title, text) => client.users.fetch(userId).then(user => user.send({ embeds: [new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "YAMAMOTO  •  EVENTS" }).setTitle(title).setDescription(text).setTimestamp()] })).catch(() => {});
+  const dm = (userId, title, text) => client.users.fetch(userId).then(user => user.send({ embeds: [new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "CORLEONE  •  EVENTS" }).setTitle(title).setDescription(text).setTimestamp()] })).catch(() => {});
   const when = `**${event.name}** (<t:${unix(event.starts_at)}:F>)`;
   for (const id of removed) { await removeSignupPing({ db, client, eventId: event.id, userId: id }).catch(() => {}); void dm(id, "↩️ Von der Teilnehmerliste genommen", `<@${actorId}> hat dich von ${when} abgemeldet. Bei Fragen melde dich bei ihm/ihr.`); }
   for (const id of added) { void pingSignup({ db, client, config, event, userId: id }).catch(() => {}); void dm(id, "✅ Für ein Event eingetragen", `<@${actorId}> hat dich für ${when} eingetragen.\nKannst du nicht? Dann über die Event-Karte abmelden.`); }
@@ -71,7 +71,7 @@ export const prioCheck = (config, guild) => userId => { const roles = config.ROL
 export async function notifyBumped({ db, client, event, userId, byId }) {
   await removeSignupPing({ db, client, eventId: event.id, userId }).catch(() => {});
   const position = createEventService(db).waitlistPosition(event.id, userId);
-  await client.users.fetch(userId).then(user => user.send({ embeds: [new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "YAMAMOTO  •  EVENTS" }).setTitle("⏳ Auf die Warteliste gerückt")
+  await client.users.fetch(userId).then(user => user.send({ embeds: [new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "CORLEONE  •  EVENTS" }).setTitle("⏳ Auf die Warteliste gerückt")
     .setDescription(`**${event.name}** (<t:${unix(event.starts_at)}:F>) ist voll und <@${byId}> hat **Prio Queue** – du stehst jetzt auf **Platz ${position}** der Warteliste und rückst automatisch nach, sobald ein Platz frei wird.`).setTimestamp()] })).catch(() => {});
 }
 

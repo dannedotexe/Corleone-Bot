@@ -17,7 +17,7 @@ const participantsOf = (db, eventId) => db.prepare("SELECT user_id,status FROM e
 
 export function attendanceEmbed(event, rows, closed = null) {
   const present = rows.filter(r => r.status === "present").map(r => r.user_id), missing = rows.filter(r => r.status !== "present").map(r => r.user_id);
-  const embed = new EmbedBuilder().setColor(closed ? 0x2e7d32 : BRAND_COLOR).setAuthor({ name: "YAMAMOTO  •  ANWESENHEIT" })
+  const embed = new EmbedBuilder().setColor(closed ? 0x2e7d32 : BRAND_COLOR).setAuthor({ name: "CORLEONE  •  ANWESENHEIT" })
     .setTitle(`${closed ? "✅" : "📋"} ${event.name}`.slice(0, 256))
     .setDescription(closed
       ? `<t:${unix(event.starts_at)}:F>\nAbgeschlossen von <@${closed.by}> · ${present.length} von ${rows.length} anwesend.`

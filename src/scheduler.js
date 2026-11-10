@@ -24,7 +24,7 @@ import { runDailySnapshot } from "./role-snapshots.js";
 import { refreshPayoutList } from "./payout-list.js";
 import { refreshTournamentBoard } from "./invite-tournament.js";
 import { syncTournamentButtons } from "./task-logs.js";
-import { yamamotoEmojiStatus, syncYamamotoEmojis } from "./emojis.js";
+import { corleoneEmojiStatus, syncCorleoneEmojis } from "./emojis.js";
 import { refreshTaskBoard, releaseHeldInvites } from "./task-logs.js";
 import { activeLogbookKinds, remindInactiveLogbooks, syncLogbookTemplates } from "./logbooks.js";
 import { requestAttendance, requestDueAttendance } from "./attendance.js";
@@ -109,8 +109,8 @@ export function startScheduler({db,client,config,series=null}) {
         void runVerifyReminders({db,client,config,reference:now}).catch(error=>console.warn("Verifizierungs-Erinnerung fehlgeschlagen:",error.message));
         await runDailyInactivity({db,client,config,reference:now}).catch(error=>console.warn("Inaktivitätsprüfung fehlgeschlagen:",error.message));
         await refreshPayoutList({db,client,config}).catch(error=>console.warn("Auszahlungsliste konnte nicht aktualisiert werden:",error.message));
-        // Yamamoto-Emojis: fehlen welche (z. B. Upload beim Start fehlgeschlagen), stündlich erneut versuchen.
-        {const e=yamamotoEmojiStatus();if(e.checkedAt&&e.active<e.total&&Date.now()-Date.parse(e.checkedAt)>3_600_000)void syncYamamotoEmojis(client).catch(()=>{});}
+        // Corleone-Emojis: fehlen welche (z. B. Upload beim Start fehlgeschlagen), stündlich erneut versuchen.
+        {const e=corleoneEmojiStatus();if(e.checkedAt&&e.active<e.total&&Date.now()-Date.parse(e.checkedAt)>3_600_000)void syncCorleoneEmojis(client).catch(()=>{});}
         await syncTournamentButtons({db,client,config,reference:now}).catch(error=>console.warn("Turnier-Knöpfe konnten nicht umgestellt werden:",error.message));
         await refreshTournamentBoard({db,client,config,reference:now}).catch(error=>console.warn("Turnier-Rangliste konnte nicht aktualisiert werden:",error.message));
         // Sicherheitsnetz: geänderte Vorlage alle 15 Minuten nachziehen (falls die Bearbeitung verpasst wurde).
@@ -124,7 +124,7 @@ export function startScheduler({db,client,config,series=null}) {
         // Logbuch-Erinnerungen einmal täglich am Abend (ab 18 Uhr Server-Zeit), wenn die meisten online sind.
         if(Number(new Intl.DateTimeFormat("en-GB",{hour:"numeric",hourCycle:"h23",timeZone:config.TIMEZONE}).format(now))>=18)await remindInactiveLogbooks({db,client,config,reference:now}).catch(error=>console.warn("Logbuch-Erinnerungen fehlgeschlagen:",error.message));
       }
-      client.yamamotoSchedulerTick=Date.now();
+      client.corleoneSchedulerTick=Date.now();
       await deliverAuditLogs(db,client,config,now);
     }catch(error){console.error("Scheduler tick failed:",error);}finally{running=false;}
   };
@@ -189,7 +189,7 @@ async function refreshStatsChannel(db,client,config){
   if(!channel?.isTextBased?.())return;
   const guild=client.guilds.cache.get(guildId);
   // Öffentlicher Statistik-Channel: niemals Finanzdaten.
-  const payload={embeds:[statsEmbed(collectStats(db,guildId,{days:30,includeFinance:false}),{title:"📊 Yamamoto Statistik (automatisch)",memberCount:guild?.memberCount??null})]};
+  const payload={embeds:[statsEmbed(collectStats(db,guildId,{days:30,includeFinance:false}),{title:"📊 Corleone Statistik (automatisch)",memberCount:guild?.memberCount??null})]};
   const stored=getSetting(db,guildId,STATS_SETTING_KEY);
   const [storedChannel,storedMessage]=stored?.split(":")??[];
   const message=storedChannel===channel.id?await channel.messages.fetch(storedMessage).catch(()=>null):null;

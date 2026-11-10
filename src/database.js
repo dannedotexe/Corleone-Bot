@@ -11,7 +11,7 @@ export function openDatabase(filename) {
   return db;
 }
 
-// Vollständiges Yamamoto-Basisschema (frische Installation). Buchungs-, Sanktions- und Audit-Tabellen sind per
+// Vollständiges Corleone-Basisschema (frische Installation). Buchungs-, Sanktions- und Audit-Tabellen sind per
 // Trigger unveränderlich (nur anhängen).
 const BASE_SCHEMA = `
   CREATE TABLE IF NOT EXISTS guild_settings (guild_id TEXT NOT NULL, key TEXT NOT NULL, value TEXT NOT NULL, updated_at TEXT NOT NULL, PRIMARY KEY(guild_id,key));

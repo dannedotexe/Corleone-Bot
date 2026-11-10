@@ -24,7 +24,7 @@ export function applicationQuestions(kind,config=questionConfig) {
 }
 export function applicationModal(kind) {
   const isRank=kind==="rang";
-  const modal=new ModalBuilder().setCustomId(`application:submit:${kind}`).setTitle(isRank?"Rang-Antrag":"Yamamoto Bewerbung");
+  const modal=new ModalBuilder().setCustomId(`application:submit:${kind}`).setTitle(isRank?"Rang-Antrag":"Corleone Bewerbung");
   for(const question of applicationQuestions(kind)){
     const input=new TextInputBuilder().setCustomId(question.id).setLabel(question.label).setStyle(question.style).setRequired(question.required!==false).setMaxLength(question.maxLength);
     if(question.placeholder)input.setPlaceholder(question.placeholder);
@@ -93,12 +93,12 @@ export function buildTicketPanelPayload(config,texts=defaultsFor("ticket")) {
 export function buildApplicationReviewPayload(kind,userId,answers,decision=null,reason="",reviewerId=null) {
   const labels=new Map([...questionsFor(kind,{}),...applicationQuestions(kind)].map(question=>[question.id,question.label]));
   const panel=new EmbedBuilder().setColor(0xc1121f)
-    .setAuthor({name:"YAMAMOTO  •  BEWERBUNGEN"})
+    .setAuthor({name:"CORLEONE  •  BEWERBUNGEN"})
     .setTitle(`${kind==="rang"?"🏅 Rang-Antrag":"🤝 Bewerbung"}`)
     .setDescription(`**Antragsteller:** <@${userId}>\n**Eingereichte Angaben:**${decision?`\n\n**Status:** ${decision==="accepted"?"✅ Angenommen":decision==="rejected"?"❌ Abgelehnt":decision==="withdrawn"?"↩️ Zurückgezogen":`🔎 In Prüfung · <@${reviewerId}>`}`:""}`)
     .addFields(Object.entries(answers).map(([key,value])=>({name:labels.get(key)??key,value:String(value||"—").slice(0,1024),inline:false})))
     .setColor(decision==="accepted"?0x2ecc71:decision==="rejected"?0xe74c3c:decision==="withdrawn"?0x7f8c8d:0xc1121f)
-    .setFooter({text:decision==="rejected"?`Ablehnungsgrund: ${reason}`.slice(0,2048):decision==="review"?"YAMAMOTO  •  Bearbeitung übernommen":decision==="withdrawn"?"YAMAMOTO  •  Vom Antragsteller zurückgezogen":"YAMAMOTO  •  Interne Prüfung"})
+    .setFooter({text:decision==="rejected"?`Ablehnungsgrund: ${reason}`.slice(0,2048):decision==="review"?"CORLEONE  •  Bearbeitung übernommen":decision==="withdrawn"?"CORLEONE  •  Vom Antragsteller zurückgezogen":"CORLEONE  •  Interne Prüfung"})
     .setTimestamp();
   return {embeds:[panel]};
 }
@@ -127,7 +127,7 @@ export function giveawayCard(row,entries=0){
     {name:"🙋 Teilnahmen",value:String(entries),inline:true},
     {name:"📌 Bedingungen",value:`${row.conditions}${row.required_role_id?`\nErforderliche Rolle: <@&${row.required_role_id}>`:""}`.slice(0,1024),inline:false},
   );
-  return card.setFooter({text:`YAMAMOTO  •  Giveaway ${row.id.slice(0,8)}`});
+  return card.setFooter({text:`CORLEONE  •  Giveaway ${row.id.slice(0,8)}`});
 }
 /** Lädt bis zu `limit` Nachrichten (seitenweise à 100) chronologisch. Wirft bei fehlendem Zugriff. */
 export async function fetchTranscript(channel,limit=500){

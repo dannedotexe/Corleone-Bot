@@ -28,9 +28,9 @@ const schema = z.object({
   DISCORD_TOKEN: z.string().min(1),
   DISCORD_CLIENT_ID: z.string().regex(SNOWFLAKE),
   DISCORD_GUILD_ID: snowflake,
-  DATABASE_PATH: z.string().default("./data/yamamoto.sqlite"),
+  DATABASE_PATH: z.string().default("./data/corleone.sqlite"),
   TIMEZONE: z.string().default("Europe/Vienna"),
-  CURRENCY_NAME: z.string().default("Yamamoto-Familienguthaben"),
+  CURRENCY_NAME: z.string().default("Corleone-Familienguthaben"),
   PAYOUT_MINIMUM_CENTS: z.coerce.number().int().nonnegative().optional(),
   ROLE_LEADERS: idList.optional(), ROLE_STAFF: idList.optional(), ROLE_EVENT_TEAM: idList.optional(), ROLE_PRIO_QUEUE: idList.optional(),
   ROLE_FINANCE: idList.optional(), ROLE_REVIEWERS: idList.optional(), ROLE_MEMBERS: idList.optional(), ROLE_FULL_ACCESS: idList.optional(),
@@ -216,7 +216,7 @@ export function hasRole(member, allowed = []) {
 
 export function requireRole(interaction, allowed, label = "autorisierte Staff-Rolle") {
   if (!interaction.inGuild()) return "Dieser Befehl funktioniert nur auf einem Server.";
-  if (interaction.user?.id && interaction.client?.yamamotoOwnerIds?.includes(interaction.user.id)) return null;
+  if (interaction.user?.id && interaction.client?.corleoneOwnerIds?.includes(interaction.user.id)) return null;
   if (!allowed?.length) return `Die Rollen für diese Aktion sind noch nicht konfiguriert. Bitte ROLE_* in der .env setzen.`;
   if (!hasRole(interaction.member, allowed)) return `Dafür brauchst du eine ${label}.`;
   return null;

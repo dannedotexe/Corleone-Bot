@@ -120,7 +120,7 @@ function fieldHtml(field, index) {
   return `<label for="${id}">${escapeHtml(field.label)}${hint}<input id="${id}" name="${field.name}" type="${type}" ${extra} ${required} value="${value}"></label>`;
 }
 /** Öffnet einen Formular-Dialog. onSubmit bekommt die Werte; ein Fehler bleibt im Dialog sichtbar. */
-function openForm({ eyebrow = "YAMAMOTO", title, intro = "", fields = [], submit = "Speichern", danger = false, onSubmit, wide = false }) {
+function openForm({ eyebrow = "CORLEONE", title, intro = "", fields = [], submit = "Speichern", danger = false, onSubmit, wide = false }) {
   $("dialog").classList.toggle("wide", wide);
   $("dialog-eyebrow").textContent = eyebrow; $("dialog-title").textContent = title; $("dialog-intro").innerHTML = intro;
   $("dialog-fields").innerHTML = fields.map(fieldHtml).join(""); $("dialog-error").textContent = "";
@@ -234,7 +234,7 @@ function renderTabs() {
   $("tabbar").innerHTML = primary.map(id => `<button type="button" class="tab-item ${state.tab === id ? "active" : ""}" data-tab="${id}" ${state.tab === id ? 'aria-current="page"' : ""}>${icon(id)}<span>${escapeHtml(short[id] ?? allowed.get(id))}</span>${badge(id)}</button>`).join("")
     + `<button type="button" class="tab-item ${primary.includes(state.tab) ? "" : "active"}" data-action="menu-more">${icon("more")}<span>Mehr</span></button>`;
   $("page-title").textContent = allowed.get(state.tab) ?? "Übersicht";
-  document.title = `${allowed.get(state.tab) ?? "Übersicht"} · Yamamoto`;
+  document.title = `${allowed.get(state.tab) ?? "Übersicht"} · Corleone`;
   for (const [id] of TABS) $(`tab-${id}`).classList.toggle("hidden", id !== state.tab);
   document.querySelectorAll(".needs-staff").forEach(el => el.classList.toggle("hidden", !caps.staff));
   document.querySelectorAll(".needs-events").forEach(el => el.classList.toggle("hidden", !caps.events));
@@ -532,13 +532,13 @@ const loaders = { members: loadMembers, overview: loadOverview, applications: lo
 const actions = {
   "menu-more": () => (document.body.classList.contains("menu-open") ? closeMenu() : openMenu()),
   appearance: () => {
-    const now = window.yamamotoAppearance?.get() ?? { design: "ios", mode: "dark" };
+    const now = window.corleoneAppearance?.get() ?? { design: "ios", mode: "dark" };
     openForm({ eyebrow: "DARSTELLUNG", title: "Darstellung", intro: "<p>Gilt nur auf diesem Gerät. Standard ist der iOS-Stil; „Klassisch“ ist das allererste Design.</p>",
       fields: [
         { name: "mode", label: "Erscheinungsbild", type: "select", value: now.mode, options: [["dark", "Dunkel (Standard)"], ["light", "Hell"], ["auto", "Automatisch (wie das Gerät)"]] },
-        { name: "design", label: "Design", type: "select", value: now.design, options: [["ios", "iOS-Stil (Standard)"], ["yamamoto", "Yamamoto (Schwarz / Rot)"], ["classic", "Klassisch (erstes Design)"]] },
+        { name: "design", label: "Design", type: "select", value: now.design, options: [["ios", "iOS-Stil (Standard)"], ["corleone", "Corleone (Schwarz / Rot)"], ["classic", "Klassisch (erstes Design)"]] },
       ],
-      submit: "Übernehmen", onSubmit: v => { window.yamamotoAppearance?.set(v); return { message: "Darstellung gespeichert." }; } });
+      submit: "Übernehmen", onSubmit: v => { window.corleoneAppearance?.set(v); return { message: "Darstellung gespeichert." }; } });
   },
   "app-claim": ({ id }) => post(`/api/applications/${id}/claim`).then(r => notify(r.message)).then(refresh),
   "app-accept": ({ id }) => confirmAction("Antrag annehmen?", "Der Antragsteller erhält sofort eine private Nachricht.", "Annehmen", () => post(`/api/applications/${id}/decision`, { status: "accepted" }), false),

@@ -7,7 +7,7 @@ export function fillWelcome(text, { member, config, memberCount }) {
   return String(text ?? "")
     .replaceAll("{user}", `<@${member.id}>`)
     .replaceAll("{name}", member.displayName ?? member.user?.username ?? "neues Mitglied")
-    .replaceAll("{server}", member.guild?.name ?? "Yamamoto")
+    .replaceAll("{server}", member.guild?.name ?? "Corleone")
     .replaceAll("{mitglieder}", String(memberCount ?? member.guild?.memberCount ?? "?"))
     .replaceAll("{verifizierung}", verification);
 }

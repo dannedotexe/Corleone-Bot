@@ -1,4 +1,4 @@
-// Erzeugt assets/emojis/*.png aus Lucide-Icons (ISC-Lizenz) im Yamamoto-Stil (schwarze Kachel, roter Rand, goldene Symbole).
+// Erzeugt assets/emojis/*.png aus Lucide-Icons (ISC-Lizenz) im Corleone-Stil (schwarze Kachel, roter Rand, goldene Symbole).
 // Nur für Entwickler: node scripts/build-emojis.mjs <pfad/zu/lucide-static/icons>  (braucht Playwright + Chromium; CHROMIUM=<pfad> optional)
 import fs from "node:fs";
 import path from "node:path";

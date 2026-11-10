@@ -1,19 +1,19 @@
 import { ChannelType, PermissionFlagsBits } from "discord.js";
 
-// Standard-Channel-Layout für den Yamamoto-Server. The duplicate "bewerbungen"
+// Standard-Channel-Layout für den Corleone-Server. The duplicate "bewerbungen"
 // channels intentionally live in different categories.
 export const CHANNEL_LAYOUT = [
   { name: "INFORMATION", emoji: "📌", channels: [{name:"willkommen",emoji:"👋"},{name:"regeln",emoji:"📜"},{name:"sanktionsliste",emoji:"⚖️"},{name:"ankündigungen",emoji:"📢"},{name:"neue-spieler",emoji:"🆕"}] },
   { name: "EVENTS", emoji: "🔮", channels: [{name:"event-infos",emoji:"📅"},{name:"event-ankündigungen",emoji:"📢"},{name:"event-anmeldung",emoji:"🎟️"},{name:"event-ergebnisse",emoji:"🏆"},{name:"event-logs",emoji:"📊"}] },
   { name: "COMMUNITY", emoji: "☁️", channels: [{name:"chat",emoji:"💬"},{name:"abstimmungen",emoji:"🗳️"},{name:"giveaway",emoji:"🎁"},{name:"marktplatz",emoji:"🛒"},{name:"kleidung",emoji:"👕"}] },
-  { name: "SUPPORT", emoji: "🆘", channels: [{name:"ticket",emoji:"🎫",topic:"Yamamoto Support · Wähle das Ticket-Panel unten aus, um ein privates Anliegen beim zuständigen Team zu eröffnen."},{name:"bewerbungen",emoji:"📄"},{name:"rang-anträge",emoji:"📝"},{name:"abmeldungen",emoji:"🚫"}] },
+  { name: "SUPPORT", emoji: "🆘", channels: [{name:"ticket",emoji:"🎫",topic:"Corleone Support · Wähle das Ticket-Panel unten aus, um ein privates Anliegen beim zuständigen Team zu eröffnen."},{name:"bewerbungen",emoji:"📄"},{name:"rang-anträge",emoji:"📝"},{name:"abmeldungen",emoji:"🚫"}] },
   { name: "STAFF", emoji: "👔", channels: [{name:"staff-dashboard",emoji:"📋"},{name:"bewerbungen",emoji:"📄"},{name:"rang-anträge",emoji:"📝"},{name:"sanktions-logs",emoji:"⚠️"},{name:"ticket-logs",emoji:"🗂️"},{name:"auszahlungen",emoji:"💰"},{name:"server-statistik",emoji:"📊"},{name:"bot-logs",emoji:"🧾"}] },
 ];
 
 export const displayCategoryName = group => `${group.emoji}・${group.name}`;
 export const displayChannelName = channel => `${channel.emoji}・${channel.name}`;
 
-// Funktion -> [Kategorie, Channel] im Yamamoto-Layout. Wird für Empfehlungen und /einstellungen kanal genutzt.
+// Funktion -> [Kategorie, Channel] im Corleone-Layout. Wird für Empfehlungen und /einstellungen kanal genutzt.
 export const CHANNEL_BINDINGS = {
   CHANNEL_WELCOME: ["INFORMATION", "willkommen"],
   CHANNEL_ANNOUNCEMENTS: ["INFORMATION", "ankündigungen"],

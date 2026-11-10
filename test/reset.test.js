@@ -67,7 +67,7 @@ test("Reset über die Website nur für Bot-Owner und nur mit Bestätigungswort",
   assert.equal(db.prepare("SELECT COUNT(*) n FROM accounts").get().n, 1, "ohne Bestätigung passiert nichts");
   const ok = await post(leader, { areas: ["finance", "giveaways"], confirm: "zurücksetzen" });
   assert.equal(ok.status, 200);
-  assert.ok(fs.readdirSync(process.env.BACKUP_DIR).some(name => name.startsWith("yamamoto-vor-reset-")), "Backup vor dem Löschen");
+  assert.ok(fs.readdirSync(process.env.BACKUP_DIR).some(name => name.startsWith("corleone-vor-reset-")), "Backup vor dem Löschen");
   assert.equal(db.prepare("SELECT COUNT(*) n FROM accounts").get().n, 0);
   assert.equal(db.prepare("SELECT COUNT(*) n FROM member_warnings").get().n, 1, "nicht gewählte Bereiche bleiben");
 });

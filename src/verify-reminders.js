@@ -20,9 +20,9 @@ function verifyUrl(db, config) {
 }
 
 /** Die Erinnerungs-DM. count/max für die Fußzeile; test = Vorschau für die Leitung. */
-export function verifyReminderPayload({ db, config, name, server = "Yamamoto", count = 1, max = 0, test = false }) {
+export function verifyReminderPayload({ db, config, name, server = "Corleone", count = 1, max = 0, test = false }) {
   const times = (config.VERIFY_REMINDER_TIMES ?? []).length;
-  const embed = new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "YAMAMOTO  •  VERIFIZIERUNG" })
+  const embed = new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "CORLEONE  •  VERIFIZIERUNG" })
     .setTitle("👋 Du bist noch nicht verifiziert")
     .setDescription([
       `Hey **${name}**,`,
@@ -104,5 +104,5 @@ export async function sendVerifyReminderTest({ db, client, config, userId }) {
   if (!user) return false;
   const guild = client.guilds.cache.get(config.DISCORD_GUILD_ID);
   const member = guild ? await guild.members.fetch(userId).catch(() => null) : null;
-  return user.send(verifyReminderPayload({ db, config, name: member?.displayName ?? user.globalName ?? user.username, server: guild?.name ?? "Yamamoto", test: true })).then(() => true).catch(() => false);
+  return user.send(verifyReminderPayload({ db, config, name: member?.displayName ?? user.globalName ?? user.username, server: guild?.name ?? "Corleone", test: true })).then(() => true).catch(() => false);
 }

@@ -1,9 +1,9 @@
 {
-  "name": "yamamoto-bot",
+  "name": "corleone-bot",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Yamamoto All-in-One Discord-Bot für die Grand-RP-Familienverwaltung",
+  "description": "Corleone All-in-One Discord-Bot für die Grand-RP-Familienverwaltung",
   "engines": {
     "node": ">=20.6.0"
   },

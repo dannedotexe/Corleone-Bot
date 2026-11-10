@@ -21,7 +21,7 @@ import { deliverWarning, deliverySummary } from "./warn-actions.js";
 import fs from "node:fs";
 import path from "node:path";
 import { currentVersion, lastUpdate } from "./version.js";
-import { yamamotoEmojiStatus } from "./emojis.js";
+import { corleoneEmojiStatus } from "./emojis.js";
 import { AbsenceError, createAbsenceService, localDay, parseDay } from "./services/absences.js";
 import { createShortAbsenceService, parseShortUntil } from "./services/short-absences.js";
 import { cleanupShortAbsencePosts, postShortAbsence } from "./absence-posts.js";
@@ -297,8 +297,8 @@ export function createDashboardApi({ db, client, config, settings = null, series
       needOwner(member);
       const backupDir = path.resolve(process.env.BACKUP_DIR ?? "./backups");
       let backups = [];
-      try { backups = fs.readdirSync(backupDir).filter(name => /^yamamoto-.*\.sqlite$/.test(name)).map(name => { const stat = fs.statSync(path.join(backupDir, name)); return { at: stat.mtime.toISOString(), size: stat.size }; }).sort((a, b) => b.at.localeCompare(a.at)); } catch { backups = []; }
-      const dbFile = path.resolve(config.DATABASE_PATH ?? "./data/yamamoto.sqlite");
+      try { backups = fs.readdirSync(backupDir).filter(name => /^corleone-.*\.sqlite$/.test(name)).map(name => { const stat = fs.statSync(path.join(backupDir, name)); return { at: stat.mtime.toISOString(), size: stat.size }; }).sort((a, b) => b.at.localeCompare(a.at)); } catch { backups = []; }
+      const dbFile = path.resolve(config.DATABASE_PATH ?? "./data/corleone.sqlite");
       const fileSize = file => { try { return fs.statSync(file).size; } catch { return 0; } };
       const day = new Date(Date.now() - 86_400_000).toISOString();
       const failedLogs = db.prepare("SELECT COUNT(*) n FROM audit_log_deliveries WHERE result='failed' AND attempted_at>=?").get(day).n;
@@ -307,11 +307,11 @@ export function createDashboardApi({ db, client, config, settings = null, series
         bot: { online: wsStatus === 0 || (wsStatus == null && Boolean(client.readyAt)), ping: Number.isFinite(client.ws?.ping) ? Math.round(client.ws.ping) : null, readySince: client.readyAt ? new Date(client.readyAt).toISOString() : null, tag: client.user?.tag ?? null, guildMembers: (await guild().catch(() => null))?.memberCount ?? null },
         process: { startedAt, uptimeSeconds: Math.round(process.uptime()), memoryMb: Math.round(process.memoryUsage().rss / 1048576), node: process.version },
         version: { commit: version, update: lastUpdate() },
-        scheduler: { lastTick: client.yamamotoSchedulerTick ? new Date(client.yamamotoSchedulerTick).toISOString() : null },
+        scheduler: { lastTick: client.corleoneSchedulerTick ? new Date(client.corleoneSchedulerTick).toISOString() : null },
         database: { sizeBytes: fileSize(dbFile) + fileSize(`${dbFile}-wal`), schema: db.prepare("SELECT MAX(version) v FROM schema_migrations").get().v },
         backups: { latest: backups[0] ?? null, count: backups.length },
         logs: { failedLast24h: failedLogs },
-        emojis: yamamotoEmojiStatus(),
+        emojis: corleoneEmojiStatus(),
         warnings: configWarnings(config),
       };
     }],
@@ -389,7 +389,7 @@ export function createDashboardApi({ db, client, config, settings = null, series
       const content = buildExportFile(kind, { db, guildId, timezone: config.TIMEZONE, finance, name: id => (id && names[id]) || (id ? `…${String(id).slice(-5)}` : "") });
       audit(db, guildId, member.id, "admin.export", null, { name: definition.label });
       const day = new Date().toISOString().slice(0, 10);
-      return { __file: true, content, type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename: `yamamoto-${kind}-${day}.xlsx` };
+      return { __file: true, content, type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename: `corleone-${kind}-${day}.xlsx` };
     }],
     [/^\/api\/info-cards$/, async member => {
       need(member, "leaders", "Leitungsrolle");
@@ -850,9 +850,9 @@ export function createDashboardApi({ db, client, config, settings = null, series
       const existing = db.prepare("SELECT * FROM transactions WHERE idempotency_key=?").get(key);
       const tx = existing ?? finance.payout({ guildId, userId, actorId: member.id, key, minimumCents: config.PAYOUT_MINIMUM_CENTS, expectedGross: Number(body.expectedGross), expectedDeduction: Number(body.expectedDeduction) });
       if (!existing) {
-        const dm = new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "YAMAMOTO  •  FAMILIENKONTO" }).setTitle("💸 Auszahlung verbucht")
+        const dm = new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "CORLEONE  •  FAMILIENKONTO" }).setTitle("💸 Auszahlung verbucht")
           .addFields({ name: "Brutto", value: formatMoney(tx.gross_cents), inline: true }, { name: "Sanktionsabzug", value: formatMoney(tx.deduction_cents), inline: true }, { name: "Auszahlung", value: `**${formatMoney(tx.net_cents)}**`, inline: true }, { name: "Referenz", value: `\`${tx.id.slice(0, 8)}\``, inline: true })
-          .setFooter({ text: "YAMAMOTO  •  Private Nachricht" }).setTimestamp();
+          .setFooter({ text: "CORLEONE  •  Private Nachricht" }).setTimestamp();
         await client.users.fetch(userId).then(user => user.send({ embeds: [dm] })).catch(() => {});
       }
       return { message: existing ? "Diese Auszahlung war bereits verbucht; es wurde nichts doppelt gebucht." : `Auszahlung verbucht: ${formatMoney(tx.net_cents)} netto (Abzug ${formatMoney(tx.deduction_cents)}). Bitte jetzt im Spiel auszahlen.`, transaction: { id: tx.id, gross: tx.gross_cents, deduction: tx.deduction_cents, net: tx.net_cents } };
@@ -921,7 +921,7 @@ export function createDashboardApi({ db, client, config, settings = null, series
         catch (error) { throw new HttpError(400, error.message); }
       }
       if (action === "unsubscribe") { push.unsubscribe({ userId: member.id, endpoint: body.endpoint }); return { message: "Benachrichtigungen auf diesem Gerät sind aus." }; }
-      const sent = await sendPush({ db, config, guildId, userId: member.id, type: "test", force: true, payload: { title: "📲 Yamamoto", body: "So sehen Benachrichtigungen aus. Alles eingerichtet!", url: "/#mine", tag: "test" } });
+      const sent = await sendPush({ db, config, guildId, userId: member.id, type: "test", force: true, payload: { title: "📲 Corleone", body: "So sehen Benachrichtigungen aus. Alles eingerichtet!", url: "/#mine", tag: "test" } });
       if (!sent) throw new HttpError(409, "Kein Gerät erreicht – bitte Benachrichtigungen erneut einschalten.");
       return { message: "Test geschickt – schau aufs Handy." };
     }],
@@ -1091,7 +1091,7 @@ export function createDashboardApi({ db, client, config, settings = null, series
       const row = warningService.revoke({ guildId, warningId: id, actorId: member.id, allowSelf: member.owner, reason: text(body.reason, { min: 3, max: 300, label: "Grund" }) });
       const active = warningService.activeCount(guildId, row.user_id, { expireDays: config.WARN_EXPIRE_DAYS });
       if (config.WARN_DM_ENABLED) {
-        const dm = new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "YAMAMOTO  •  VERWARNUNG" }).setTitle("✅ Verwarnung zurückgenommen")
+        const dm = new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "CORLEONE  •  VERWARNUNG" }).setTitle("✅ Verwarnung zurückgenommen")
           .setDescription(`Deine Verwarnung („${row.reason}“) wurde zurückgenommen.\n**Grund:** ${row.revoke_reason}\n**Aktive Verwarnungen:** ${active}`).setTimestamp();
         await client.users.fetch(row.user_id).then(user => user.send({ embeds: [dm] })).catch(() => {});
       }

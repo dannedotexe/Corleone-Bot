@@ -123,7 +123,7 @@ export function createFinanceCommands({ answer, can, client, config, db, finance
         {name:"Voraussichtliche Auszahlung",value:`**${formatMoney(plan.net)}**`,inline:true},
         ...(plan.remainingAfter?[{name:"Danach noch offene Sanktionen",value:formatMoney(plan.remainingAfter),inline:true}]:[]),
         ...(config.PAYOUT_MINIMUM_CENTS?[{name:"Auszahlung ab",value:plan.gross>=config.PAYOUT_MINIMUM_CENTS?`${formatMoney(config.PAYOUT_MINIMUM_CENTS)} · ✅ erreicht`:`${formatMoney(config.PAYOUT_MINIMUM_CENTS)} · noch ${formatMoney(config.PAYOUT_MINIMUM_CENTS-plan.gross)}`,inline:true}]:[]),
-      ],exists?"Yamamoto-Familienguthaben für Grand-RP-Events und Familienaktivitäten. Sanktionen werden erst bei der Auszahlung verrechnet.":"Für dieses Mitglied wurde noch kein Familienkonto angelegt. Es entsteht mit der ersten Gutschrift oder über /konto anlegen."),ephemeral:true};
+      ],exists?"Corleone-Familienguthaben für Grand-RP-Events und Familienaktivitäten. Sanktionen werden erst bei der Auszahlung verrechnet.":"Für dieses Mitglied wurde noch kein Familienkonto angelegt. Es entsteht mit der ersten Gutschrift oder über /konto anlegen."),ephemeral:true};
   }
   function historyView(g,target,page=1){
     const pageSize=10,total=db.prepare("SELECT COUNT(*) n FROM transactions WHERE guild_id=? AND user_id=?").get(g,target).n;
@@ -164,9 +164,9 @@ export function createFinanceCommands({ answer, can, client, config, db, finance
       {name:"Buchungsreferenz",value:`\`${tx.id}\``,inline:true},
     ],existing?"Diese Vorschau wurde bereits bestätigt; es wurde nichts doppelt gebucht.":"Die Buchung und alle zugehörigen Sanktionsverrechnungen wurden gemeinsam gespeichert. Bitte zahle den Nettobetrag jetzt im Spiel aus."),components:[]});
     if(!existing){
-      const dm=new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({name:"YAMAMOTO  •  FAMILIENKONTO"}).setTitle("💸 Auszahlung verbucht")
+      const dm=new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({name:"CORLEONE  •  FAMILIENKONTO"}).setTitle("💸 Auszahlung verbucht")
         .addFields({name:"Brutto",value:formatMoney(tx.gross_cents),inline:true},{name:"Sanktionsabzug",value:formatMoney(tx.deduction_cents),inline:true},{name:"Auszahlung",value:`**${formatMoney(tx.net_cents)}**`,inline:true},{name:"Referenz",value:`\`${tx.id.slice(0,8)}\``,inline:true})
-        .setFooter({text:"YAMAMOTO  •  Private Nachricht"}).setTimestamp();
+        .setFooter({text:"CORLEONE  •  Private Nachricht"}).setTimestamp();
       await client.users.fetch(userId).then(user=>user.send({embeds:[dm]})).catch(()=>{});
     }
   }

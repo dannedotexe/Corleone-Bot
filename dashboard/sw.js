@@ -1,7 +1,7 @@
-/* Yamamoto – Service Worker: schneller Start (App-Gerüst im Speicher) und Push-Benachrichtigungen.
+/* Corleone – Service Worker: schneller Start (App-Gerüst im Speicher) und Push-Benachrichtigungen.
    __VERSION__ ersetzt der Server; mit jedem Update entsteht ein neuer Speicher, der alte wird gelöscht. */
-const CACHE = "yamamoto-__VERSION__";
-const SHELL = ["/", "/assets/app.js", "/assets/theme.js", "/assets/style.css", "/assets/classic.css", "/assets/yamamoto.css", "/assets/ui.js",
+const CACHE = "corleone-__VERSION__";
+const SHELL = ["/", "/assets/app.js", "/assets/theme.js", "/assets/style.css", "/assets/classic.css", "/assets/corleone.css", "/assets/ui.js",
   "/assets/admin.js", "/assets/people.js", "/assets/announce.js", "/assets/polls.js", "/assets/mine.js", "/assets/tasks.js", "/assets/calendar.js",
   "/assets/eventlogs.js", "/assets/suggestions.js", "/assets/icons/icon-192.png"];
 
@@ -9,7 +9,7 @@ self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).catch(() => {}).then(() => self.skipWaiting()));
 });
 self.addEventListener("activate", event => {
-  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith("yamamoto-") && key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim()));
+  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith("corleone-") && key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim()));
 });
 
 // Daten (/api, Login, Logo) nie aus dem Speicher. Seite und Dateien kommen aus dem Speicher dieser Version (passen also
@@ -30,7 +30,7 @@ self.addEventListener("fetch", event => {
 self.addEventListener("push", event => {
   let data = {};
   try { data = event.data ? event.data.json() : {}; } catch { data = { body: event.data?.text() }; }
-  event.waitUntil(self.registration.showNotification(data.title || "Yamamoto", {
+  event.waitUntil(self.registration.showNotification(data.title || "Corleone", {
     body: data.body || "", tag: data.tag || undefined, data: { url: data.url || "/" },
     icon: "/assets/icons/icon-192.png", badge: "/assets/icons/icon-192.png",
   }));

@@ -1,22 +1,22 @@
 #!/usr/bin/env bash
-# Richtet HTTPS (Let's Encrypt über Caddy) für das Yamamoto-Dashboard ein.
+# Richtet HTTPS (Let's Encrypt über Caddy) für das Corleone-Dashboard ein.
 # Aufruf auf der VM:   bash deploy/setup-https.sh <domain>
 # Voraussetzung: Die Domain zeigt bereits per A-Eintrag auf die öffentliche IP dieser VM.
 #
 # Gemeinsame VM: Andere Seiten in /etc/caddy/Caddyfile (z. B. vom Gambino-Bot) bleiben unangetastet. Das Skript
-# pflegt nur einen eigenen, markierten Yamamoto-Block, prüft die Konfiguration und lädt Caddy nur neu (kein Neustart).
+# pflegt nur einen eigenen, markierten Corleone-Block, prüft die Konfiguration und lädt Caddy nur neu (kein Neustart).
 set -euo pipefail
 
 DOMAIN="${1:-}"
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ENV_FILE="$APP_DIR/.env"
-PM2_NAME="yamamoto-bot"
+PM2_NAME="corleone-bot"
 CADDYFILE="/etc/caddy/Caddyfile"
-BEGIN_MARK="# >>> yamamoto-bot (verwaltet von deploy/setup-https.sh)"
-END_MARK="# <<< yamamoto-bot"
+BEGIN_MARK="# >>> corleone-bot (verwaltet von deploy/setup-https.sh)"
+END_MARK="# <<< corleone-bot"
 
 if [[ -z "$DOMAIN" || ! "$DOMAIN" =~ ^[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]]; then
-  echo "Aufruf: bash deploy/setup-https.sh <domain>   (z. B. yamamoto.duckdns.org)" >&2
+  echo "Aufruf: bash deploy/setup-https.sh <domain>   (z. B. corleone.duckdns.org)" >&2
   exit 1
 fi
 [[ -f "$ENV_FILE" ]] || { echo "Keine .env in $APP_DIR gefunden." >&2; exit 1; }
@@ -59,16 +59,16 @@ for p in 80 443; do
 done
 if command -v netfilter-persistent >/dev/null 2>&1; then sudo netfilter-persistent save >/dev/null; fi
 
-say "4/6 Yamamoto-Block in der Caddyfile setzen"
+say "4/6 Corleone-Block in der Caddyfile setzen"
 sudo touch "$CADDYFILE"
 BACKUP="$CADDYFILE.bak-$(date +%Y%m%d-%H%M%S)"
 sudo cp "$CADDYFILE" "$BACKUP"
 TMP="$(mktemp)"
-# Alten Yamamoto-Block entfernen, alles andere unverändert übernehmen.
+# Alten Corleone-Block entfernen, alles andere unverändert übernehmen.
 sudo awk -v b="$BEGIN_MARK" -v e="$END_MARK" '$0==b{skip=1;next} $0==e{skip=0;next} !skip' "$CADDYFILE" > "$TMP"
 if grep -qE "^[[:space:]]*(https?://)?$DOMAIN([[:space:]:,{]|$)" "$TMP"; then
   rm -f "$TMP"
-  echo "$DOMAIN ist in $CADDYFILE bereits außerhalb des Yamamoto-Blocks eingetragen – bitte prüfen, nichts geändert." >&2
+  echo "$DOMAIN ist in $CADDYFILE bereits außerhalb des Corleone-Blocks eingetragen – bitte prüfen, nichts geändert." >&2
   exit 1
 fi
 printf '\n%s\n%s {\n\tencode gzip\n\treverse_proxy 127.0.0.1:%s\n}\n%s\n' "$BEGIN_MARK" "$DOMAIN" "$PORT" "$END_MARK" >> "$TMP"
@@ -103,7 +103,7 @@ fi
 cat <<MSG
 
 Letzter Schritt (nur du kannst das):
-  Discord Developer Portal → Yamamoto-Anwendung → OAuth2 → Redirects:
+  Discord Developer Portal → Corleone-Anwendung → OAuth2 → Redirects:
   https://$DOMAIN/oauth/callback   hinzufügen und speichern.
 Danach die Website unter https://$DOMAIN öffnen.
 MSG

@@ -82,7 +82,7 @@ test("Website: Abstimmung starten und Excel-Export mit Rechten, Text-IDs, Zahlen
   const accounts = await get(as("finance"), "/api/export/accounts.xlsx");
   assert.equal(accounts.status, 200);
   assert.equal(accounts.type, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-  assert.match(accounts.headers["Content-Disposition"], /attachment; filename="yamamoto-accounts-\d{4}-\d{2}-\d{2}\.xlsx"/);
+  assert.match(accounts.headers["Content-Disposition"], /attachment; filename="corleone-accounts-\d{4}-\d{2}-\d{2}\.xlsx"/);
   assert.equal(accounts.body.subarray(0, 2).toString(), "PK", "echte ZIP-/XLSX-Datei");
   const sheet = unzipEntry(accounts.body, "xl/worksheets/sheet1.xml");
   assert.match(sheet, new RegExp(`<t xml:space="preserve">${A}</t>`), "Discord-ID als Text, nicht als Zahl");

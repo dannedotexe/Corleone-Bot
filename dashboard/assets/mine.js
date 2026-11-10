@@ -126,15 +126,15 @@ async function renderApp() {
   const mobile = window.matchMedia?.("(max-width: 900px)").matches;
   // 1. Installieren (nur wenn noch nicht als App geöffnet)
   install.innerHTML = isStandalone() ? "" : installPrompt
-    ? `<p class="subtle">Yamamoto wie eine App vom Home-Bildschirm öffnen – ohne Browserleiste.</p><div class="actions start"><button type="button" class="primary-btn" data-action="app-install">App installieren</button></div>`
-    : isIOS() ? `<ol class="app-steps"><li>In <b>Safari</b> unten auf <b>Teilen</b> <span aria-hidden="true">⬆︎</span> tippen</li><li><b>„Zum Home-Bildschirm“</b> wählen</li><li>Yamamoto vom Home-Bildschirm öffnen – danach hier Benachrichtigungen einschalten</li></ol>`
+    ? `<p class="subtle">Corleone wie eine App vom Home-Bildschirm öffnen – ohne Browserleiste.</p><div class="actions start"><button type="button" class="primary-btn" data-action="app-install">App installieren</button></div>`
+    : isIOS() ? `<ol class="app-steps"><li>In <b>Safari</b> unten auf <b>Teilen</b> <span aria-hidden="true">⬆︎</span> tippen</li><li><b>„Zum Home-Bildschirm“</b> wählen</li><li>Corleone vom Home-Bildschirm öffnen – danach hier Benachrichtigungen einschalten</li></ol>`
     : mobile ? `<p class="subtle">Im Browser-Menü <b>„App installieren“</b> bzw. <b>„Zum Startbildschirm hinzufügen“</b> wählen.</p>` : "";
   // 2. Benachrichtigungen
   const note = text => { body.innerHTML = `<p class="subtle">${text}</p>`; };
   if (!("serviceWorker" in navigator) || !window.isSecureContext) return note("Benachrichtigungen gehen nur über die sichere Adresse der Website (https mit gültigem Zertifikat). Sobald sie darüber läuft, kannst du sie hier einschalten.");
-  if (isIOS() && !isStandalone()) return note("Auf dem iPhone gehen Benachrichtigungen erst, wenn Yamamoto auf dem Home-Bildschirm liegt (Schritte oben).");
+  if (isIOS() && !isStandalone()) return note("Auf dem iPhone gehen Benachrichtigungen erst, wenn Corleone auf dem Home-Bildschirm liegt (Schritte oben).");
   if (!("PushManager" in window) || !("Notification" in window)) return note("Dieses Gerät bzw. dieser Browser unterstützt keine Benachrichtigungen.");
-  if (Notification.permission === "denied") return note("Benachrichtigungen sind für Yamamoto blockiert. Erlaube sie in den Einstellungen deines Handys (Mitteilungen → Yamamoto) und lade die Seite neu.");
+  if (Notification.permission === "denied") return note("Benachrichtigungen sind für Corleone blockiert. Erlaube sie in den Einstellungen deines Handys (Mitteilungen → Corleone) und lade die Seite neu.");
   const sub = await currentSubscription().catch(() => null);
   const info = await api(`/api/push${sub ? `?endpoint=${encodeURIComponent(sub.endpoint)}` : ""}`);
   pushState.info = info;
@@ -158,7 +158,7 @@ Object.assign(actions, {
   "app-install": async () => { if (!installPrompt) return; installPrompt.prompt(); await installPrompt.userChoice.catch(() => null); installPrompt = null; renderApp(); },
   "push-enable": async () => {
     const permission = await Notification.requestPermission();
-    if (permission !== "granted") { notify("Ohne Erlaubnis kann Yamamoto keine Benachrichtigungen schicken.", "error"); return renderApp(); }
+    if (permission !== "granted") { notify("Ohne Erlaubnis kann Corleone keine Benachrichtigungen schicken.", "error"); return renderApp(); }
     const info = pushState.info ?? await api("/api/push");
     const reg = await navigator.serviceWorker.ready;
     const sub = (await reg.pushManager.getSubscription()) ?? await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlKey(info.publicKey) });

@@ -1,8 +1,8 @@
-/* Yamamoto – Dashboard · Design „Yamamoto“
+/* Corleone – Dashboard · Design „Corleone“
    Liegt als zweite Ebene über style.css (gleiche Struktur, eigene Haltung):
-   Lackschwarz, Yamamoto-Rot, dezentes Gold. Hell = Reispapier.
+   Lackschwarz, Corleone-Rot, dezentes Gold. Hell = Reispapier.
    Auffällig ist nur eins: Seitentitel in Bodoni (Giambattista Bodoni). Alles andere bleibt ruhig.
-   Wählbar unter Darstellung → „Yamamoto“; Standard ist der iOS-Stil. */
+   Wählbar unter Darstellung → „Corleone“; Standard ist der iOS-Stil. */
 
 @font-face{font-family:"Bodoni Moda";src:url(/assets/fonts/bodoni-moda.woff2) format("woff2");font-weight:400 900;font-style:normal;font-display:swap;
   unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
@@ -10,14 +10,14 @@
   unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 
 /* ---------- Tokens: Lack (dunkel) ---------- */
-:root[data-design=yamamoto]{
+:root[data-design=corleone]{
   --font:"Archivo",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
   --display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
   --night:#0b0a0a;        /* Lackschwarz, Grund */
   --night-raised:#161313; /* Flächen */
   --night-high:#231d1d;   /* gehobene Flächen, Hover */
   --brass:#c9a24b;        /* dezentes Gold: aktiv, Linien, Fokus */
-  --oxblood:#c1121f;      /* Yamamoto-Rot: Hauptaktionen, Marke */
+  --oxblood:#c1121f;      /* Corleone-Rot: Hauptaktionen, Marke */
   --ivory:#f2ece4;        /* Schrift */
   --bg:var(--night);--surface:var(--night-raised);--surface2:#1c1818;--surface3:var(--night-high);--elevated:#1c1818;
   --fill:rgba(193,18,31,.12);--fill2:rgba(242,236,228,.06);--hover:rgba(242,236,228,.07);
@@ -33,7 +33,7 @@
   --radius-xl:16px;--radius:14px;--radius-md:12px;--radius-sm:10px;
 }
 /* ---------- Tokens: Reispapier (hell) ---------- */
-:root[data-design=yamamoto][data-theme=light]{
+:root[data-design=corleone][data-theme=light]{
   --night:#f4f0ea;--night-raised:#fbf8f3;--night-high:#e9e3da;
   --brass:#8a6a1f;--oxblood:#a50f1a;--ivory:#1a1414;
   --surface2:#f0ebe3;--elevated:#fffdf9;
@@ -50,61 +50,61 @@
 }
 
 /* ---------- Grund ---------- */
-[data-design=yamamoto] body{font-feature-settings:"tnum" 1,"ss01" 1;letter-spacing:0}
-[data-design=yamamoto] ::selection{background:rgba(201,162,75,.35)}
-[data-design=yamamoto] :focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+[data-design=corleone] body{font-feature-settings:"tnum" 1,"ss01" 1;letter-spacing:0}
+[data-design=corleone] ::selection{background:rgba(201,162,75,.35)}
+[data-design=corleone] :focus-visible{outline:2px solid var(--brass);outline-offset:2px}
 
 /* ---------- Das eine Auffällige: Titel und Beträge in Bodoni ---------- */
-[data-design=yamamoto] .hero h1,
-[data-design=yamamoto] .section-intro h2{font-family:var(--display);font-weight:600;letter-spacing:-.005em;line-height:1.05;font-variation-settings:"opsz" 96}
-[data-design=yamamoto] .hero h1{font-size:44px}
-[data-design=yamamoto] .section-intro h2{font-size:40px}
-[data-design=yamamoto] .hero h1::after,
-[data-design=yamamoto] .section-intro h2::after{content:"";display:block;width:56px;height:2px;margin-top:12px;background:var(--brass)}
+[data-design=corleone] .hero h1,
+[data-design=corleone] .section-intro h2{font-family:var(--display);font-weight:600;letter-spacing:-.005em;line-height:1.05;font-variation-settings:"opsz" 96}
+[data-design=corleone] .hero h1{font-size:44px}
+[data-design=corleone] .section-intro h2{font-size:40px}
+[data-design=corleone] .hero h1::after,
+[data-design=corleone] .section-intro h2::after{content:"";display:block;width:56px;height:2px;margin-top:12px;background:var(--brass)}
 /* Zahlen bleiben in der Grotesk (Bodoni-Einsen lesen sich wie „I“) – mit gleich breiten Ziffern */
-[data-design=yamamoto] .stat .value{font-weight:650;letter-spacing:-.02em}
-[data-design=yamamoto] .hero p,[data-design=yamamoto] .section-intro p{max-width:62ch}
+[data-design=corleone] .stat .value{font-weight:650;letter-spacing:-.02em}
+[data-design=corleone] .hero p,[data-design=corleone] .section-intro p{max-width:62ch}
 
 /* Überschriften der Flächen bleiben ruhig in der Grotesk */
-[data-design=yamamoto] .panel h2,[data-design=yamamoto] .manage-card h3{letter-spacing:-.01em}
+[data-design=corleone] .panel h2,[data-design=corleone] .manage-card h3{letter-spacing:-.01em}
 
 /* ---------- Navigation: Messing statt Rot für „hier bist du“ ---------- */
-[data-design=yamamoto] .brand b{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:.02em}
-[data-design=yamamoto] .nav-item.active{background:var(--fill);color:var(--text);box-shadow:inset 3px 0 0 var(--brass)}
-[data-design=yamamoto] .nav-item.active svg{stroke:var(--brass)}
-[data-design=yamamoto] .nav-item.active .nav-badge{background:var(--brass);color:#1a1405}
-[data-design=yamamoto] .tab-item.active{color:var(--brass)}
-[data-design=yamamoto] .crumb b{font-family:var(--display);font-weight:600;font-size:19px;letter-spacing:0}
+[data-design=corleone] .brand b{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:.02em}
+[data-design=corleone] .nav-item.active{background:var(--fill);color:var(--text);box-shadow:inset 3px 0 0 var(--brass)}
+[data-design=corleone] .nav-item.active svg{stroke:var(--brass)}
+[data-design=corleone] .nav-item.active .nav-badge{background:var(--brass);color:#1a1405}
+[data-design=corleone] .tab-item.active{color:var(--brass)}
+[data-design=corleone] .crumb b{font-family:var(--display);font-weight:600;font-size:19px;letter-spacing:0}
 
 /* ---------- Farbe sparsam: Ochsenblut nur für Hauptaktionen, Messing für Hinweise ---------- */
-[data-design=yamamoto] .nav-item svg{stroke:var(--muted)}
-[data-design=yamamoto] .quick-btn svg{stroke:var(--brass)}
-[data-design=yamamoto] .stat .symbol{background:var(--fill);color:var(--brass)}
-[data-design=yamamoto] .link-btn{color:var(--brass)}
-[data-design=yamamoto] .todo-count{background:var(--fill);color:var(--brass)}
-[data-design=yamamoto] .check:has(input:checked){background:var(--fill);color:var(--text)}
-[data-design=yamamoto] input[type=checkbox],[data-design=yamamoto] input[type=radio]{accent-color:var(--brass)}
-[data-design=yamamoto] .dialog .eyebrow{color:var(--brass)}
-[data-design=yamamoto] .cal-day.today{background:var(--fill);box-shadow:inset 0 0 0 1.5px var(--brass)}
-[data-design=yamamoto] .cal-day.today .cal-head b{color:var(--brass)}
-[data-design=yamamoto] .evlog figcaption .evlog-kills{color:var(--brass)}
-[data-design=yamamoto] .login-screen{background:radial-gradient(1100px 600px at 50% -10%,rgba(201,162,75,.14),transparent 62%),var(--bg)}
+[data-design=corleone] .nav-item svg{stroke:var(--muted)}
+[data-design=corleone] .quick-btn svg{stroke:var(--brass)}
+[data-design=corleone] .stat .symbol{background:var(--fill);color:var(--brass)}
+[data-design=corleone] .link-btn{color:var(--brass)}
+[data-design=corleone] .todo-count{background:var(--fill);color:var(--brass)}
+[data-design=corleone] .check:has(input:checked){background:var(--fill);color:var(--text)}
+[data-design=corleone] input[type=checkbox],[data-design=corleone] input[type=radio]{accent-color:var(--brass)}
+[data-design=corleone] .dialog .eyebrow{color:var(--brass)}
+[data-design=corleone] .cal-day.today{background:var(--fill);box-shadow:inset 0 0 0 1.5px var(--brass)}
+[data-design=corleone] .cal-day.today .cal-head b{color:var(--brass)}
+[data-design=corleone] .evlog figcaption .evlog-kills{color:var(--brass)}
+[data-design=corleone] .login-screen{background:radial-gradient(1100px 600px at 50% -10%,rgba(201,162,75,.14),transparent 62%),var(--bg)}
 
 /* ---------- Flächen ---------- */
-[data-design=yamamoto] .stat,[data-design=yamamoto] .panel,[data-design=yamamoto] .manage-card{box-shadow:var(--card-ring)}
-[data-design=yamamoto] .stat .label{letter-spacing:.01em}
+[data-design=corleone] .stat,[data-design=corleone] .panel,[data-design=corleone] .manage-card{box-shadow:var(--card-ring)}
+[data-design=corleone] .stat .label{letter-spacing:.01em}
 
 /* ---------- Aktionen ---------- */
-[data-design=yamamoto] .primary-btn,[data-design=yamamoto] .primary{box-shadow:none;letter-spacing:.01em}
-[data-design=yamamoto] .chip.active,[data-design=yamamoto] .group-nav .chip.active{background:var(--brass);color:#1a1405}
-[data-design=yamamoto][data-theme=light] .chip.active,[data-design=yamamoto][data-theme=light] .group-nav .chip.active{color:#fff}
-[data-design=yamamoto] .check input{accent-color:var(--brass)}
-[data-design=yamamoto] .progress{background:linear-gradient(90deg,transparent,var(--brass),transparent)}
+[data-design=corleone] .primary-btn,[data-design=corleone] .primary{box-shadow:none;letter-spacing:.01em}
+[data-design=corleone] .chip.active,[data-design=corleone] .group-nav .chip.active{background:var(--brass);color:#1a1405}
+[data-design=corleone][data-theme=light] .chip.active,[data-design=corleone][data-theme=light] .group-nav .chip.active{color:#fff}
+[data-design=corleone] .check input{accent-color:var(--brass)}
+[data-design=corleone] .progress{background:linear-gradient(90deg,transparent,var(--brass),transparent)}
 
 @media (max-width:900px){
-  [data-design=yamamoto] .hero h1{font-size:36px}
-  [data-design=yamamoto] .section-intro h2{font-size:33px}
+  [data-design=corleone] .hero h1{font-size:36px}
+  [data-design=corleone] .section-intro h2{font-size:33px}
 }
 @media (prefers-reduced-motion:reduce){
-  [data-design=yamamoto] *{transition:none!important;animation:none!important}
+  [data-design=corleone] *{transition:none!important;animation:none!important}
 }

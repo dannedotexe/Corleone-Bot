@@ -98,7 +98,7 @@ export function resetPreview(db, guildId) {
 /** Sicherung vor dem Reset (SQLite-Backup-API, WAL-sicher). Ohne Backup-Funktion (Tests) wird übersprungen. */
 export async function backupBeforeReset(db, dir = process.env.BACKUP_DIR ?? "./backups") {
   if (typeof db.backup !== "function") return null;
-  const target = path.resolve(dir, `yamamoto-vor-reset-${new Date().toISOString().replace(/[:.]/g, "-")}.sqlite`);
+  const target = path.resolve(dir, `corleone-vor-reset-${new Date().toISOString().replace(/[:.]/g, "-")}.sqlite`);
   fs.mkdirSync(path.dirname(target), { recursive: true, mode: 0o700 });
   await db.backup(target);
   fs.chmodSync(target, 0o600);

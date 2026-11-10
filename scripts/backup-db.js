@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import Database from "better-sqlite3";
 
-const source = path.resolve(process.env.DATABASE_PATH ?? "./data/yamamoto.sqlite");
+const source = path.resolve(process.env.DATABASE_PATH ?? "./data/corleone.sqlite");
 const targetDir = path.resolve(process.env.BACKUP_DIR ?? "./backups");
 const keep = Math.max(1, Number.parseInt(process.env.BACKUP_KEEP ?? "14", 10) || 14);
 
@@ -15,7 +15,7 @@ if (!fs.existsSync(source)) {
 }
 fs.mkdirSync(targetDir, { recursive: true, mode: 0o700 });
 const stamp = new Date().toISOString().replace(/[:.]/g, "-");
-const target = path.join(targetDir, `yamamoto-${stamp}.sqlite`);
+const target = path.join(targetDir, `corleone-${stamp}.sqlite`);
 const db = new Database(source, { readonly: true, fileMustExist: true });
 try {
   await db.backup(target);
@@ -31,5 +31,5 @@ try {
   process.exitCode = 1;
 } finally { db.close(); }
 
-const backups = fs.readdirSync(targetDir).filter(name => /^yamamoto-.*\.sqlite$/.test(name)).sort();
+const backups = fs.readdirSync(targetDir).filter(name => /^corleone-.*\.sqlite$/.test(name)).sort();
 for (const old of backups.slice(0, Math.max(0, backups.length - keep))) fs.rmSync(path.join(targetDir, old));

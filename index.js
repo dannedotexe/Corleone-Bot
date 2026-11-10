@@ -21,7 +21,7 @@ import { createAccountClosureService } from "./src/services/account-closures.js"
 import { createActivityService } from "./src/services/activity.js";
 import { sendWelcome } from "./src/welcome.js";
 import { trackRankChange } from "./src/rank-tracking.js";
-import { syncYamamotoEmojis } from "./src/emojis.js";
+import { syncCorleoneEmojis } from "./src/emojis.js";
 import { guardBotOnlyRoles } from "./src/role-guard.js";
 
 let config;
@@ -44,7 +44,7 @@ const handlers=createHandler({db,finance,config,client,settings,series});
 const dashboard=createDashboard({db,client,config,settings,series});
 
 client.once(Events.ClientReady,ready=>{
-  console.log(`Yamamoto Bot bereit als ${ready.user.tag} (Version ${currentVersion()}).`);
+  console.log(`Corleone Bot bereit als ${ready.user.tag} (Version ${currentVersion()}).`);
   startScheduler({db,client,config,series});
   void adoptNamedDefaults();
   // Alle Mitglieder in den Cache laden, damit Rollenwechsel (z. B. neue Familienrolle) zuverlässig erkannt werden.
@@ -54,8 +54,8 @@ client.once(Events.ClientReady,ready=>{
 // auf dem konfigurierten Server wirklich existiert und den richtigen Typ hat; jede Übernahme wird protokolliert.
 const ADOPT_NAMES={CHANNEL_WELCOME:/^\W*willkommen$/i,CHANNEL_ABSENCES:/^\W*abmeldungen$/i,CHANNEL_BOT_SUGGESTIONS:/^\W*bot-?vorschl(ä|ae)ge$/i,CHANNEL_WEBSITE_PANEL:/^\W*dashboard$/i,CHANNEL_INVITE_TOURNAMENT:/^\W*invite-?turnier$/i};
 async function adoptNamedDefaults(){
-  // Eigene Yamamoto-Emojis hochladen bzw. laden, bevor Panels und Karten gebaut werden.
-  await syncYamamotoEmojis(client).then(n=>{if(n)console.log(`${n} Yamamoto-Emojis hochgeladen.`);}).catch(error=>console.warn("Yamamoto-Emojis:",error.message));
+  // Eigene Corleone-Emojis hochladen bzw. laden, bevor Panels und Karten gebaut werden.
+  await syncCorleoneEmojis(client).then(n=>{if(n)console.log(`${n} Corleone-Emojis hochgeladen.`);}).catch(error=>console.warn("Corleone-Emojis:",error.message));
   if(!settings)return;
   const guild=await client.guilds.fetch(config.DISCORD_GUILD_ID).catch(()=>null);
   if(!guild)return;

@@ -30,7 +30,7 @@ export function vapidKeys(db, guildId) {
   setSetting(db, guildId, "PUSH_VAPID", JSON.stringify(keys));
   return keys;
 }
-const subject = config => (/^https:\/\//.test(config.DASHBOARD_PUBLIC_URL ?? "") ? config.DASHBOARD_PUBLIC_URL : "mailto:push@yamamoto.invalid");
+const subject = config => (/^https:\/\//.test(config.DASHBOARD_PUBLIC_URL ?? "") ? config.DASHBOARD_PUBLIC_URL : "mailto:push@corleone.invalid");
 
 export function createPushService(db) {
   const now = () => new Date().toISOString();

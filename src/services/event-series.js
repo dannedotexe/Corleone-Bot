@@ -4,7 +4,7 @@ import { audit, getSetting, setSetting } from "../database.js";
 export const WEEKDAYS = { 1: "Mo", 2: "Di", 3: "Mi", 4: "Do", 5: "Fr", 6: "Sa", 7: "So" };
 export const ALL_DAYS = [1, 2, 3, 4, 5, 6, 7];
 
-/** Grand-RP-Aktivitäten von Yamamoto. Werden einmalig pro Server angelegt, standardmäßig inaktiv. */
+/** Grand-RP-Aktivitäten von Corleone. Werden einmalig pro Server angelegt, standardmäßig inaktiv. */
 export const DEFAULT_SERIES = [
   { name: "Cayo Perico", weekdays: [3], times: ["20:20"] },
   { name: "Flugzeugträger", weekdays: [4], times: ["21:30"] },

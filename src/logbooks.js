@@ -276,9 +276,9 @@ export async function remindInactiveLogbooks({ db, client, config, reference = n
     const baseline = last ?? row.created_at;
     if (new Date(baseline).getTime() > cutoff || (row.reminded_at && row.reminded_at > baseline)) continue;
     db.prepare("UPDATE logbooks SET reminded_at=? WHERE guild_id=? AND user_id=?").run(reference.toISOString(), guildId, row.user_id);
-    const embed = new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "YAMAMOTO  •  LOGBUCH" }).setTitle("📸 Lange nichts geloggt")
+    const embed = new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "CORLEONE  •  LOGBUCH" }).setTitle("📸 Lange nichts geloggt")
       .setDescription(`${last ? `Dein letztes Log ist **${Math.floor((reference.getTime() - new Date(last).getTime()) / 86_400_000)} Tage** her.` : "Du hast noch kein Log eingereicht."}\n\nErledigte Aufgaben (Invite, Solar …) einfach als Screenshot in dein Logbuch posten – die Belohnung kommt nach der Prüfung automatisch aufs Familienkonto.\n\n➡️ [Zu deinem Logbuch](https://discord.com/channels/${guildId}/${row.thread_id})`)
-      .setFooter({ text: "YAMAMOTO  •  Automatische Erinnerung" }).setTimestamp(reference);
+      .setFooter({ text: "CORLEONE  •  Automatische Erinnerung" }).setTimestamp(reference);
     if (await member.send({ embeds: [embed] }).then(() => true).catch(() => false)) sent++;
   }
   if (sent) audit(db, guildId, client.user?.id ?? "system", "logbook.reminded", null, { sent, days });

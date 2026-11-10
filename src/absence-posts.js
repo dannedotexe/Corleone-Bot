@@ -5,7 +5,7 @@ import { getSetting, setSetting } from "./database.js";
 import { formatDay, localDay } from "./services/absences.js";
 
 export const ABSENCE_LIST_KEY = "ABSENCE_LIST_MESSAGE";
-const LIST_FOOTER = "YAMAMOTO  •  Abmeldungsliste";
+const LIST_FOOTER = "CORLEONE  •  Abmeldungsliste";
 const shortClock = (iso, timezone) => new Intl.DateTimeFormat("de-AT", { hour: "2-digit", minute: "2-digit", timeZone: timezone }).format(new Date(iso));
 const snowflakeAfter = (a, b) => BigInt(a) > BigInt(b);
 
@@ -85,7 +85,7 @@ export async function syncAbsenceRoles({ db, client, config, reference = new Dat
   const start = db.prepare("SELECT * FROM member_absences WHERE guild_id=? AND ended_at IS NULL AND role_applied=0 AND starts_on<=? AND ends_on>=?").all(guildId, today, today);
   for (const row of start) {
     const member = await guild.members.fetch(row.user_id).catch(() => null);
-    if (member) for (const roleId of roles) if (!member.roles.cache.has(roleId)) await member.roles.add(roleId, "Yamamoto: Abmeldung").then(() => { added++; }).catch(error => console.warn("Abmelde-Rolle nicht vergeben:", error.message));
+    if (member) for (const roleId of roles) if (!member.roles.cache.has(roleId)) await member.roles.add(roleId, "Corleone: Abmeldung").then(() => { added++; }).catch(error => console.warn("Abmelde-Rolle nicht vergeben:", error.message));
     db.prepare("UPDATE member_absences SET role_applied=1 WHERE id=?").run(row.id);
   }
   const stop = db.prepare("SELECT * FROM member_absences WHERE guild_id=? AND role_applied=1 AND (ended_at IS NOT NULL OR ends_on<? OR starts_on>?)").all(guildId, today, today);
@@ -93,7 +93,7 @@ export async function syncAbsenceRoles({ db, client, config, reference = new Dat
     const stillAbsent = db.prepare("SELECT 1 FROM member_absences WHERE guild_id=? AND user_id=? AND id<>? AND ended_at IS NULL AND starts_on<=? AND ends_on>=?").get(guildId, row.user_id, row.id, today, today);
     if (!stillAbsent) {
       const member = await guild.members.fetch(row.user_id).catch(() => null);
-      if (member) for (const roleId of roles) if (member.roles.cache.has(roleId)) await member.roles.remove(roleId, "Yamamoto: Abmeldung beendet").then(() => { removed++; }).catch(error => console.warn("Abmelde-Rolle nicht entfernt:", error.message));
+      if (member) for (const roleId of roles) if (member.roles.cache.has(roleId)) await member.roles.remove(roleId, "Corleone: Abmeldung beendet").then(() => { removed++; }).catch(error => console.warn("Abmelde-Rolle nicht entfernt:", error.message));
     }
     db.prepare("UPDATE member_absences SET role_applied=0 WHERE id=?").run(row.id);
   }

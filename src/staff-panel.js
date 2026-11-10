@@ -17,7 +17,7 @@ export const VIEWS = {
   stats: { label: "Statistik (30 Tage)", emoji: "📊", group: "anyStaff" },
 };
 
-const panelEmbed = (title, description = "") => new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "YAMAMOTO  •  STAFF-DASHBOARD" }).setTitle(title).setDescription(description || null).setFooter({ text: "YAMAMOTO  •  Nur für berechtigte Rollen" }).setTimestamp();
+const panelEmbed = (title, description = "") => new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "CORLEONE  •  STAFF-DASHBOARD" }).setTitle(title).setDescription(description || null).setFooter({ text: "CORLEONE  •  Nur für berechtigte Rollen" }).setTimestamp();
 const rel = iso => `<t:${Math.floor(new Date(iso).getTime() / 1000)}:R>`;
 const clip = (text, max = 1024) => (text.length > max ? `${text.slice(0, max - 1)}…` : text) || "—";
 const count = (db, sql, ...params) => db.prepare(sql).get(...params)?.n ?? 0;
@@ -25,7 +25,7 @@ const count = (db, sql, ...params) => db.prepare(sql).get(...params)?.n ?? 0;
 /** Öffentliche Panel-Nachricht: nur Zählwerte, keine Namen oder Beträge. */
 export function buildPanelPayload(db, guildId, texts = {}) {
   const nowIso = new Date().toISOString();
-  const embed = panelEmbed(texts.title || "🧭 Yamamoto Staff-Dashboard", texts.description ?? "Wähle unten eine Ansicht. Details erscheinen nur privat für dich und nur, wenn deine Rolle sie freigibt.").addFields(
+  const embed = panelEmbed(texts.title || "🧭 Corleone Staff-Dashboard", texts.description ?? "Wähle unten eine Ansicht. Details erscheinen nur privat für dich und nur, wenn deine Rolle sie freigibt.").addFields(
     { name: "🎫 Offene Tickets", value: `${count(db, "SELECT COUNT(*) n FROM tickets WHERE guild_id=? AND status='open'", guildId)} · davon ${count(db, "SELECT COUNT(*) n FROM tickets WHERE guild_id=? AND status='open' AND claimed_by IS NULL", guildId)} ohne Bearbeiter`, inline: true },
     { name: "📨 Offene Anträge", value: String(count(db, "SELECT COUNT(*) n FROM applications WHERE guild_id=? AND status IN ('open','review')", guildId)), inline: true },
     { name: "📅 Kommende Events", value: String(count(db, "SELECT COUNT(*) n FROM events WHERE guild_id=? AND status='scheduled' AND starts_at>?", guildId, nowIso)), inline: true },
@@ -86,9 +86,9 @@ export function buildView(db, guildId, view, { config, finance } = {}) {
 
 const statusText = (map, labels) => Object.entries(labels).map(([key, label]) => `${label}: ${map[key] ?? 0}`).join(" · ");
 
-export function statsEmbed(stats, { title = "📊 Yamamoto Statistik", memberCount = null } = {}) {
+export function statsEmbed(stats, { title = "📊 Corleone Statistik", memberCount = null } = {}) {
   const period = PERIODS[stats.days] ?? `${stats.days} Tage`;
-  const embed = panelEmbed(title, `**Zeitraum:** ${period}\n**Quelle:** Bot-Datenbank (nur Vorgänge, die über den Bot liefen). „aktuell“ = Momentaufnahme.`).setAuthor({ name: "YAMAMOTO  •  STATISTIK" });
+  const embed = panelEmbed(title, `**Zeitraum:** ${period}\n**Quelle:** Bot-Datenbank (nur Vorgänge, die über den Bot liefen). „aktuell“ = Momentaufnahme.`).setAuthor({ name: "CORLEONE  •  STATISTIK" });
   embed.addFields(
     { name: "👥 Mitglieder", value: `${memberCount != null ? `Aktuell: **${memberCount}**\n` : ""}Beitritte: ${stats.members.joins} · Austritte: ${stats.members.leaves}`, inline: true },
     { name: "🎫 Tickets", value: `Erstellt: ${stats.tickets.created} · Geschlossen: ${stats.tickets.closed}\nAktuell offen: ${stats.tickets.openNow} (ohne Bearbeiter: ${stats.tickets.unclaimedNow})${stats.tickets.avgCloseHours != null ? `\nØ Bearbeitungszeit: ${stats.tickets.avgCloseHours.toFixed(1)} h` : ""}`, inline: true },

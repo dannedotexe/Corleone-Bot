@@ -73,7 +73,7 @@ function updateSaveBar() {
 }
 function showSettingsSection(id) {
   settingsState.section = id;
-  try { localStorage.setItem("yamamoto-settings-section", id); } catch {}
+  try { localStorage.setItem("corleone-settings-section", id); } catch {}
   const searching = Boolean(document.querySelector("#tab-settings .search")?.value.trim());
   document.querySelectorAll("#settings-groups .settings-nav-item").forEach(b => b.classList.toggle("active", !searching && b.dataset.section === id));
   document.querySelectorAll("#settings-view .settings-group").forEach(g => { g.hidden = !searching && g.dataset.section !== id; });
@@ -91,7 +91,7 @@ function renderSettings() {
     const more = advanced.length ? `<details class="settings-advanced"><summary>Erweitert · ${advanced.length} ${advanced.length === 1 ? "Option" : "Optionen"}${changed ? ` · ${changed} angepasst` : ""}</summary>${advanced.map(settingRow).join("")}</details>` : "";
     return `<section class="panel settings-group" id="sg-${sec.id}" data-section="${sec.id}"><div class="panel-head"><div><h2>${sec.icon ? `${sec.icon} ` : ""}${escapeHtml(sec.label)}</h2>${sec.description ? `<p class="subtle">${escapeHtml(sec.description)}</p>` : ""}</div></div>${basic.map(settingRow).join("")}${more}</section>`;
   }).join("");
-  let saved = null; try { saved = localStorage.getItem("yamamoto-settings-section"); } catch {}
+  let saved = null; try { saved = localStorage.getItem("corleone-settings-section"); } catch {}
   const known = [...sections, ...SETTINGS_EXTRAS].map(s => s.id);
   showSettingsSection(known.includes(settingsState.section) ? settingsState.section : known.includes(saved) ? saved : known[0]);
   document.querySelectorAll("#tab-settings .search").forEach(filterList);
@@ -135,21 +135,21 @@ function renderPreview() {
   const extras = panel.id === "activityBoard" ? [[values.scheduledTitle, "**Bizwar** · täglich · 01:05, 19:05 Uhr · nächstes in 2 Stunden", false], [values.flexibleTitle, "**Ladenraub** · alle 3 Stunden möglich", false]].filter(([n]) => n)
     : panel.id === "staffDashboard" ? [["🎫 Offene Tickets", "3 · davon 1 ohne Bearbeiter", true], ["📨 Offene Anträge", "2", true]]
     : panel.id === "leaderboard" ? [[values.weekTitle, "🥇 @Tony · **5** Teilnahmen\n🥈 @Paulie · **3** Teilnahmen", true], [values.monthTitle, "🥇 @Paulie · **14** Teilnahmen\n🥈 @Tony · **12** Teilnahmen", true]] : [];
-  if (panel.id === "welcome") { const sample = { "{user}": "@NeuerSpieler", "{name}": "NeuerSpieler", "{server}": "Yamamoto", "{mitglieder}": "128", "{verifizierung}": "#neue-spieler" }; for (const key of ["content", "author", "title", "description", "footer", "dm"]) values[key] = String(values[key] ?? "").replace(/\{(user|name|server|mitglieder|verifizierung)\}/g, m => sample[m]); }
+  if (panel.id === "welcome") { const sample = { "{user}": "@NeuerSpieler", "{name}": "NeuerSpieler", "{server}": "Corleone", "{mitglieder}": "128", "{verifizierung}": "#neue-spieler" }; for (const key of ["content", "author", "title", "description", "footer", "dm"]) values[key] = String(values[key] ?? "").replace(/\{(user|name|server|mitglieder|verifizierung)\}/g, m => sample[m]); }
   if (panel.id === "events") return renderEventPreview(values);
   const buttons = panel.id === "verification" ? `<div class="dc-buttons"><span class="dc-btn ok">${escapeHtml(values.button)}</span><span class="dc-btn">${escapeHtml(values.buttonRename)}</span></div>`
     : panel.id === "application" ? `<div class="dc-buttons"><span class="dc-btn primary">${escapeHtml(values.buttonApply)}</span><span class="dc-btn">${escapeHtml(values.buttonRank)}</span></div>`
     : panel.id === "absence" ? `<div class="dc-buttons"><span class="dc-btn danger">${escapeHtml(values.buttonAbsent)}</span><span class="dc-btn ok">${escapeHtml(values.buttonBack)}</span></div>`
     : panel.id === "welcome" ? (values.button ? `<div class="dc-buttons"><span class="dc-btn">${escapeHtml(values.button)} ↗</span></div>` : "") + (values.dm ? `<div class="sub-label">Private Nachricht (falls aktiviert)</div><div class="dc-desc">${markdown(values.dm)}</div>` : "")
     : panel.id === "ticket" ? `<div class="dc-select">${escapeHtml(values.placeholder)}<span>⌄</span></div>` : panel.id === "staffDashboard" ? '<div class="dc-select">📂 Ansicht wählen …<span>⌄</span></div>' : "";
-  $("texts-preview").innerHTML = `<div class="dc-head"><img src="/brand/logo" alt=""><b>Yamamoto Bot</b><span class="dc-app">APP</span></div>${panel.id === "welcome" && values.content ? `<div class="dc-desc">${markdown(values.content)}</div>` : ""}<div class="dc-embed">${values.author ? `<div class="dc-author">${escapeHtml(values.author)}</div>` : ""}${values.title ? `<div class="dc-title">${escapeHtml(values.title)}</div>` : ""}${values.description ? `<div class="dc-desc">${markdown(values.description)}</div>` : ""}<div class="dc-fields">${[...fields, ...extras].map(([name, value, inline]) => `<div class="dc-field ${inline ? "inline" : ""}"><b>${escapeHtml(name)}</b><div>${markdown(value)}</div></div>`).join("")}</div>${values.footer ? `<div class="dc-footer">${escapeHtml(values.footer)}</div>` : ""}</div>${buttons}`;
+  $("texts-preview").innerHTML = `<div class="dc-head"><img src="/brand/logo" alt=""><b>Corleone Bot</b><span class="dc-app">APP</span></div>${panel.id === "welcome" && values.content ? `<div class="dc-desc">${markdown(values.content)}</div>` : ""}<div class="dc-embed">${values.author ? `<div class="dc-author">${escapeHtml(values.author)}</div>` : ""}${values.title ? `<div class="dc-title">${escapeHtml(values.title)}</div>` : ""}${values.description ? `<div class="dc-desc">${markdown(values.description)}</div>` : ""}<div class="dc-fields">${[...fields, ...extras].map(([name, value, inline]) => `<div class="dc-field ${inline ? "inline" : ""}"><b>${escapeHtml(name)}</b><div>${markdown(value)}</div></div>`).join("")}</div>${values.footer ? `<div class="dc-footer">${escapeHtml(values.footer)}</div>` : ""}</div>${buttons}`;
   const embed = $("texts-preview").querySelector(".dc-embed");
   if (embed) embed.style.borderLeftColor = /^#[0-9a-f]{6}$/i.test(values.color ?? "") ? values.color : "#c1121f";
   document.querySelectorAll("#texts-form [data-text]").forEach(input => { const counter = input.parentElement.querySelector(".counter"); if (counter && input.maxLength > 0) counter.textContent = `${input.value.length}/${input.maxLength}`; });
 }
 function renderEventPreview(values) {
   const fill = text => markdown(String(text ?? "").replaceAll("{name}", "Bizwar").replaceAll("{zeit}", "Mittwoch, 14. Oktober 2026 19:05").replaceAll("{uhrzeit}", "19:05").replaceAll("{relativ}", "in 2 Stunden").replaceAll("{minuten}", "60").replaceAll("{treffpunkt}", "Hauptquartier").replaceAll("{anmeldung}", "#event-anmeldung"));
-  const head = '<div class="dc-head"><img src="/brand/logo" alt=""><b>Yamamoto Bot</b><span class="dc-app">APP</span></div>';
+  const head = '<div class="dc-head"><img src="/brand/logo" alt=""><b>Corleone Bot</b><span class="dc-app">APP</span></div>';
   const author = values.author ? `<div class="dc-author">${escapeHtml(values.author)}</div>` : "";
   $("texts-preview").innerHTML = `<div class="sub-label">#event-ankündigungen</div>${head}<div class="dc-embed">${author}<div class="dc-desc">${fill(values.announceText)}</div></div><div class="dc-buttons"><span class="dc-btn">${escapeHtml(values.announceButton)} ↗</span></div>
     <div class="sub-label spaced">#event-anmeldung</div>${head}<div class="dc-embed">${author}<div class="dc-title">📅 Bizwar</div><div class="dc-fields"><div class="dc-field inline"><b>🕒 Beginn</b><div>Mittwoch, 14. Oktober 2026 19:05<br>in 2 Stunden</div></div><div class="dc-field"><b>🙋 ${escapeHtml(values.participantsLabel)} (0)</b><div>${escapeHtml(values.emptyParticipants)}</div></div></div><div class="dc-footer">${escapeHtml(values.seriesFooter)} · täglich · 01:05, 19:05 Uhr</div></div><div class="dc-buttons"><span class="dc-btn ok">${escapeHtml(values.joinButton)}</span><span class="dc-btn">${escapeHtml(values.leaveButton)}</span><span class="dc-btn">${escapeHtml(values.dmButton)}</span></div>

@@ -4,7 +4,7 @@ import { audit, getSetting } from "../database.js";
 
 /*
  * Fachliche Bedeutung (verbindlich):
- * - accounts.balance_cents: Yamamoto-Familienguthaben = Geld, das die Familie dem Mitglied für Grand-RP-Events
+ * - accounts.balance_cents: Corleone-Familienguthaben = Geld, das die Familie dem Mitglied für Grand-RP-Events
  *   oder Familienaktivitäten schuldet und noch nicht ausgezahlt hat. Keine Discord-Spielwährung.
  * - transactions: unveränderliches Journal (DB-Trigger verhindern UPDATE/DELETE). amount_cents ist immer der
  *   Betrag, um den sich das Familienguthaben ändert; die Richtung ergibt sich aus dem Typ:

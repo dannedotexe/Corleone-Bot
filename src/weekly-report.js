@@ -71,7 +71,7 @@ export function weeklyReportPayload(numbers, { fromDay, toDay }, extra = {}) {
   const n = numbers, mod = n.discipline.moderation;
   const medals = ["🥇", "🥈", "🥉"];
   const top = n.events.top.length ? n.events.top.map((r, i) => `${medals[i]} <@${r.user_id}> · ${r.n}`).join("\n") : "—";
-  const embed = new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "YAMAMOTO  •  WOCHENBERICHT" })
+  const embed = new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "CORLEONE  •  WOCHENBERICHT" })
     .setTitle(`📊 Woche ${fmt(fromDay)} – ${fmt(toDay)}`)
     .addFields(
       { name: "📅 Events", value: `**${n.events.ended}** durchgeführt · ${n.events.cancelled} abgesagt\n**${n.events.participations}** Teilnahmen (${n.events.present} bestätigt, ${n.events.absent} gefehlt)`, inline: true },
@@ -83,7 +83,7 @@ export function weeklyReportPayload(numbers, { fromDay, toDay }, extra = {}) {
       { name: "💸 Familienkonto", value: `${n.finance.credits.n} Gutschriften (${formatMoney(n.finance.credits.cents)})\n${n.finance.payouts.n} Auszahlungen: ${formatMoney(n.finance.payouts.net)} netto, ${formatMoney(n.finance.payouts.deduction)} Sanktionsabzug\nNoch auszuzahlen: ${formatMoney(n.finance.balanceNow)}`, inline: true },
       { name: "🎫 Tickets", value: `${n.tickets.created} eröffnet · ${n.tickets.closed} geschlossen\n${n.tickets.openNow} gerade offen`, inline: true },
     )
-    .setFooter({ text: "YAMAMOTO  •  Automatischer Wochenbericht (Montag)" }).setTimestamp();
+    .setFooter({ text: "CORLEONE  •  Automatischer Wochenbericht (Montag)" }).setTimestamp();
   return { embeds: [embed], allowedMentions: { parse: [] } };
 }
 

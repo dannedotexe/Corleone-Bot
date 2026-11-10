@@ -31,7 +31,7 @@ export async function verifyMemberManually({ db, client, config, guild, userId, 
   try { verifications.save({ guildId: guild.id, userId, data, roleResult: roleIds.length ? (failed.length ? "teilweise fehlgeschlagen" : "vergeben") : null, actorId, manual: true }); }
   catch (error) { throw new VerifyError(error.message); }
   for (const kind of Object.keys(LOGBOOK_FORUMS)) void renameLogbook({ db, client, guildId: guild.id, userId, title: data.nickname, kind }).catch(() => {});
-  void member.send({ embeds: [new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "YAMAMOTO  •  VERIFIZIERUNG" }).setTitle(before ? "✏️ Dein Name wurde geändert" : "✅ Du wurdest verifiziert")
+  void member.send({ embeds: [new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "CORLEONE  •  VERIFIZIERUNG" }).setTitle(before ? "✏️ Dein Name wurde geändert" : "✅ Du wurdest verifiziert")
     .setDescription(`Das Team hat dich ${before ? "umbenannt" : "verifiziert"}. Dein Name lautet jetzt **${data.nickname}**.${before ? `\nVorher: ${before.nickname}` : ""}`).setTimestamp()] }).catch(() => {});
   return { data, before, notes };
 }

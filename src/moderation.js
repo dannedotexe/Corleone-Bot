@@ -31,7 +31,7 @@ export function startModeration({ client, db, config }) {
       if (recentJoins.length < config.RAID_JOIN_COUNT) return;
       const performed = [];
       if (config.RAID_ACTIONS.includes("timeout") && !accessGroups(config).anyStaff.some(id => member.roles.cache.has(id))) {
-        const ok = await member.timeout(config.RAID_TIMEOUT_MINUTES * 60_000, "Yamamoto Raid-Schutz: ungewöhnliche Beitrittsrate").then(() => true).catch(error => { console.warn("Raid-Timeout fehlgeschlagen:", error.message); return false; });
+        const ok = await member.timeout(config.RAID_TIMEOUT_MINUTES * 60_000, "Corleone Raid-Schutz: ungewöhnliche Beitrittsrate").then(() => true).catch(error => { console.warn("Raid-Timeout fehlgeschlagen:", error.message); return false; });
         performed.push(ok ? "timeout" : "timeout_failed");
       }
       if (config.RAID_ACTIONS.includes("alert")) performed.push("alert");
@@ -91,7 +91,7 @@ export function startModeration({ client, db, config }) {
       performed.push(ok ? "delete" : "delete_failed");
     }
     if (actions.includes("timeout") && message.member) {
-      const ok = message.member.moderatable && await message.member.timeout(config.AUTOMOD_TIMEOUT_MINUTES * 60_000, `Yamamoto AutoMod: ${RULE_LABELS[rule]}`).then(() => true).catch(error => { console.warn("AutoMod-Timeout fehlgeschlagen:", error.message); return false; });
+      const ok = message.member.moderatable && await message.member.timeout(config.AUTOMOD_TIMEOUT_MINUTES * 60_000, `Corleone AutoMod: ${RULE_LABELS[rule]}`).then(() => true).catch(error => { console.warn("AutoMod-Timeout fehlgeschlagen:", error.message); return false; });
       performed.push(ok ? "timeout" : "timeout_failed");
     }
     if (actions.includes("warn")) {
@@ -121,10 +121,10 @@ export async function syncNativeAutomod({ guild, db, config, actorId, getSetting
   if (!me.permissions.has(PermissionFlagsBits.ManageGuild)) throw new Error("Dem Bot fehlt die Berechtigung „Server verwalten“ für native AutoMod-Regeln.");
   const terms = config.AUTOMOD_BLOCKED_TERMS.map(term => term.slice(0, 60)).slice(0, 1000);
   if (!terms.length) throw new Error("AUTOMOD_BLOCKED_TERMS ist leer. Es gibt nichts zu synchronisieren.");
-  const actions = [{ type: AutoModerationActionType.BlockMessage, metadata: { customMessage: "Diese Nachricht verstößt gegen die Yamamoto-Serverregeln." } }];
+  const actions = [{ type: AutoModerationActionType.BlockMessage, metadata: { customMessage: "Diese Nachricht verstößt gegen die Corleone-Serverregeln." } }];
   if (config.CHANNEL_AUTOMOD_LOG) actions.push({ type: AutoModerationActionType.SendAlertMessage, metadata: { channel: config.CHANNEL_AUTOMOD_LOG } });
   const exemptRoles = [...new Set([...accessGroups(config).anyStaff, ...(config.AUTOMOD_EXEMPT_ROLES ?? [])])].slice(0, 20);
-  const data = { name: "Yamamoto – gesperrte Begriffe", eventType: AutoModerationRuleEventType.MessageSend, triggerType: AutoModerationRuleTriggerType.Keyword, triggerMetadata: { keywordFilter: terms }, actions, enabled: true, exemptRoles, exemptChannels: (config.AUTOMOD_EXEMPT_CHANNELS ?? []).slice(0, 50) };
+  const data = { name: "Corleone – gesperrte Begriffe", eventType: AutoModerationRuleEventType.MessageSend, triggerType: AutoModerationRuleTriggerType.Keyword, triggerMetadata: { keywordFilter: terms }, actions, enabled: true, exemptRoles, exemptChannels: (config.AUTOMOD_EXEMPT_CHANNELS ?? []).slice(0, 50) };
   const existingId = getSetting(db, guild.id, "AUTOMOD_NATIVE_RULE_ID");
   const existing = existingId ? await guild.autoModerationRules.fetch(existingId).catch(() => null) : null;
   const rule = existing ? await existing.edit(data) : await guild.autoModerationRules.create(data);

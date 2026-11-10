@@ -138,7 +138,7 @@ export function pollPayload(poll, { counts, total }, { turnout = null } = {}) {
   const voted = `🗳️ **${total}**${eligible ? ` von ${eligible}` : ""} ${total === 1 && !eligible ? "Stimme" : eligible ? "haben abgestimmt" : "Stimmen"}`;
   const when = poll.status === "cancelled" ? "🚫 abgebrochen" : open ? `⏳ endet <t:${unix(poll.ends_at)}:R>` : `🏁 beendet <t:${unix(poll.closed_at ?? poll.ends_at)}:R>`;
   const notes = [poll.multi ? "☑️ mehrere Antworten möglich" : null, poll.anonymous ? "🔒 anonym" : null, poll.hide_results && open ? "🙈 Ergebnis erst am Ende" : null, poll.required_role_id ? `nur <@&${poll.required_role_id}>` : null].filter(Boolean).join(" · ");
-  const embed = new EmbedBuilder().setColor(color).setAuthor({ name: "YAMAMOTO  •  ABSTIMMUNG" }).setTitle(`📊 ${poll.question}`.slice(0, 256))
+  const embed = new EmbedBuilder().setColor(color).setAuthor({ name: "CORLEONE  •  ABSTIMMUNG" }).setTitle(`📊 ${poll.question}`.slice(0, 256))
     .setDescription(`${lines.join("\n\n")}\n\n${voted}  ·  ${when}${notes ? `\n*${notes}*` : ""}`.slice(0, 4096));
   const components = [];
   if (open) {
@@ -200,7 +200,7 @@ export function pollResultPayload(poll, { counts, total }) {
     ? `🤝 **Gleichstand** zwischen ${winners.map(w => `**${w.option}**`).join(" und ")} – je ${votes(max)}.`
     : `🏆 **${winners[0].option}** gewinnt mit **${votes(max)}** (${Math.round(max / total * 100)} %).`;
   const podium = total ? ranked.map((r, k) => `${MEDALS[k] ?? `**${k + 1}.**`} ${r.option} · ${bar(r.n / total, 10)} ${Math.round(r.n / total * 100)} % · ${votes(r.n)}`).join("\n") : "";
-  const embed = new EmbedBuilder().setColor(DONE_COLOR).setAuthor({ name: "YAMAMOTO  •  ERGEBNIS" }).setTitle(`🏁 ${poll.question}`.slice(0, 256))
+  const embed = new EmbedBuilder().setColor(DONE_COLOR).setAuthor({ name: "CORLEONE  •  ERGEBNIS" }).setTitle(`🏁 ${poll.question}`.slice(0, 256))
     .setDescription(`${headline}${podium ? `\n\n${podium}` : ""}`.slice(0, 4096))
     .setFooter({ text: `${votes(total)} insgesamt` }).setTimestamp(new Date(poll.closed_at ?? poll.ends_at));
   return { embeds: [embed], allowedMentions: { parse: [] } };

@@ -21,7 +21,7 @@ function sugCopyText() {
   const list = sugState.items.filter(s => s.status === "open" || s.status === "accepted").sort((a, b) => (b.up - b.down) - (a.up - a.down) || b.number - a.number);
   if (!list.length) return "";
   const day = new Intl.DateTimeFormat("de-AT", { dateStyle: "medium", timeZone: state.timezone }).format(new Date());
-  return [`Bot-Vorschläge von Yamamoto (offen & angenommen), Stand ${day}:`, "",
+  return [`Bot-Vorschläge von Corleone (offen & angenommen), Stand ${day}:`, "",
     ...list.map(s => `#${s.number} [${sugStatus[s.status][0].replace(/^\S+\s/, "")}] ${s.title} (🟢 ${s.up} / 🔴 ${s.down}, von ${state.names[s.user_id] ?? "Mitglied"})${s.text && !s.text.startsWith(s.title) ? `\n   ${s.text.replace(/\n/g, "\n   ")}` : s.text && s.text !== s.title ? `\n   …${s.text.slice(s.title.length).trim().replace(/\n/g, "\n   ")}` : ""}${s.note ? `\n   Team: ${s.note}` : ""}`)].join("\n");
 }
 

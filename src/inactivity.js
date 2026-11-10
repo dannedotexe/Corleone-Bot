@@ -25,9 +25,9 @@ export function inactivityFor({ db, config, guildId, members, reference = new Da
 
 /** Erinnert eine inaktive Person per DM und merkt sich den Zeitpunkt. */
 export async function remindInactive({ db, client, config, guildId, userId, actorId, days }) {
-  const embed = new EmbedBuilder().setColor(0xe67e22).setAuthor({ name: "YAMAMOTO  •  AKTIVITÄT" }).setTitle("👋 Wir vermissen dich!")
+  const embed = new EmbedBuilder().setColor(0xe67e22).setAuthor({ name: "CORLEONE  •  AKTIVITÄT" }).setTitle("👋 Wir vermissen dich!")
     .setDescription(`Du warst seit **${days} Tagen** weder im Discord aktiv noch bei einem Familien-Event.\n\nAlles okay? Wenn du eine Pause brauchst, melde dich bitte kurz ab (\`/abwesend melden\` oder Abmeldungs-Panel). Dann zählst du nicht als inaktiv.`)
-    .setFooter({ text: "YAMAMOTO  •  Automatische Erinnerung" }).setTimestamp();
+    .setFooter({ text: "CORLEONE  •  Automatische Erinnerung" }).setTimestamp();
   const sent = await client.users.fetch(userId).then(user => user.send({ embeds: [embed] })).then(() => true).catch(() => false);
   createActivityService(db).markNotified(guildId, userId);
   audit(db, guildId, actorId, "activity.reminder", userId, { days, result: sent ? "sent" : "dm_closed" });

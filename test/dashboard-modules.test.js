@@ -12,7 +12,7 @@ const scripts = [...html.matchAll(/<script([^>]*)src="\/assets\/([\w-]+\.js)"[^>
 test("Website: Seiten-Skripte laufen als Module mit eigenem Scope (keine Namenskollisionen)", () => {
   const core = new Set(["theme.js", "app.js"]);
   for (const s of scripts) if (!core.has(s.file)) assert.ok(s.module, `${s.file} muss als type="module" geladen werden`);
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "yamamoto-modules-"));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "corleone-modules-"));
   try {
     for (const s of scripts.filter(s => s.module)) {
       const copy = path.join(tmp, s.file.replace(/\.js$/, ".mjs"));

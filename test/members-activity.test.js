@@ -103,7 +103,7 @@ function setup(extra = {}) {
     moderatable: true, kickable: true, bannable: true,
     timeout: async (ms, reason) => { log.timeouts.push({ id, ms, reason }); }, kick: async reason => { log.kicks.push({ id, reason }); },
   });
-  const guild = { id: GUILD, name: "Yamamoto", ownerId: "99999999999999999", memberCount: 5,
+  const guild = { id: GUILD, name: "Corleone", ownerId: "99999999999999999", memberCount: 5,
     members: { cache: new Map(), fetch: async arg => (typeof arg === "string" ? (roleOf[arg] ? gm(arg) : null) : new Map(Object.keys(roleOf).map(id => [id, gm(id)]))), ban: async (id, opts) => { log.bans.push({ id, opts }); }, unban: async id => { log.unbans.push(id); } },
     channels: { fetch: async () => null }, roles: { fetch: async () => new Map() } };
   const client = { ws: { ping: 12, status: 0 }, readyAt: new Date(), user: { id: "bot", tag: "Bot#0001" }, guilds: { cache: new Map([[GUILD, guild]]), fetch: async () => guild },

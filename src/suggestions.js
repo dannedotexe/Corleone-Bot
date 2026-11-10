@@ -20,7 +20,7 @@ const DAILY_LIMIT = 5;
 const unix = iso => Math.floor(new Date(iso).getTime() / 1000);
 
 export function buildSuggestionPanelPayload() {
-  const embed = new EmbedBuilder().setColor(0xc1121f).setAuthor({ name: "YAMAMOTO  •  BOT-VORSCHLÄGE" }).setTitle("💡 Wie können wir den Bot besser machen?")
+  const embed = new EmbedBuilder().setColor(0xc1121f).setAuthor({ name: "CORLEONE  •  BOT-VORSCHLÄGE" }).setTitle("💡 Wie können wir den Bot besser machen?")
     .setDescription("✍️ Schreib deinen Vorschlag einfach als Nachricht in diesen Channel");
   return { embeds: [embed], components: [] };
 }
@@ -50,7 +50,7 @@ export function suggestionCard(db, row) {
       quote(body).slice(0, 3000),
       ...(row.decided_by ? ["", `**${row.status === "rejected" ? "Begründung" : "Antwort vom Team"}** · <@${row.decided_by}> <t:${unix(row.decided_at)}:R>`, row.note ? quote(row.note).slice(0, 600) : "> —"] : []),
     ].join("\n"))
-    .setFooter({ text: "YAMAMOTO  •  Bot-Vorschläge" }).setTimestamp(new Date(row.created_at));
+    .setFooter({ text: "CORLEONE  •  Bot-Vorschläge" }).setTimestamp(new Date(row.created_at));
   if (row.avatar_url) embed.setThumbnail(row.avatar_url);
   if (row.image_name) embed.setImage(`attachment://${row.image_name}`);
   const votes = new ActionRowBuilder().addComponents(
@@ -180,7 +180,7 @@ export async function setSuggestionStatus({ db, client, row, status, note, actor
   db.prepare("UPDATE suggestions SET status=?,note=?,decided_by=?,decided_at=? WHERE id=?").run(status, text, actorId, new Date().toISOString(), row.id);
   audit(db, row.guild_id, actorId, "suggestion.status", row.id, { name: row.title, value: status });
   await refreshCard({ db, client, row: byId(db, row.id) });
-  await client.users.fetch(row.user_id).then(user => user.send({ embeds: [new EmbedBuilder().setColor(STATUS[status].color).setAuthor({ name: "YAMAMOTO  •  BOT-VORSCHLÄGE" })
+  await client.users.fetch(row.user_id).then(user => user.send({ embeds: [new EmbedBuilder().setColor(STATUS[status].color).setAuthor({ name: "CORLEONE  •  BOT-VORSCHLÄGE" })
     .setTitle(`${STATUS[status].label}: ${row.title}`.slice(0, 256)).setDescription(`${text ? `${text}\n\n` : ""}Danke für deinen Vorschlag!`).setTimestamp()] })).catch(() => {});
   return byId(db, row.id);
 }

@@ -13,7 +13,7 @@ const event = (extra = {}) => ({ id: "e1", guild_id: G, name: "Bizwar", descript
 test("Event-Karte zeigt nur ausgefüllte Angaben und keinen Bot als Veranstalter", () => {
   const card = eventCardPayload({ event: event(), botId: "bot" }).embeds[0].toJSON();
   assert.deepEqual(card.fields.map(f => f.name), ["🕒 Beginn", "🙋 Teilnehmende (0)"]);
-  assert.equal(card.author.name, "YAMAMOTO  •  EVENTS");
+  assert.equal(card.author.name, "CORLEONE  •  EVENTS");
   const full = eventCardPayload({ event: event({ series_id: null, host_id: "30000000000000001", location: "HQ", equipment: "Weste" }), participants: [{ user_id: "30000000000000002" }], botId: "bot" }).embeds[0].toJSON();
   assert.deepEqual(full.fields.map(f => f.name), ["🕒 Beginn", "📍 Treffpunkt", "👤 Veranstalter", "🧰 Ausrüstung", "🙋 Teilnehmende (1)"]);
   const ended = eventCardPayload({ event: event(), state: "ended" });

@@ -32,7 +32,7 @@ export function buildPayoutList(db, guildId, { minimumCents = null, name = id =>
     if ((current + "\n" + line).length > 3800) { chunks.push(current); current = line; } else current = current ? `${current}\n${line}` : line;
   }
   if (current) chunks.push(current);
-  const head = new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "YAMAMOTO  •  AUSZAHLUNGSLISTE" }).setTitle("💵 Wer bekommt wie viel")
+  const head = new EmbedBuilder().setColor(BRAND_COLOR).setAuthor({ name: "CORLEONE  •  AUSZAHLUNGSLISTE" }).setTitle("💵 Wer bekommt wie viel")
     .setDescription(rows.length
       ? `**${rows.length}** Mitglieder · auszuzahlen gesamt **${formatMoney(totals.net)}**${totals.deduction ? `\nBrutto ${formatMoney(totals.gross)} · davon Sanktionen −${formatMoney(totals.deduction)}` : ""}${minimumCents != null ? `\nMindestbetrag für Auszahlung: ${formatMoney(minimumCents)}` : ""}`
       : "Aktuell hat niemand ausstehendes Guthaben.")
