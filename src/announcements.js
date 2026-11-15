@@ -26,7 +26,7 @@ export function validateAnnouncement(input, { allowEveryone = false, reference =
     title: str(input.title, 256, "Titel"),
     description: str(input.description, 4000, "Beschreibung"),
     footer: str(input.footer, 200, "Fußzeile"),
-    color: COLOR.test(String(input.color ?? "")) ? `#${String(input.color).replace("#", "").toLowerCase()}` : "#c9a24b",
+    color: COLOR.test(String(input.color ?? "")) ? `#${String(input.color).replace("#", "").toLowerCase()}` : "#f2f2f2",
     imageUrl: str(input.imageUrl, 500, "Bild-Link"),
   };
   if (embed.imageUrl && !/^https:\/\/[^\s]+$/i.test(embed.imageUrl)) throw new AnnouncementError("Bild-Link: bitte eine https://-Adresse angeben.");
@@ -59,7 +59,7 @@ export function announcementPayload(row) {
   const content = [pings, row.content].filter(Boolean).join("\n");
   if (content) payload.content = content.slice(0, 2000);
   if (embed.title || embed.description) {
-    const card = new EmbedBuilder().setColor(Number.parseInt(String(embed.color ?? "#c9a24b").replace("#", ""), 16)).setTimestamp();
+    const card = new EmbedBuilder().setColor(Number.parseInt(String(embed.color ?? "#f2f2f2").replace("#", ""), 16)).setTimestamp();
     if (embed.title) card.setTitle(embed.title);
     if (embed.description) card.setDescription(embed.description);
     if (embed.footer) card.setFooter({ text: embed.footer });

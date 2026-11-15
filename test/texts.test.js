@@ -12,7 +12,7 @@ test("Standardtexte entsprechen dem bisherigen Bewerbungs-Panel", () => {
   const payload = buildApplicationPanelPayload().embeds[0].toJSON();
   assert.equal(payload.title, "📋  Bewerbungen & Rang-Anträge");
   assert.equal(payload.fields.length, 3);
-  assert.equal(payload.color, 0xc9a24b);
+  assert.equal(payload.color, 0xf2f2f2);
 });
 
 test("Panel-Texte werden validiert, gespeichert, angewendet und zurückgesetzt", () => {

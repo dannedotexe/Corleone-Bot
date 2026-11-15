@@ -15,7 +15,7 @@ export function buildActivityBoard(seriesList, timezone, reference = new Date(),
   const active = seriesList.filter(item => item.active);
   const scheduled = active.filter(item => item.kind === "scheduled").map(item => ({ item, next: nextOccurrence(item, timezone, reference) })).sort((a, b) => (a.next ?? Infinity) - (b.next ?? Infinity));
   const flexible = active.filter(item => item.kind === "flexible");
-  const embed = new EmbedBuilder().setColor(colorNumber(texts.color || "#c9a24b")).setTitle(texts.title || "📆 Familien-Aktivitäten")
+  const embed = new EmbedBuilder().setColor(colorNumber(texts.color || "#f2f2f2")).setTitle(texts.title || "📆 Familien-Aktivitäten")
     .setDescription((active.length ? texts.description : texts.emptyText) || null)
     .setFooter({ text: `CORLEONE  •  Zeiten in ${timezone}` }).setTimestamp();
   if (texts.author) embed.setAuthor({ name: texts.author });

@@ -1,5 +1,5 @@
 // Erzeugt die Platzhalter-Markenbilder (App-Icons, Profilbild, Login-Banner) im Corleone-Stil:
-// Schwarz, weinrotes Siegel, Gold, Monogramm „C“ in Bodoni Moda (OFL, liegt unter dashboard/assets/fonts).
+// Schwarz, weißes Siegel (Familienfarbe), Silber, Monogramm „C“ in Bodoni Moda (OFL, liegt unter dashboard/assets/fonts).
 // Nur für Entwickler: node scripts/build-brand.mjs   (braucht Playwright + Chromium; CHROMIUM=<pfad> optional)
 // Eigenes Logo: einfach die erzeugten Dateien in dashboard/assets/ ersetzen (gleiche Namen und Größen).
 import fs from "node:fs";
@@ -12,7 +12,7 @@ const { chromium } = require(process.env.PLAYWRIGHT ?? "playwright");
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const assets = path.join(root, "dashboard/assets");
 const font = fs.readFileSync(path.join(assets, "fonts/bodoni-moda.woff2")).toString("base64");
-const RED = "#8b1e2d", GOLD = "#c9a24b", INK = "#0b0a0a", IVORY = "#f2ece4";
+const RED = "#f2f2f2", GOLD = "#9a9a9a", INK = "#0b0a0a", IVORY = "#f2ece4";
 
 const css = `@font-face{font-family:B;src:url(data:font/woff2;base64,${font}) format("woff2");font-weight:400 900}
 html,body{margin:0;background:transparent}`;
@@ -20,9 +20,9 @@ html,body{margin:0;background:transparent}`;
 const mark = (size, pad = 0.12, rounded = true) => {
   const s = size * (1 - 2 * pad);
   return `<div style="width:${size}px;height:${size}px;background:${INK};display:grid;place-items:center;${rounded ? `border-radius:${size * 0.22}px;` : ""}overflow:hidden">
-    <div style="width:${s}px;height:${s}px;border-radius:${s * 0.2}px;background:radial-gradient(120% 120% at 30% 20%,#a8293b,${RED} 55%,#4f0f19);
+    <div style="width:${s}px;height:${s}px;border-radius:${s * 0.2}px;background:radial-gradient(120% 120% at 30% 20%,#ffffff,${RED} 55%,#bdbdbd);
       box-shadow:inset 0 0 0 ${Math.max(1, s * 0.025)}px ${GOLD};display:grid;place-items:center">
-      <span style="font-family:B;font-weight:700;font-size:${s * 0.72}px;line-height:1;color:#e8c97f;transform:translateY(${s * 0.02}px)">C</span>
+      <span style="font-family:B;font-weight:700;font-size:${s * 0.72}px;line-height:1;color:#0b0b0b;transform:translateY(${s * 0.02}px)">C</span>
     </div></div>`;
 };
 const banner = (w, h) => `<div style="width:${w}px;height:${h}px;background:radial-gradient(80% 90% at 50% 40%,#1d1515,${INK});display:grid;place-items:center">

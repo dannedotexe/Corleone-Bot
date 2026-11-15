@@ -8,7 +8,7 @@ import { audit } from "./database.js";
  */
 export class InfoCardError extends Error {}
 const COLOR = /^#?[0-9a-f]{6}$/i;
-const DEFAULT_COLOR = "#c9a24b";
+const DEFAULT_COLOR = "#f2f2f2";
 
 export function validateInfoCard(input) {
   const str = (value, max, label) => {

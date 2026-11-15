@@ -82,7 +82,7 @@ test("Einstellungs-Import: per Name aufgelöst, Unklares nur gelistet, Geld in C
   assert.equal(config.INACTIVITY_DAYS, 21);
   const texts = panelTexts(db, G, "application");
   assert.equal(texts.title, "Komm zu Corleone");
-  assert.equal(texts.color, "#c9a24b", "Corleone-Farbe bleibt");
+  assert.equal(texts.color, "#f2f2f2", "Corleone-Farbe bleibt");
   assert.ok(db.prepare("SELECT COUNT(*) n FROM audit_logs WHERE action='config.changed'").get().n >= 8, "jede Änderung protokolliert");
 });
 

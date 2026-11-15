@@ -1,6 +1,6 @@
 /* Corleone – Dashboard · Design „Corleone“
    Liegt als zweite Ebene über style.css (gleiche Struktur, eigene Haltung):
-   Schwarz, Weinrot, Gold – der Pate. Hell = Elfenbein.
+   Schwarz und Weiß – die Familienfarbe. Hell = Papierweiß.
    Auffällig ist nur eins: Seitentitel in Bodoni (Giambattista Bodoni). Alles andere bleibt ruhig.
    Wählbar unter Darstellung → „Corleone“; Standard ist der iOS-Stil. */
 
@@ -16,32 +16,32 @@
   --night:#0b0a0a;        /* Schwarz, Grund */
   --night-raised:#161313; /* Flächen */
   --night-high:#231d1d;   /* gehobene Flächen, Hover */
-  --brass:#c9a24b;        /* Gold: aktiv, Linien, Fokus */
-  --oxblood:#8b1e2d;      /* Weinrot: Hauptaktionen, Marke */
+  --brass:#bdbdbd;        /* Silber: aktiv, Linien, Fokus */
+  --oxblood:#f2f2f2;      /* Weiß (Familienfarbe): Hauptaktionen, Marke */
   --ivory:#f2ece4;        /* Schrift */
   --bg:var(--night);--surface:var(--night-raised);--surface2:#1c1818;--surface3:var(--night-high);--elevated:#1c1818;
-  --fill:rgba(139,30,45,.16);--fill2:rgba(242,236,228,.06);--hover:rgba(242,236,228,.07);
-  --line:rgba(201,162,75,.14);--line2:rgba(201,162,75,.26);
+  --fill:rgba(255,255,255,.08);--fill2:rgba(242,236,228,.06);--hover:rgba(242,236,228,.07);
+  --line:rgba(255,255,255,.10);--line2:rgba(255,255,255,.20);
   --text:var(--ivory);--muted:rgba(242,236,228,.64);--faint:rgba(242,236,228,.38);
-  --accent:var(--oxblood);--accent-press:#6e1723;--accent-soft:rgba(139,30,45,.28);--on-accent:#fff;
-  --gold:var(--brass);--blue:var(--brass);--blue-soft:rgba(201,162,75,.16);
+  --accent:var(--oxblood);--accent-press:#d4d4d4;--accent-soft:rgba(255,255,255,.12);--on-accent:#0b0b0b;
+  --gold:var(--brass);--blue:var(--brass);--blue-soft:rgba(255,255,255,.10);
   --green:#5fc48a;--green-text:#7fd6a2;--green-soft:rgba(95,196,138,.14);
   --red:#e5383b;--red-text:#f07c7e;--red-soft:rgba(229,56,59,.16);--danger:#f07c7e;
-  --glass:rgba(11,10,10,.84);--glass-strong:rgba(18,15,15,.93);--glass-line:rgba(201,162,75,.12);
-  --card-ring:inset 0 0 0 1px rgba(201,162,75,.09);
+  --glass:rgba(11,10,10,.84);--glass-strong:rgba(18,15,15,.93);--glass-line:rgba(255,255,255,.08);
+  --card-ring:inset 0 0 0 1px rgba(255,255,255,.07);
   --shadow:0 10px 30px rgba(0,0,0,.4);--shadow-lg:0 26px 70px rgba(0,0,0,.55);
   --radius-xl:16px;--radius:14px;--radius-md:12px;--radius-sm:10px;
 }
 /* ---------- Tokens: Elfenbein (hell) ---------- */
 :root[data-design=corleone][data-theme=light]{
   --night:#f4f0ea;--night-raised:#fbf8f3;--night-high:#e9e3da;
-  --brass:#8a6a1f;--oxblood:#7a1a28;--ivory:#1a1414;
+  --brass:#555555;--oxblood:#111111;--ivory:#1a1414;
   --surface2:#f0ebe3;--elevated:#fffdf9;
-  --fill:rgba(122,26,40,.07);--fill2:rgba(26,20,20,.05);--hover:rgba(26,20,20,.06);
+  --fill:rgba(0,0,0,.05);--fill2:rgba(26,20,20,.05);--hover:rgba(26,20,20,.06);
   --line:rgba(26,20,20,.12);--line2:rgba(26,20,20,.21);
   --muted:rgba(26,20,20,.66);--faint:rgba(26,20,20,.4);
-  --accent-press:#5e1420;--accent-soft:rgba(122,26,40,.1);--on-accent:#fff;
-  --blue-soft:rgba(138,106,31,.12);
+  --accent-press:#000000;--accent-soft:rgba(0,0,0,.08);--on-accent:#fff;
+  --blue-soft:rgba(0,0,0,.06);
   --green:#2f8f5b;--green-text:#25734a;--green-soft:rgba(47,143,91,.12);
   --red:#c0303a;--red-text:#a4222b;--red-soft:rgba(192,48,58,.1);--danger:#a4222b;
   --glass:rgba(244,240,234,.86);--glass-strong:rgba(251,248,243,.94);--glass-line:rgba(26,20,20,.08);
@@ -51,7 +51,7 @@
 
 /* ---------- Grund ---------- */
 [data-design=corleone] body{font-feature-settings:"tnum" 1,"ss01" 1;letter-spacing:0}
-[data-design=corleone] ::selection{background:rgba(201,162,75,.35)}
+[data-design=corleone] ::selection{background:rgba(255,255,255,.28)}
 [data-design=corleone] :focus-visible{outline:2px solid var(--brass);outline-offset:2px}
 
 /* ---------- Das eine Auffällige: Titel und Beträge in Bodoni ---------- */
@@ -88,7 +88,7 @@
 [data-design=corleone] .cal-day.today{background:var(--fill);box-shadow:inset 0 0 0 1.5px var(--brass)}
 [data-design=corleone] .cal-day.today .cal-head b{color:var(--brass)}
 [data-design=corleone] .evlog figcaption .evlog-kills{color:var(--brass)}
-[data-design=corleone] .login-screen{background:radial-gradient(1100px 600px at 50% -10%,rgba(201,162,75,.14),transparent 62%),var(--bg)}
+[data-design=corleone] .login-screen{background:radial-gradient(1100px 600px at 50% -10%,rgba(255,255,255,.14),transparent 62%),var(--bg)}
 
 /* ---------- Flächen ---------- */
 [data-design=corleone] .stat,[data-design=corleone] .panel,[data-design=corleone] .manage-card{box-shadow:var(--card-ring)}

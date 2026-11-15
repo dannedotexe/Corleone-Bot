@@ -33,7 +33,7 @@ const seriesOf = (db, event) => (event.series_id ? db.prepare("SELECT * FROM eve
 
 export function eventCardPayload({ event, participants = [], texts = defaultsFor("events"), state = event.status, series = null, botId = null, waitlist = [], overlaps = [], exclusive = false }) {
   const look = STATE[state];
-  const embed = new EmbedBuilder().setColor(look?.color ?? colorNumber(texts.color || "#c9a24b"))
+  const embed = new EmbedBuilder().setColor(look?.color ?? colorNumber(texts.color || "#f2f2f2"))
     .setTitle(`${look?.prefix ?? "📅 "}${event.name}`.slice(0, 256)).setTimestamp();
   if (texts.author) embed.setAuthor({ name: texts.author });
   if (event.description && !event.description.startsWith("Wiederkehrende Familienaktivität")) embed.setDescription(event.description.slice(0, 4000));
@@ -61,7 +61,7 @@ export function eventCardPayload({ event, participants = [], texts = defaultsFor
 
 function announcementPayload({ event, texts, link, pingRoles = [], state = event.status }) {
   const look = STATE[state];
-  const embed = new EmbedBuilder().setColor(look?.color ?? colorNumber(texts.color || "#c9a24b"))
+  const embed = new EmbedBuilder().setColor(look?.color ?? colorNumber(texts.color || "#f2f2f2"))
     .setDescription(`${look ? `${look.prefix}**${event.name}**` : fillTemplate(texts.announceText, event, { link })}`.slice(0, 4000));
   if (texts.author) embed.setAuthor({ name: texts.author });
   const components = link && !look ? [new ActionRowBuilder().addComponents(new ButtonBuilder().setStyle(ButtonStyle.Link).setURL(link).setLabel(texts.announceButton || "Zur Anmeldung"))] : [];
@@ -153,7 +153,7 @@ export async function sendEventReminder({ db, client, config, event }) {
   // Ohne Anmeldungen gibt es niemanden zu erinnern – keine leeren Erinnerungen im Channel.
   if (!all.length) return false;
   const card = await fetchMessage(client, event.channel_id, event.message_id);
-  const embed = new EmbedBuilder().setColor(colorNumber(texts.color || "#c9a24b"))
+  const embed = new EmbedBuilder().setColor(colorNumber(texts.color || "#f2f2f2"))
     .setDescription(`${fillTemplate(texts.reminderText, event)}${event.location ? `\n📍 ${event.location}` : ""}${event.equipment ? `\n🧰 ${event.equipment}` : ""}`.slice(0, 4000));
   // Im Channel wird die Familienrolle markiert statt jede angemeldete Person einzeln (Event-Ping-Rolle, sonst Familienrolle).
   const roles = (config.EVENT_PING_ROLES?.length ? config.EVENT_PING_ROLES : config.ROLE_MEMBERS ?? []).slice(0, 5);

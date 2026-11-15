@@ -34,7 +34,7 @@ export function applicationModal(kind) {
 }
 /** Embed aus bearbeitbaren Texten; leere Teile werden weggelassen (Discord lehnt leere Felder ab). */
 export function textEmbed(texts,fields=[]){
-  const panel=new EmbedBuilder().setColor(colorNumber(texts.color??"#c9a24b")).setTimestamp();
+  const panel=new EmbedBuilder().setColor(colorNumber(texts.color??"#f2f2f2")).setTimestamp();
   if(texts.author)panel.setAuthor({name:texts.author});
   if(texts.title)panel.setTitle(texts.title);
   if(texts.description)panel.setDescription(texts.description);
@@ -92,12 +92,12 @@ export function buildTicketPanelPayload(config,texts=defaultsFor("ticket")) {
 }
 export function buildApplicationReviewPayload(kind,userId,answers,decision=null,reason="",reviewerId=null) {
   const labels=new Map([...questionsFor(kind,{}),...applicationQuestions(kind)].map(question=>[question.id,question.label]));
-  const panel=new EmbedBuilder().setColor(0xc9a24b)
+  const panel=new EmbedBuilder().setColor(0xf2f2f2)
     .setAuthor({name:"CORLEONE  •  BEWERBUNGEN"})
     .setTitle(`${kind==="rang"?"🏅 Rang-Antrag":"🤝 Bewerbung"}`)
     .setDescription(`**Antragsteller:** <@${userId}>\n**Eingereichte Angaben:**${decision?`\n\n**Status:** ${decision==="accepted"?"✅ Angenommen":decision==="rejected"?"❌ Abgelehnt":decision==="withdrawn"?"↩️ Zurückgezogen":`🔎 In Prüfung · <@${reviewerId}>`}`:""}`)
     .addFields(Object.entries(answers).map(([key,value])=>({name:labels.get(key)??key,value:String(value||"—").slice(0,1024),inline:false})))
-    .setColor(decision==="accepted"?0x2ecc71:decision==="rejected"?0xe74c3c:decision==="withdrawn"?0x7f8c8d:0xc9a24b)
+    .setColor(decision==="accepted"?0x2ecc71:decision==="rejected"?0xe74c3c:decision==="withdrawn"?0x7f8c8d:0xf2f2f2)
     .setFooter({text:decision==="rejected"?`Ablehnungsgrund: ${reason}`.slice(0,2048):decision==="review"?"CORLEONE  •  Bearbeitung übernommen":decision==="withdrawn"?"CORLEONE  •  Vom Antragsteller zurückgezogen":"CORLEONE  •  Interne Prüfung"})
     .setTimestamp();
   return {embeds:[panel]};

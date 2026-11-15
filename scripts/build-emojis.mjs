@@ -1,4 +1,4 @@
-// Erzeugt assets/emojis/*.png aus Lucide-Icons (ISC-Lizenz) im Corleone-Stil (schwarze Kachel, roter Rand, goldene Symbole).
+// Erzeugt assets/emojis/*.png aus Lucide-Icons (ISC-Lizenz) im Corleone-Stil (schwarze Kachel, weißer Rand, weiße Symbole).
 // Nur für Entwickler: node scripts/build-emojis.mjs <pfad/zu/lucide-static/icons>  (braucht Playwright + Chromium; CHROMIUM=<pfad> optional)
 import fs from "node:fs";
 import path from "node:path";
@@ -10,9 +10,9 @@ const { chromium } = createRequire(import.meta.url)(process.env.PLAYWRIGHT ?? "p
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const iconDir = process.argv[2];
 const out = path.join(root, "assets/emojis");
-const GOLD = "#e9c75a";
+const GOLD = "#f2f2f2";
 const inner = name => fs.readFileSync(path.join(iconDir, `${name}.svg`), "utf8").replace(/<!--[\s\S]*?-->/, "").replace(/^[\s\S]*?<svg[\s\S]*?>/, "").replace(/<\/svg>\s*$/, "");
-const tile = (id, glyph) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="128" height="128"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#211a1a"/><stop offset="1" stop-color="#0b0a0a"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="8" fill="url(#${id})" stroke="#8b1e2d" stroke-opacity=".95" stroke-width="1"/>${glyph}</svg>`;
+const tile = (id, glyph) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="128" height="128"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#211a1a"/><stop offset="1" stop-color="#0b0a0a"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="8" fill="url(#${id})" stroke="#ffffff" stroke-opacity=".55" stroke-width="1"/>${glyph}</svg>`;
 const icons = new Map();
 for (const [emoji, [name, icon, color = GOLD]] of Object.entries(EMOJI_SET)) {
   if (icons.has(name)) continue;
