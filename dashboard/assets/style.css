@@ -548,7 +548,7 @@ dialog .cselect-list{z-index:1000}
 .check{max-width:100%;white-space:normal;line-height:1.3}
 @media (max-width:640px){.poll-form .check{border-radius:14px;align-items:flex-start}.poll-form .check input{margin-top:1px;flex:none}.poll-form .checks{flex-direction:column;align-items:flex-start}}
 /* Login: Corleone-Banner als Kopf der Karte */
-.login-banner{display:block;width:calc(100% + 60px);max-width:none;margin:-36px -30px 22px;aspect-ratio:16/9;object-fit:cover;border-radius:28px 28px 0 0}
+.login-banner{display:block;width:calc(100% + 60px);max-width:none;margin:-36px -30px 22px;aspect-ratio:17/6;object-fit:cover;border-radius:28px 28px 0 0}
 .rows.scroll.tall{max-height:520px}
 /* ---------- Einstellungen: Themen links, Inhalt rechts, gesammelt speichern ---------- */
 .settings-layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:22px;align-items:start;margin-top:8px}
