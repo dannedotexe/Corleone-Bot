@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# Richtet HTTPS (Let's Encrypt über Caddy) für das Corleone-Dashboard ein.
+# Richtet HTTPS (Let's Encrypt) für das Corleone-Dashboard ein.
 # Aufruf auf der VM:   bash deploy/setup-https.sh <domain>
-# Voraussetzung: Die Domain zeigt bereits per A-Eintrag auf die öffentliche IP dieser VM.
+# Voraussetzung: Die Domain zeigt bereits per A-Eintrag auf die öffentliche IP dieser VM (sslip.io tut das automatisch).
 #
-# Gemeinsame VM: Andere Seiten in /etc/caddy/Caddyfile (z. B. vom Gambino-Bot) bleiben unangetastet. Das Skript
-# pflegt nur einen eigenen, markierten Corleone-Block, prüft die Konfiguration und lädt Caddy nur neu (kein Neustart).
+# Gemeinsame VM: Läuft dort schon nginx (z. B. für Panel und Gambino), wird nur eine eigene nginx-Seite
+# „corleone-dashboard“ angelegt und das Zertifikat per certbot geholt; andere Seiten bleiben unangetastet, bei einer
+# ungültigen Konfiguration wird der eigene Eintrag wieder entfernt. Ohne nginx: Caddy mit eigenem, markiertem Block.
 set -euo pipefail
 
 DOMAIN="${1:-}"
@@ -33,6 +34,63 @@ if [[ -z "$DNS_IP" || ( -n "$PUBLIC_IP" && "$DNS_IP" != "$PUBLIC_IP" ) ]]; then
   echo "Die Domain zeigt (noch) nicht auf diese VM. Bitte A-Eintrag auf $PUBLIC_IP setzen und ein paar Minuten warten." >&2
   exit 1
 fi
+
+if systemctl is-active --quiet nginx; then
+  # nginx bedient bereits andere Seiten (z. B. Panel, Gambino): Corleone als eigene nginx-Seite eintragen, Zertifikat per certbot.
+  SITE="/etc/nginx/sites-available/corleone-dashboard"
+  LINK="/etc/nginx/sites-enabled/corleone-dashboard"
+  say "2/6 nginx gefunden – eigene Seite für $DOMAIN anlegen"
+  if grep -rqsE "server_name[^;]*[[:space:]]$DOMAIN[;[:space:]]" /etc/nginx/sites-enabled/ --exclude=corleone-dashboard; then
+    echo "$DOMAIN ist in nginx schon bei einer anderen Seite eingetragen – bitte prüfen, nichts geändert." >&2; exit 1
+  fi
+  [[ -f "$SITE" ]] && sudo cp "$SITE" "/tmp/corleone-dashboard.bak-$(date +%Y%m%d-%H%M%S)"
+  sudo tee "$SITE" >/dev/null <<NGINX
+# Corleone-Bot Dashboard (verwaltet von deploy/setup-https.sh)
+server {
+    listen 80;
+    listen [::]:80;
+    server_name $DOMAIN;
+    client_max_body_size 4m;
+    location / {
+        proxy_pass http://127.0.0.1:$PORT;
+        proxy_http_version 1.1;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_buffering off;
+        proxy_read_timeout 1h;
+    }
+}
+NGINX
+  sudo ln -sf "$SITE" "$LINK"
+  if ! sudo nginx -t; then
+    sudo rm -f "$LINK"; echo "nginx-Konfiguration ungültig – Corleone-Eintrag wieder entfernt, andere Seiten unverändert." >&2; exit 1
+  fi
+  sudo systemctl reload nginx
+  # Caddy wird hier nicht gebraucht (Ports gehören nginx) – nicht beim Booten starten lassen.
+  if systemctl is-enabled --quiet caddy 2>/dev/null && ! systemctl is-active --quiet caddy; then sudo systemctl disable caddy >/dev/null 2>&1 || true; fi
+
+  say "3/6 Zertifikat (Let's Encrypt über certbot)"
+  if ! command -v certbot >/dev/null 2>&1; then sudo apt-get update -qq && sudo apt-get install -y -qq certbot python3-certbot-nginx; fi
+  sudo certbot --nginx -d "$DOMAIN" --redirect --non-interactive --agree-tos --register-unsafely-without-email --keep-until-expiring
+
+  say "4/6 Bot auf die neue Adresse umstellen"
+  cp "$ENV_FILE" "$ENV_FILE.bak-$(date +%Y%m%d-%H%M%S)"; chmod 600 "$ENV_FILE".bak-* 2>/dev/null || true
+  if grep -qE '^DASHBOARD_PUBLIC_URL=' "$ENV_FILE"; then sed -i -E "s#^DASHBOARD_PUBLIC_URL=.*#DASHBOARD_PUBLIC_URL=https://$DOMAIN#" "$ENV_FILE"; else echo "DASHBOARD_PUBLIC_URL=https://$DOMAIN" >> "$ENV_FILE"; fi
+  if command -v pm2 >/dev/null 2>&1 && pm2 describe "$PM2_NAME" >/dev/null 2>&1; then pm2 restart "$PM2_NAME" --update-env >/dev/null && echo "$PM2_NAME neu gestartet."; fi
+
+  say "5/6 Prüfen"
+  sleep 6
+  if curl -fsS --max-time 20 "https://$DOMAIN/health" >/dev/null; then echo "✅ https://$DOMAIN ist mit gültigem Zertifikat erreichbar."
+  else echo "⚠️  Noch nicht erreichbar. Logs: pm2 logs $PM2_NAME --lines 30   und   sudo tail -n 30 /var/log/nginx/error.log"; fi
+  say "6/6 Fertig"
+  echo "Website: https://$DOMAIN  (Redirect im Discord Developer Portal: https://$DOMAIN/oauth/callback)"
+  exit 0
+fi
+for svc in apache2; do
+  if systemctl is-active --quiet "$svc"; then echo "$svc belegt die Web-Ports – bitte die Domain dort als Reverse-Proxy auf 127.0.0.1:$PORT eintragen, das Skript ändert nichts." >&2; exit 1; fi
+done
 
 say "2/6 Caddy prüfen"
 if ! command -v caddy >/dev/null 2>&1; then
