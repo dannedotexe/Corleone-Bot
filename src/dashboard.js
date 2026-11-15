@@ -164,7 +164,7 @@ export function createDashboard({ db, client, config, settings = null, series = 
         if (!url.searchParams.get("code") || !expiry || expiry < Date.now()) return loginFailure("Anmeldung abgelaufen. Bitte erneut versuchen.");
         const tokenResponse = await fetch("https://discord.com/api/oauth2/token", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams({ client_id: config.DISCORD_CLIENT_ID, client_secret: config.DISCORD_CLIENT_SECRET, grant_type: "authorization_code", code: url.searchParams.get("code"), redirect_uri: `${config.DASHBOARD_PUBLIC_URL}/oauth/callback` }) });
         const token = await tokenResponse.json();
-        if (!tokenResponse.ok) return loginFailure("Discord-Anmeldung fehlgeschlagen. Bitte erneut versuchen.");
+        if (!tokenResponse.ok) { console.warn(`Discord-Anmeldung abgelehnt (${tokenResponse.status}): ${String(token?.error ?? "")} ${String(token?.error_description ?? "").slice(0, 200)} – Client-Secret und Redirect-URL prüfen.`); return loginFailure("Discord-Anmeldung fehlgeschlagen. Bitte erneut versuchen."); }
         const userResponse = await fetch("https://discord.com/api/users/@me", { headers: { Authorization: `Bearer ${token.access_token}` } });
         const user = await userResponse.json();
         const allowed = userResponse.ok && await memberFor(user.id);
