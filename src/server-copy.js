@@ -92,7 +92,7 @@ export function applyBlueprint({ blueprint, targetGuild, onDone = () => {} }) {
         if (c.topic) options.topic = c.topic;
         if (c.nsfw) options.nsfw = true;
         if (c.rateLimitPerUser) options.rateLimitPerUser = c.rateLimitPerUser;
-        if ([ChannelType.GuildVoice, ChannelType.GuildStageVoice].includes(c.type)) { if (c.bitrate) options.bitrate = Math.min(c.bitrate, 96000); if (c.userLimit) options.userLimit = c.userLimit; }
+        if ([ChannelType.GuildVoice, ChannelType.GuildStageVoice].includes(c.type)) { if (c.bitrate) options.bitrate = Math.min(c.bitrate, 96000); if (c.userLimit) options.userLimit = Math.min(c.userLimit, 99); }
         if (c.type === ChannelType.GuildForum && c.tags?.length) options.availableTags = c.tags.slice(0, 20).map(t => ({ name: t.name, moderated: Boolean(t.moderated), emoji: t.emoji?.name ? { name: t.emoji.name } : null }));
         // Ankündigungs- und Forum-Channels gibt es nur auf Community-Servern – dann als normaler Text-Channel.
         try { await targetGuild.channels.create(options); job.created.channels++; }

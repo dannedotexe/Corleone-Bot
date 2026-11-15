@@ -35,6 +35,9 @@ export const PANEL_CHANNEL_KEYS = ["CHANNEL_ACCOUNT_PANEL", "CHANNEL_WEBSITE_PAN
  * bei Netzwerkfehlern wird nichts doppelt gepostet. Ticket- und Bewerbungs-Panels werden zusätzlich aktualisiert,
  * damit geänderte Kategorien sofort sichtbar sind.
  */
+/** Alle Panels mit Channel-Einstellung und Namen (z. B. für /einstellungen panels). */
+export const panelList = () => panelDefinitions().map(({ channelKey, label }) => ({ channelKey, label }));
+
 export async function ensurePanels({ db, client, config, series, only = null }) {
   const guildId = config.DISCORD_GUILD_ID;
   if (!guildId) return [];

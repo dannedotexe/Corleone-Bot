@@ -1,6 +1,6 @@
 import { CHANNEL_BINDINGS } from "../channel-setup.js";
 import { ChannelType, MessageFlags } from "discord.js";
-import { PANEL_CHANNEL_KEYS, ensurePanels } from "../panels.js";
+import { PANEL_CHANNEL_KEYS, ensurePanels, panelList } from "../panels.js";
 import { PANEL_SETTING_KEY, VIEWS, buildPanelPayload, buildView } from "../staff-panel.js";
 import { audit, getSetting, setSetting } from "../database.js";
 import { checkChannels } from "../channel-check.js";
@@ -47,6 +47,16 @@ export function createAdminCommands({ answer, can, client, config, db, finance, 
         {name:"Module",value:`AutoMod: ${config.AUTOMOD_ENABLED?"aktiv":"aus"} · Raid-Aktionen: ${config.RAID_ACTIONS.join(", ")||"keine"}\nRang-Rollenvergabe: ${config.RANK_ROLE_ASSIGNMENT_ENABLED?"aktiv":"aus"} · Webdashboard: ${config.DASHBOARD_ENABLED?"aktiv":"aus"}\nZeitzone: ${config.TIMEZONE} · Erinnerungen: ${config.EVENT_REMINDER_MINUTES.join(", ")||"aus"} Min.\nAuszahlungs-Mindestbetrag: ${config.PAYOUT_MINIMUM_CENTS!=null?formatMoney(config.PAYOUT_MINIMUM_CENTS):"keiner"}`},
         {name:`Hinweise (${warnings.length})`,value:warnings.length?warnings.map(w=>`• ${w}`).join("\n").slice(0,1024):"Keine offenen Konfigurationspunkte."},
       ],"Rollen werden in der .env gepflegt. Funktions-Channels können mit `/einstellungen kanal` gesetzt werden."),ephemeral:true});
+    }
+    if(sub==="panels"){
+      // Alle Panels in ihre eingestellten Channels senden bzw. aktualisieren (nie doppelt, siehe ensurePanels).
+      await i.deferReply({flags:MessageFlags.Ephemeral});
+      const results=await ensurePanels({db,client,config,series}).catch(error=>{console.warn("Panels:",error.message);return [];});
+      const status={posted:"✅ neu gesendet",adopted:"✅ übernommen",ok:"✅ aktualisiert",unknown:"⚠️ Discord nicht erreichbar – später erneut",channel_unavailable:"❌ Channel nicht erreichbar (Bot-Rechte prüfen)",not_ready:"⏳ noch nicht bereit",failed:"❌ Senden fehlgeschlagen (Bot-Rechte prüfen)"};
+      const done=results.map(r=>`${status[r.status]??r.status} – **${r.panel}**`);
+      const missing=panelList().filter(p=>!config[p.channelKey]).map(p=>`➖ **${p.label}** – kein Channel eingestellt (\`/einstellungen kanal\` oder Website)`);
+      audit(db,g,u,"panels.sent",null,{results:results.map(r=>`${r.panel}: ${r.status}`).slice(0,20)});
+      return i.editReply(presentInteractionPayload({embeds:[embed("📌 Panels",[...done,...missing].join("\n").slice(0,4000)||"Keine Panels eingerichtet.")]}));
     }
     if(sub==="pruefen"){
       await i.deferReply({flags:MessageFlags.Ephemeral});
