@@ -201,7 +201,6 @@ const AUTO_RULES = {
   CHANNEL_GIVEAWAYS: { name: /^giveaways?$/ },
   CHANNEL_STAFF_DASHBOARD: { name: /^staff-?dashboard$/ },
   CHANNEL_SANCTION_LOG: { name: /^sanktions?-?logs?$/ },
-  CHANNEL_PAYOUT_LIST: { name: /^auszahlungsliste$/ },
   CHANNEL_TASK_REVIEW: { name: /^aufgaben-?pr(ü|ue)fung$/ },
   CHANNEL_TASK_BOARD: { name: /^aufgaben$/ },
   CHANNEL_TASK_FORUM: { name: /^aufgaben-?logs?$/, kind: "forum" },
