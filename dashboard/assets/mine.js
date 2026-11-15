@@ -123,6 +123,11 @@ async function currentSubscription() { const reg = await navigator.serviceWorker
 async function renderApp() {
   const install = $("app-install"), body = $("push-body");
   if (!install || !body) return;
+  // Am PC (Maus statt Touch) gibt es weder App noch Handy-Benachrichtigungen – Karte dort ausblenden.
+  const desktop = window.matchMedia?.("(hover: hover) and (pointer: fine)").matches && !isIOS();
+  const panel = $("app-panel");
+  if (panel) panel.style.display = desktop ? "none" : "";
+  if (desktop) return;
   const mobile = window.matchMedia?.("(max-width: 900px)").matches;
   // 1. Installieren (nur wenn noch nicht als App geöffnet)
   install.innerHTML = isStandalone() ? "" : installPrompt
