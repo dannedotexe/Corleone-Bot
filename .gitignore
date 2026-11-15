@@ -6,3 +6,5 @@ data/
 *.sqlite-wal
 npm-debug.log*
 backups/
+.env.bak-*
+.env.tmp
