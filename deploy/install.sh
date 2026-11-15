@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Ersteinrichtung des Corleone-Bots auf der Oracle-VM – ein Befehl, fragt nur nach den Discord-Werten.
-#   cd /home/ubuntu && git clone https://github.com/dannedotexe/Yamamoto-Bot.git Corleone-Bot && bash Corleone-Bot/deploy/install.sh
+#   cd /home/ubuntu && git clone https://github.com/dannedotexe/Corleone-Bot.git && bash Corleone-Bot/deploy/install.sh
 # Fasst nur den eigenen pm2-Prozess „corleone-bot“ an; andere Bots (gambino-bot usw.) bleiben unberührt.
 # Kann gefahrlos erneut ausgeführt werden (vorhandene .env bleibt, Bot wird nur neu gestartet).
 set -euo pipefail

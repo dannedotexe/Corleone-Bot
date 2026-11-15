@@ -209,11 +209,11 @@ Statt IDs zeigt die Website Namen an, und Mitglieder werden über eine Suche aus
 
 Der Bot läuft auf derselben Oracle-VM wie die anderen pm2-Prozesse (`gambino-bot`, `chud-bot`, `hugosmp-bot`, `hugopredict`), aber vollständig getrennt: eigener Ordner `/home/ubuntu/Corleone-Bot`, eigener pm2-Prozess `corleone-bot`, eigene Datenbank `data/corleone.sqlite`, eigener Dashboard-Port **3090** (Gambino: 3080), eigener Deploy-Timer `corleone-autodeploy`. Die Skripte fassen nur `corleone-bot` an.
 
-**Ersteinrichtung (einmalig):** am einfachsten `cd /home/ubuntu && git clone https://github.com/dannedotexe/Yamamoto-Bot.git Corleone-Bot && bash Corleone-Bot/deploy/install.sh` – fragt Token (verdeckt), Client-ID und Server-ID ab, legt die `.env` an, installiert, registriert die Befehle und startet `corleone-bot`. Von Hand:
+**Ersteinrichtung (einmalig):** am einfachsten `cd /home/ubuntu && git clone https://github.com/dannedotexe/Corleone-Bot.git && bash Corleone-Bot/deploy/install.sh` – fragt Token (verdeckt), Client-ID und Server-ID ab, legt die `.env` an, installiert, registriert die Befehle und startet `corleone-bot`. Von Hand:
 
 ```sh
 cd /home/ubuntu
-git clone https://github.com/dannedotexe/Yamamoto-Bot.git Corleone-Bot
+git clone https://github.com/dannedotexe/Corleone-Bot.git
 cd Corleone-Bot
 cp .env.example .env && chmod 600 .env   # Token, Client-ID, Server-ID usw. eintragen
 npm install --omit=dev --no-package-lock
