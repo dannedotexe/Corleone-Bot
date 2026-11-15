@@ -110,7 +110,7 @@ export function startScheduler({db,client,config,series=null}) {
         await runDailyInactivity({db,client,config,reference:now}).catch(error=>console.warn("Inaktivitätsprüfung fehlgeschlagen:",error.message));
         await refreshPayoutList({db,client,config}).catch(error=>console.warn("Auszahlungsliste konnte nicht aktualisiert werden:",error.message));
         // Corleone-Emojis: fehlen welche (z. B. Upload beim Start fehlgeschlagen), stündlich erneut versuchen.
-        {const e=corleoneEmojiStatus();if(e.checkedAt&&e.active<e.total&&Date.now()-Date.parse(e.checkedAt)>3_600_000)void syncCorleoneEmojis(client).catch(()=>{});}
+        {const e=corleoneEmojiStatus();if(e.checkedAt&&e.active<e.total&&Date.now()-Date.parse(e.checkedAt)>3_600_000)void syncCorleoneEmojis(client,config.DISCORD_GUILD_ID?{get:()=>getSetting(db,config.DISCORD_GUILD_ID,"EMOJI_HASHES"),set:value=>setSetting(db,config.DISCORD_GUILD_ID,"EMOJI_HASHES",value)}:null).catch(()=>{});}
         await syncTournamentButtons({db,client,config,reference:now}).catch(error=>console.warn("Turnier-Knöpfe konnten nicht umgestellt werden:",error.message));
         await refreshTournamentBoard({db,client,config,reference:now}).catch(error=>console.warn("Turnier-Rangliste konnte nicht aktualisiert werden:",error.message));
         // Sicherheitsnetz: geänderte Vorlage alle 15 Minuten nachziehen (falls die Bearbeitung verpasst wurde).

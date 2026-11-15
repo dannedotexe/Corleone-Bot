@@ -26,3 +26,21 @@ test("Corleone-Emojis: Text, Karten und Knöpfe werden ersetzt, Unbekanntes blei
   assert.equal(body.embeds[0].fields[0].value, "<:co_warning:222> B");
   assert.deepEqual(body.components[0].components[0].emoji, { id: "111", name: "co_check", animated: false });
 });
+
+test("Corleone-Emojis: neues Bild ersetzt das alte Bot-Emoji, unverändertes bleibt", async () => {
+  const { syncCorleoneEmojis } = await import("../src/emojis.js");
+  const { EMOJI_SET } = await import("../src/emoji-set.js");
+  const names = [...new Set(Object.values(EMOJI_SET).map(([name]) => name))];
+  let next = 1; const deleted = [], created = [];
+  const emoji = name => ({ id: String(next++), name, delete: async () => { deleted.push(name); } });
+  const existing = new Map(names.map(name => { const e = emoji(name); return [e.id, e]; }));
+  const client = { application: { id: "app", emojis: { fetch: async () => existing, create: async ({ name }) => { created.push(name); return emoji(name); } } } };
+  let stored = null;
+  const store = { get: () => stored, set: value => { stored = value; } };
+  assert.equal(await syncCorleoneEmojis(client, store), names.length, "ohne Fingerabdruck einmalig alle ersetzt");
+  assert.equal(deleted.length, names.length);
+  deleted.length = 0; created.length = 0;
+  for (const name of names) existing.set(name, emoji(name));
+  assert.equal(await syncCorleoneEmojis(client, store), 0, "danach bleibt alles stehen");
+  assert.deepEqual([deleted.length, created.length], [0, 0]);
+});

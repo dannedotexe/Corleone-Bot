@@ -55,6 +55,8 @@ import { conditionText, decideTask, refreshTaskBoard } from "./task-logs.js";
 import { LOGBOOK_FORUMS, applyLogbookTemplate, createMissingLogbooks, logbookStatus, resetLogbookForum } from "./logbooks.js";
 import { RESET_CONFIRM_WORD, backupBeforeReset, resetData, resetPreview } from "./services/reset.js";
 import { PANEL_TEXTS, createTextsService } from "./services/texts.js";
+import { applyBlueprint, copyJob } from "./server-copy.js";
+import { BLUEPRINT_CONFIRM_WORD, SETTINGS_CONFIRM_WORD, applySettingsImport, previewBlueprint, resolveSettingsImport, validateBlueprint } from "./nexus-import.js";
 import { eventButtons, eventEmbed, giveawayButtons, giveawayCard, parseEventDate, ticketActions, ticketCard } from "./commands.js";
 
 /** Fehler mit HTTP-Status und einer für Staff verständlichen Meldung. */
@@ -404,6 +406,11 @@ export function createDashboardApi({ db, client, config, settings = null, series
     [/^\/api\/reset$/, async member => {
       needOwner(member);
       return { areas: resetPreview(db, guildId), confirmWord: RESET_CONFIRM_WORD };
+    }],
+    // Import aus dem Nexus-Bot: Fortschritt des Server-Aufbaus (läuft im Hintergrund).
+    [/^\/api\/import\/blueprint\/status$/, async member => {
+      needOwner(member);
+      return { job: copyJob(guildId) };
     }],
     [/^\/api\/roles$/, async member => {
       need(member, "staff", "Staff-Rolle");
@@ -1002,6 +1009,36 @@ export function createDashboardApi({ db, client, config, settings = null, series
       const result = await sendWeeklyReport({ db, client, config, force: true });
       if (!result.sent) throw new HttpError(502, "Der Wochenbericht konnte nicht gesendet werden (Channel nicht erreichbar oder keine Rechte).");
       return { message: "Wochenbericht der Vorwoche gesendet." };
+    }],
+    // Import aus dem Nexus-Bot (nur Bot-Owner). Erst Vorschau, dann mit Bestätigungswort ausführen.
+    [/^\/api\/import\/blueprint(\/preview)?$/, async (member, body, [, preview]) => {
+      needOwner(member);
+      const g = await guild();
+      try { validateBlueprint(body.blueprint); } catch (error) { throw new HttpError(400, error.message); }
+      if (preview) return { preview: await previewBlueprint({ blueprint: body.blueprint, guild: g }) };
+      if (String(body.confirm ?? "").trim().toUpperCase() !== BLUEPRINT_CONFIRM_WORD) throw new HttpError(400, `Zur Bestätigung bitte genau „${BLUEPRINT_CONFIRM_WORD}“ eintippen.`);
+      let job;
+      try {
+        job = applyBlueprint({ blueprint: body.blueprint, targetGuild: g, onDone: done => audit(db, guildId, member.id, "admin.import", null, { name: "Server-Aufbau aus Nexus", ...done.created, skipped: done.skipped, errors: done.errors.length }) });
+      } catch (error) { throw new HttpError(409, error.message); }
+      audit(db, guildId, member.id, "admin.import", null, { name: "Server-Aufbau gestartet", source: String(body.blueprint.source ?? "").slice(0, 100) });
+      return { message: "Der Aufbau läuft im Hintergrund – der Fortschritt erscheint unten.", job };
+    }],
+    [/^\/api\/import\/settings(\/preview)?$/, async (member, body, [, preview]) => {
+      needOwner(member);
+      if (!settings || !texts) throw new HttpError(409, "Einstellungen über die Website brauchen DISCORD_GUILD_ID in der .env.");
+      const g = await guild();
+      let resolved;
+      try { resolved = await resolveSettingsImport({ data: body.data, guild: g }); } catch (error) { throw new HttpError(400, error.message); }
+      const view = { ...resolved, changes: resolved.changes.map(({ key, label, display }) => ({ key, label, display })), texts: resolved.texts.map(({ panel, label }) => ({ panel, label })) };
+      if (preview) return { preview: view };
+      if (String(body.confirm ?? "").trim().toUpperCase() !== SETTINGS_CONFIRM_WORD) throw new HttpError(400, `Zur Bestätigung bitte genau „${SETTINGS_CONFIRM_WORD}“ eintippen.`);
+      const result = applySettingsImport({ resolved, settings, textsService: texts, actorId: member.id, actorRoleIds: member.roles, actorIsOwner: member.owner });
+      audit(db, guildId, member.id, "admin.import", null, { name: "Einstellungen aus Nexus", applied: result.applied.length, texts: result.textsApplied.length, failed: result.failed.length, missing: resolved.missing.length });
+      // Panels in den neu gesetzten Channels posten bzw. mit den neuen Texten aktualisieren.
+      const panelKeys = [...new Set([...result.applied.filter(key => PANEL_CHANNEL_KEYS.includes(key)), ...result.textsApplied.map(panel => PANEL_TEXTS[panel]?.channelKey).filter(key => key && config[key])])];
+      if (panelKeys.length) await ensurePanels({ db, client, config, series, only: panelKeys }).catch(() => []);
+      return { message: `${result.applied.length} Einstellungen und ${result.textsApplied.length} Panel-Texte übernommen${result.failed.length ? `, ${result.failed.length} fehlgeschlagen` : ""}.`, result, missing: resolved.missing, settings: settings.describe() };
     }],
     [/^\/api\/reset$/, async (member, body) => {
       needOwner(member);

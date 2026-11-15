@@ -43,6 +43,8 @@ const finance=createFinance(db);
 const handlers=createHandler({db,finance,config,client,settings,series});
 const dashboard=createDashboard({db,client,config,settings,series});
 
+// Merkt sich, welche Emoji-Bilder schon hochgeladen sind (neues Design → alte Bot-Emojis werden ersetzt).
+const emojiStore=config.DISCORD_GUILD_ID?{get:()=>getSetting(db,config.DISCORD_GUILD_ID,"EMOJI_HASHES"),set:value=>setSetting(db,config.DISCORD_GUILD_ID,"EMOJI_HASHES",value)}:null;
 client.once(Events.ClientReady,ready=>{
   console.log(`Corleone Bot bereit als ${ready.user.tag} (Version ${currentVersion()}).`);
   startScheduler({db,client,config,series});
@@ -55,7 +57,7 @@ client.once(Events.ClientReady,ready=>{
 const ADOPT_NAMES={CHANNEL_WELCOME:/^\W*willkommen$/i,CHANNEL_ABSENCES:/^\W*abmeldungen$/i,CHANNEL_BOT_SUGGESTIONS:/^\W*bot-?vorschl(ä|ae)ge$/i,CHANNEL_WEBSITE_PANEL:/^\W*dashboard$/i,CHANNEL_INVITE_TOURNAMENT:/^\W*invite-?turnier$/i};
 async function adoptNamedDefaults(){
   // Eigene Corleone-Emojis hochladen bzw. laden, bevor Panels und Karten gebaut werden.
-  await syncCorleoneEmojis(client).then(n=>{if(n)console.log(`${n} Corleone-Emojis hochgeladen.`);}).catch(error=>console.warn("Corleone-Emojis:",error.message));
+  await syncCorleoneEmojis(client,emojiStore).then(n=>{if(n)console.log(`${n} Corleone-Emojis hochgeladen.`);}).catch(error=>console.warn("Corleone-Emojis:",error.message));
   if(!settings)return;
   const guild=await client.guilds.fetch(config.DISCORD_GUILD_ID).catch(()=>null);
   if(!guild)return;

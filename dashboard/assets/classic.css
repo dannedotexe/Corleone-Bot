@@ -188,7 +188,7 @@ button.danger#dialog-submit{background:var(--red);border-color:var(--red);color:
 /* ---------- Discord-Vorschau (bewusst im Discord-Look) ---------- */
 .dc-preview{background:#313338;border-radius:var(--radius);padding:14px;position:sticky;top:64px;font-family:"gg sans","Noto Sans",Arial,sans-serif}
 .dc-head{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:14px;color:#f2f3f5}.dc-head img{width:32px;height:32px;border-radius:50%}.dc-app{background:#5865f2;color:#fff;font-size:10px;padding:1px 5px;border-radius:4px}
-.dc-embed{background:#2b2d31;border-left:4px solid #c1121f;border-radius:4px;padding:10px 14px 12px;max-width:520px;color:#dbdee1;font-size:13px;line-height:1.4}
+.dc-embed{background:#2b2d31;border-left:4px solid #c9a24b;border-radius:4px;padding:10px 14px 12px;max-width:520px;color:#dbdee1;font-size:13px;line-height:1.4}
 .dc-author{font-size:12px;font-weight:600;color:#f2f3f5;margin-bottom:6px}.dc-title{font-weight:700;font-size:15px;color:#f2f3f5;margin-bottom:6px}.dc-desc{margin-bottom:8px;overflow-wrap:anywhere;color:#dbdee1}
 .dc-fields{display:flex;flex-wrap:wrap;gap:8px 16px}.dc-field{flex:1 1 100%;min-width:0}.dc-field.inline{flex:1 1 40%}.dc-field>b{display:block;color:#f2f3f5;font-size:13px;margin-bottom:2px}.dc-field div b,.dc-desc b{color:#f2f3f5}
 .dc-footer{font-size:11px;color:#b5bac1;margin-top:10px}.dc-buttons{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.dc-btn{background:#4e5058;color:#fff;border-radius:4px;padding:6px 14px;font-size:13px}.dc-btn.primary{background:#5865f2}.dc-btn.ok{background:#248046}.dc-btn.danger{background:#da373c}

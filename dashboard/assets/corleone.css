@@ -1,6 +1,6 @@
 /* Corleone – Dashboard · Design „Corleone“
    Liegt als zweite Ebene über style.css (gleiche Struktur, eigene Haltung):
-   Lackschwarz, Corleone-Rot, dezentes Gold. Hell = Reispapier.
+   Schwarz, Weinrot, Gold – der Pate. Hell = Elfenbein.
    Auffällig ist nur eins: Seitentitel in Bodoni (Giambattista Bodoni). Alles andere bleibt ruhig.
    Wählbar unter Darstellung → „Corleone“; Standard ist der iOS-Stil. */
 
@@ -9,21 +9,21 @@
 @font-face{font-family:"Archivo";src:url(/assets/fonts/archivo.woff2) format("woff2");font-weight:100 900;font-style:normal;font-display:swap;
   unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 
-/* ---------- Tokens: Lack (dunkel) ---------- */
+/* ---------- Tokens: Nacht (dunkel) ---------- */
 :root[data-design=corleone]{
   --font:"Archivo",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
   --display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
-  --night:#0b0a0a;        /* Lackschwarz, Grund */
+  --night:#0b0a0a;        /* Schwarz, Grund */
   --night-raised:#161313; /* Flächen */
   --night-high:#231d1d;   /* gehobene Flächen, Hover */
-  --brass:#c9a24b;        /* dezentes Gold: aktiv, Linien, Fokus */
-  --oxblood:#c1121f;      /* Corleone-Rot: Hauptaktionen, Marke */
+  --brass:#c9a24b;        /* Gold: aktiv, Linien, Fokus */
+  --oxblood:#8b1e2d;      /* Weinrot: Hauptaktionen, Marke */
   --ivory:#f2ece4;        /* Schrift */
   --bg:var(--night);--surface:var(--night-raised);--surface2:#1c1818;--surface3:var(--night-high);--elevated:#1c1818;
-  --fill:rgba(193,18,31,.12);--fill2:rgba(242,236,228,.06);--hover:rgba(242,236,228,.07);
+  --fill:rgba(139,30,45,.16);--fill2:rgba(242,236,228,.06);--hover:rgba(242,236,228,.07);
   --line:rgba(201,162,75,.14);--line2:rgba(201,162,75,.26);
   --text:var(--ivory);--muted:rgba(242,236,228,.64);--faint:rgba(242,236,228,.38);
-  --accent:var(--oxblood);--accent-press:#9d0d18;--accent-soft:rgba(193,18,31,.22);--on-accent:#fff;
+  --accent:var(--oxblood);--accent-press:#6e1723;--accent-soft:rgba(139,30,45,.28);--on-accent:#fff;
   --gold:var(--brass);--blue:var(--brass);--blue-soft:rgba(201,162,75,.16);
   --green:#5fc48a;--green-text:#7fd6a2;--green-soft:rgba(95,196,138,.14);
   --red:#e5383b;--red-text:#f07c7e;--red-soft:rgba(229,56,59,.16);--danger:#f07c7e;
@@ -32,15 +32,15 @@
   --shadow:0 10px 30px rgba(0,0,0,.4);--shadow-lg:0 26px 70px rgba(0,0,0,.55);
   --radius-xl:16px;--radius:14px;--radius-md:12px;--radius-sm:10px;
 }
-/* ---------- Tokens: Reispapier (hell) ---------- */
+/* ---------- Tokens: Elfenbein (hell) ---------- */
 :root[data-design=corleone][data-theme=light]{
   --night:#f4f0ea;--night-raised:#fbf8f3;--night-high:#e9e3da;
-  --brass:#8a6a1f;--oxblood:#a50f1a;--ivory:#1a1414;
+  --brass:#8a6a1f;--oxblood:#7a1a28;--ivory:#1a1414;
   --surface2:#f0ebe3;--elevated:#fffdf9;
-  --fill:rgba(165,15,26,.07);--fill2:rgba(26,20,20,.05);--hover:rgba(26,20,20,.06);
+  --fill:rgba(122,26,40,.07);--fill2:rgba(26,20,20,.05);--hover:rgba(26,20,20,.06);
   --line:rgba(26,20,20,.12);--line2:rgba(26,20,20,.21);
   --muted:rgba(26,20,20,.66);--faint:rgba(26,20,20,.4);
-  --accent-press:#7f0b14;--accent-soft:rgba(165,15,26,.1);--on-accent:#fff;
+  --accent-press:#5e1420;--accent-soft:rgba(122,26,40,.1);--on-accent:#fff;
   --blue-soft:rgba(138,106,31,.12);
   --green:#2f8f5b;--green-text:#25734a;--green-soft:rgba(47,143,91,.12);
   --red:#c0303a;--red-text:#a4222b;--red-soft:rgba(192,48,58,.1);--danger:#a4222b;

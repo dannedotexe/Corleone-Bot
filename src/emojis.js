@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { MessagePayload } from "discord.js";
@@ -73,8 +74,12 @@ function patchPayloads() {
   };
 }
 
-/** Lädt fehlende Emojis als Bot-Emojis hoch und aktiviert die Ersetzung. Gibt die Zahl neu hochgeladener zurück. */
-export async function syncCorleoneEmojis(client) {
+/**
+ * Lädt fehlende Emojis als Bot-Emojis hoch und aktiviert die Ersetzung. Gibt die Zahl neu hochgeladener zurück.
+ * Mit store (get/set, z. B. guild_settings) wird je Emoji ein Fingerabdruck des Bildes gemerkt: Ändert sich das Bild
+ * (neues Design), wird das alte Bot-Emoji ersetzt. Emojis ohne gemerkten Fingerabdruck gelten einmalig als veraltet.
+ */
+export async function syncCorleoneEmojis(client, store = null) {
   status.checkedAt = new Date().toISOString(); status.error = null; status.failed = 0;
   if (!client.application?.id) await client.application?.fetch?.().catch(() => {});
   const manager = client.application?.emojis;
@@ -84,13 +89,24 @@ export async function syncCorleoneEmojis(client) {
   for (const emoji of existing.values()) ids.set(emoji.name, emoji.id);
   let uploaded = 0;
   const wanted = [...new Set(Object.values(EMOJI_SET).map(([name]) => name))];
+  let hashes = {};
+  try { hashes = JSON.parse(store?.get() ?? "{}") ?? {}; } catch { hashes = {}; }
+  const byName = new Map([...existing.values()].map(emoji => [emoji.name, emoji]));
   for (const name of wanted) {
-    if (ids.has(name)) continue;
     const file = path.join(DIR, `${name}.png`);
     if (!fs.existsSync(file)) continue;
-    try { const emoji = await manager.create({ attachment: file, name }); ids.set(emoji.name, emoji.id); uploaded++; }
+    const hash = store ? createHash("sha1").update(fs.readFileSync(file)).digest("hex").slice(0, 16) : null;
+    if (ids.has(name)) {
+      if (!store || hashes[name] === hash) continue;
+      // Altes Bild: Bot-Emoji löschen und neu hochladen (Name bleibt gleich).
+      const old = byName.get(name);
+      if (old && !(await old.delete().then(() => true).catch(error => { console.warn(`Emoji ${name} konnte nicht ersetzt werden:`, error.message); return false; }))) continue;
+      ids.delete(name);
+    }
+    try { const emoji = await manager.create({ attachment: file, name }); ids.set(emoji.name, emoji.id); uploaded++; if (hash) hashes[name] = hash; }
     catch (error) { status.failed++; status.error = `Hochladen fehlgeschlagen (${name}): ${error.message}`; console.warn(`Emoji ${name} konnte nicht hochgeladen werden:`, error.message); }
   }
+  if (store) { try { store.set(JSON.stringify(hashes)); } catch (error) { console.warn("Emoji-Stand konnte nicht gespeichert werden:", error.message); } }
   patchPayloads();
   return uploaded;
 }

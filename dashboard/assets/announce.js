@@ -29,7 +29,7 @@ function infoCardForm(card = null) {
     { name: "title", label: "Titel", value: c.title, max: 256 },
     { name: "description", label: "Text", hint: "(**fett**, *kursiv*, Zeilenumbrüche wie in Discord)", type: "textarea", rows: 16, max: 4000, value: c.description },
     { name: "footer", label: "Fußzeile", hint: "(optional)", value: c.footer, max: 2048 },
-    { name: "color", label: "Farbe", hint: "(z. B. #c1121f)", value: c.color ?? "#c1121f", max: 7 },
+    { name: "color", label: "Farbe", hint: "(z. B. #c9a24b)", value: c.color ?? "#c9a24b", max: 7 },
   ];
   openForm({ eyebrow: "INFO-KARTE", title: card ? "Info-Karte bearbeiten" : "Neue Info-Karte", wide: true, fields, submit: card ? "In Discord speichern" : "Posten",
     intro: card ? "Beim Speichern wird die Nachricht in Discord direkt geändert." : "Der Bot postet die Karte im gewählten Channel.",
@@ -44,7 +44,7 @@ function renderAnnounceForm() {
     <label>Text über der Karte <small>(optional, max. 1800 Zeichen)</small><textarea name="content" rows="2" maxlength="1800" placeholder="z. B. Wichtige Info für alle!"></textarea></label>
     <label>Titel der Karte<input name="title" maxlength="256" placeholder="z. B. Familientreffen am Freitag"></label>
     <label>Beschreibung <small>(**fett**, Zeilenumbrüche wie in Discord)</small><textarea name="description" rows="6" maxlength="4000"></textarea></label>
-    <div class="form-row"><label>Farbe<input name="color" type="color" value="#c1121f"></label><label>Fußzeile <small>(optional)</small><input name="footer" maxlength="200" placeholder="CORLEONE  •  Leitung"></label></div>
+    <div class="form-row"><label>Farbe<input name="color" type="color" value="#c9a24b"></label><label>Fußzeile <small>(optional)</small><input name="footer" maxlength="200" placeholder="CORLEONE  •  Leitung"></label></div>
     <label>Bild <small>(optional, https-Link zu einem Bild)</small><input name="imageUrl" maxlength="500" placeholder="https://…"></label>
     <fieldset class="checks role-checks"><legend>Rollen erwähnen <small>(optional, max. 5)</small></legend>${caps.announceEveryone ? '<label class="check"><input type="checkbox" name="pingEveryone"> @everyone</label>' : ""}${annState.roles.map(r => `<label class="check"><input type="checkbox" name="pingRole" value="${escapeHtml(r.id)}"> @${escapeHtml(r.name)}</label>`).join("")}</fieldset>
     <label>Später senden <small>(leer = sofort, Zeitzone ${escapeHtml(state.timezone)})</small><input name="scheduledAt" type="datetime-local"></label>
@@ -69,7 +69,7 @@ function renderAnnouncePreview() {
   const image = !/^https:\/\//i.test(v.imageUrl) ? "" : /^https:\/\/cdn\.discordapp\.com\//i.test(v.imageUrl) ? `<img class="dc-image" src="${escapeHtml(v.imageUrl)}" alt="" referrerpolicy="no-referrer">` : `<div class="dc-image-placeholder">Bild wird in Discord angezeigt</div>`;
   $("announce-preview").innerHTML = `<div class="sub-label">#${escapeHtml(annState.channels.find(c => c.id === v.channelId)?.name ?? "channel")}</div><div class="dc-head"><img src="/brand/logo" alt=""><b>Corleone Bot</b><span class="dc-app">APP</span></div>${content ? `<div class="dc-desc">${content}</div>` : ""}${hasEmbed ? `<div class="dc-embed">${v.title ? `<div class="dc-title">${escapeHtml(v.title)}</div>` : ""}${v.description ? `<div class="dc-desc">${markdown(v.description)}</div>` : ""}${image}${v.footer ? `<div class="dc-footer">${escapeHtml(v.footer)}</div>` : ""}</div>` : ""}${!content && !hasEmbed ? '<p class="muted">Schreib einen Text oder Titel – die Vorschau erscheint hier.</p>' : ""}`;
   // Farbe per CSSOM setzen: Inline-style-Attribute blockiert die Content-Security-Policy.
-  const card = $("announce-preview").querySelector(".dc-embed"); if (card) card.style.borderLeftColor = /^#[0-9a-f]{6}$/i.test(v.color) ? v.color : "#c1121f";
+  const card = $("announce-preview").querySelector(".dc-embed"); if (card) card.style.borderLeftColor = /^#[0-9a-f]{6}$/i.test(v.color) ? v.color : "#c9a24b";
   $("announce-submit").textContent = v.scheduledAt ? "Planen" : "Jetzt senden";
 }
 
@@ -110,7 +110,7 @@ Object.assign(actions, {
   "announce-cancel": ({ id }) => confirmAction("Geplante Ankündigung abbrechen?", "Sie wird nicht gesendet.", "Abbrechen", () => post(`/api/announcements/${id}/cancel`)),
   "announce-copy": ({ id }) => {
     const a = annState.items.find(item => item.id === id), f = $("announce-form"); if (!a) return;
-    for (const [name, value] of Object.entries({ channelId: a.channel_id, content: a.content, title: a.embed.title ?? "", description: a.embed.description ?? "", color: a.embed.color ?? "#c1121f", footer: a.embed.footer ?? "", imageUrl: a.embed.imageUrl ?? "", scheduledAt: "" })) if (f.elements[name]) f.elements[name].value = value;
+    for (const [name, value] of Object.entries({ channelId: a.channel_id, content: a.content, title: a.embed.title ?? "", description: a.embed.description ?? "", color: a.embed.color ?? "#c9a24b", footer: a.embed.footer ?? "", imageUrl: a.embed.imageUrl ?? "", scheduledAt: "" })) if (f.elements[name]) f.elements[name].value = value;
     f.querySelectorAll('input[name="pingRole"]').forEach(box => { box.checked = a.ping_role_ids.includes(box.value); });
     if (f.elements.pingEveryone) f.elements.pingEveryone.checked = Boolean(a.ping_everyone);
     renderAnnouncePreview(); f.scrollIntoView({ behavior: "smooth", block: "start" });

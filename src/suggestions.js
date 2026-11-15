@@ -11,7 +11,7 @@ import { audit, getSetting, setSetting } from "./database.js";
 export const SUGGESTION_PANEL_KEY = "PANEL_BOT_SUGGESTIONS";
 export const KINDS = { general: { emoji: "💡", label: "Vorschlag" }, idea: { emoji: "💡", label: "Neue Idee" }, improve: { emoji: "🔧", label: "Verbesserung" }, change: { emoji: "✏️", label: "Änderung" } };
 export const STATUS = {
-  open: { label: "🕓 Offen", color: 0xc1121f },
+  open: { label: "🕓 Offen", color: 0xc9a24b },
   accepted: { label: "✅ Angenommen – kommt", color: 0x0a84ff },
   done: { label: "🛠️ Umgesetzt", color: 0x30d158 },
   rejected: { label: "❌ Abgelehnt", color: 0xff453a },
@@ -20,7 +20,7 @@ const DAILY_LIMIT = 5;
 const unix = iso => Math.floor(new Date(iso).getTime() / 1000);
 
 export function buildSuggestionPanelPayload() {
-  const embed = new EmbedBuilder().setColor(0xc1121f).setAuthor({ name: "CORLEONE  •  BOT-VORSCHLÄGE" }).setTitle("💡 Wie können wir den Bot besser machen?")
+  const embed = new EmbedBuilder().setColor(0xc9a24b).setAuthor({ name: "CORLEONE  •  BOT-VORSCHLÄGE" }).setTitle("💡 Wie können wir den Bot besser machen?")
     .setDescription("✍️ Schreib deinen Vorschlag einfach als Nachricht in diesen Channel");
   return { embeds: [embed], components: [] };
 }

@@ -2,7 +2,7 @@
 const settingsState = { settings: [], sections: [], roles: [], channels: [], categories: [], section: "access" };
 const SOURCE_LABELS = { website: "angepasst", env: "aus .env", standard: "" };
 // Zusatzbereiche ohne Einstellungen (eigene Panels auf der Seite).
-const SETTINGS_EXTRAS = [{ id: "texts", label: "Discord-Texte", icon: "✏️" }, { id: "check", label: "Channel-Prüfung", icon: "🩺" }, { id: "danger", label: "Gefahrenzone", icon: "⚠️" }];
+const SETTINGS_EXTRAS = [{ id: "texts", label: "Discord-Texte", icon: "✏️" }, { id: "check", label: "Channel-Prüfung", icon: "🩺" }, { id: "import", label: "Import aus Nexus", icon: "📥" }, { id: "danger", label: "Gefahrenzone", icon: "⚠️" }];
 const slug = text => text.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
 function pickList(items, selected, kind) {
@@ -144,7 +144,7 @@ function renderPreview() {
     : panel.id === "ticket" ? `<div class="dc-select">${escapeHtml(values.placeholder)}<span>⌄</span></div>` : panel.id === "staffDashboard" ? '<div class="dc-select">📂 Ansicht wählen …<span>⌄</span></div>' : "";
   $("texts-preview").innerHTML = `<div class="dc-head"><img src="/brand/logo" alt=""><b>Corleone Bot</b><span class="dc-app">APP</span></div>${panel.id === "welcome" && values.content ? `<div class="dc-desc">${markdown(values.content)}</div>` : ""}<div class="dc-embed">${values.author ? `<div class="dc-author">${escapeHtml(values.author)}</div>` : ""}${values.title ? `<div class="dc-title">${escapeHtml(values.title)}</div>` : ""}${values.description ? `<div class="dc-desc">${markdown(values.description)}</div>` : ""}<div class="dc-fields">${[...fields, ...extras].map(([name, value, inline]) => `<div class="dc-field ${inline ? "inline" : ""}"><b>${escapeHtml(name)}</b><div>${markdown(value)}</div></div>`).join("")}</div>${values.footer ? `<div class="dc-footer">${escapeHtml(values.footer)}</div>` : ""}</div>${buttons}`;
   const embed = $("texts-preview").querySelector(".dc-embed");
-  if (embed) embed.style.borderLeftColor = /^#[0-9a-f]{6}$/i.test(values.color ?? "") ? values.color : "#c1121f";
+  if (embed) embed.style.borderLeftColor = /^#[0-9a-f]{6}$/i.test(values.color ?? "") ? values.color : "#c9a24b";
   document.querySelectorAll("#texts-form [data-text]").forEach(input => { const counter = input.parentElement.querySelector(".counter"); if (counter && input.maxLength > 0) counter.textContent = `${input.value.length}/${input.maxLength}`; });
 }
 function renderEventPreview(values) {
@@ -154,7 +154,7 @@ function renderEventPreview(values) {
   $("texts-preview").innerHTML = `<div class="sub-label">#event-ankündigungen</div>${head}<div class="dc-embed">${author}<div class="dc-desc">${fill(values.announceText)}</div></div><div class="dc-buttons"><span class="dc-btn">${escapeHtml(values.announceButton)} ↗</span></div>
     <div class="sub-label spaced">#event-anmeldung</div>${head}<div class="dc-embed">${author}<div class="dc-title">📅 Bizwar</div><div class="dc-fields"><div class="dc-field inline"><b>🕒 Beginn</b><div>Mittwoch, 14. Oktober 2026 19:05<br>in 2 Stunden</div></div><div class="dc-field"><b>🙋 ${escapeHtml(values.participantsLabel)} (0)</b><div>${escapeHtml(values.emptyParticipants)}</div></div></div><div class="dc-footer">${escapeHtml(values.seriesFooter)} · täglich · 01:05, 19:05 Uhr</div></div><div class="dc-buttons"><span class="dc-btn ok">${escapeHtml(values.joinButton)}</span><span class="dc-btn">${escapeHtml(values.leaveButton)}</span><span class="dc-btn">${escapeHtml(values.dmButton)}</span></div>
     <div class="sub-label spaced">Erinnerung (Antwort auf die Karte)</div>${head}<div class="dc-embed"><div class="dc-desc">${fill(values.reminderText)}</div></div>`;
-  $("texts-preview").querySelectorAll(".dc-embed").forEach(embed => { embed.style.borderLeftColor = /^#[0-9a-f]{6}$/i.test(values.color ?? "") ? values.color : "#c1121f"; });
+  $("texts-preview").querySelectorAll(".dc-embed").forEach(embed => { embed.style.borderLeftColor = /^#[0-9a-f]{6}$/i.test(values.color ?? "") ? values.color : "#c9a24b"; });
   document.querySelectorAll("#texts-form [data-text]").forEach(input => { const counter = input.parentElement.querySelector(".counter"); if (counter && input.maxLength > 0) counter.textContent = `${input.value.length}/${input.maxLength}`; });
 }
 function renderTexts() {
@@ -235,4 +235,80 @@ document.addEventListener("input", event => {
 document.addEventListener("change", event => {
   const pick = event.target.closest?.(".pick");
   if (pick && event.target.type === "checkbox") pick.querySelector(".pick-count").textContent = `${pick.querySelectorAll("input[type=checkbox]:checked").length} ausgewählt`;
+});
+
+// ------------------------------------------------------------------ Import aus dem Nexus-Bot (nur Bot-Owner)
+// Dateien kommen aus dem Nexus-Bot (Status → „Server kopieren“ / „Einstellungen exportieren“). Erst Vorschau, dann
+// mit Bestätigungswort ausführen. Der Server prüft Rechte und Inhalt noch einmal selbst.
+const importState = { blueprint: null, settings: null, timer: null };
+async function readImportFile(input) {
+  const file = input.files?.[0];
+  if (!file) return null;
+  if (file.size > 2_500_000) throw new Error("Die Datei ist zu groß (max. 2,5 MB).");
+  try { return JSON.parse(await file.text()); } catch { throw new Error("Die Datei ist kein gültiges JSON."); }
+}
+const importList = (items, empty) => items.length ? `<ul class="import-list">${items.join("")}</ul>` : `<p class="muted">${empty}</p>`;
+const confirmRow = (id, word, action, label) => `<div class="import-confirm"><label>Zur Bestätigung „${escapeHtml(word)}“ eintippen<input id="${id}" maxlength="20" placeholder="${escapeHtml(word)}" autocomplete="off"></label><button type="button" class="primary" data-action="${action}">${label}</button></div>`;
+
+function renderBlueprintPreview(p) {
+  $("import-blueprint-result").innerHTML = `<p><b>Aufbau von „${escapeHtml(p.source)}“</b>${p.capturedAt ? ` · Stand ${escapeHtml(new Date(p.capturedAt).toLocaleString("de-DE"))}` : ""}</p>
+    <div class="import-stats"><span><b>${p.roles.create}</b> von ${p.roles.total} Rollen neu</span><span><b>${p.categories.create}</b> von ${p.categories.total} Kategorien neu</span><span><b>${p.channels.create}</b> von ${p.channels.total} Channels neu</span></div>
+    ${p.roles.names.length ? `<p class="subtle">Neue Rollen: ${p.roles.names.map(escapeHtml).join(", ")}${p.roles.create > p.roles.names.length ? " …" : ""}</p>` : ""}
+    <p class="subtle">Vorhandenes mit gleichem Namen bleibt, es wird nichts gelöscht. Der Bot braucht dafür Administrator-Rechte und seine Rolle ganz oben.</p>
+    ${confirmRow("import-blueprint-confirm", p.confirmWord, "import-blueprint-run", "Aufbau starten")}`;
+}
+function renderBlueprintJob(job) {
+  if (!job) return;
+  const pct = job.total ? Math.round(job.done / job.total * 100) : 0;
+  const state = job.status === "running" ? "⏳" : job.status === "done" ? "✅" : "❌";
+  $("import-blueprint-result").innerHTML = `<p><b>${state} ${escapeHtml(job.step)}</b></p>
+    <div class="import-progress"><span></span></div>
+    <p class="subtle">${job.done} von ${job.total} Schritten · neu: ${job.created.roles} Rollen, ${job.created.categories} Kategorien, ${job.created.channels} Channels · ${job.skipped} schon vorhanden</p>
+    ${job.errors.length ? `<p><b>Hinweise:</b></p>${importList(job.errors.map(e => `<li>${escapeHtml(e)}</li>`), "")}` : ""}`;
+  const bar = $("import-blueprint-result").querySelector(".import-progress span");
+  if (bar) bar.style.width = `${pct}%`;
+}
+async function pollBlueprint() {
+  clearTimeout(importState.timer);
+  const { job } = await api("/api/import/blueprint/status");
+  renderBlueprintJob(job);
+  if (job?.status === "running") importState.timer = setTimeout(() => pollBlueprint().catch(() => {}), 1500);
+  else if (job?.status === "done") notify("Server-Aufbau fertig. Jetzt kannst du die Einstellungen hochladen.");
+}
+function renderSettingsPreview(p) {
+  $("import-settings-result").innerHTML = `<p><b>Einstellungen von „${escapeHtml(p.source)}“</b></p>
+    <h3>Wird übernommen (${p.changes.length} Einstellungen, ${p.texts.length} Panel-Texte)</h3>
+    ${importList([...p.changes.map(c => `<li><b>${escapeHtml(c.label)}</b> → ${escapeHtml(c.display)}</li>`), ...p.texts.map(t => `<li><b>Texte: ${escapeHtml(t.label)}</b> (Nexus → Corleone, Farben bleiben)</li>`)], "Nichts Passendes gefunden.")}
+    <h3>Nicht gefunden – bitte selbst einstellen (${p.missing.length})</h3>
+    ${importList(p.missing.map(m => `<li><b>${escapeHtml(m.label)}</b>: ${escapeHtml(m.reason)}</li>`), "Alles gefunden.")}
+    ${p.changes.length || p.texts.length ? confirmRow("import-settings-confirm", p.confirmWord, "import-settings-run", "Übernehmen") : ""}`;
+}
+document.addEventListener("change", async event => {
+  const id = event.target?.id;
+  if (id !== "import-blueprint-file" && id !== "import-settings-file") return;
+  const target = id === "import-blueprint-file" ? "import-blueprint-result" : "import-settings-result";
+  try {
+    const data = await readImportFile(event.target);
+    if (!data) return;
+    $(target).innerHTML = '<p class="muted">Prüfe die Datei …</p>';
+    if (id === "import-blueprint-file") { importState.blueprint = data; renderBlueprintPreview((await post("/api/import/blueprint/preview", { blueprint: data })).preview); }
+    else { importState.settings = data; renderSettingsPreview((await post("/api/import/settings/preview", { data })).preview); }
+  } catch (error) { $(target).innerHTML = `<p class="lvl-error">${escapeHtml(error.message)}</p>`; event.target.value = ""; }
+});
+Object.assign(actions, {
+  "import-blueprint-run": async () => {
+    if (!importState.blueprint) throw new Error("Bitte zuerst die Aufbau-Datei auswählen.");
+    const data = await post("/api/import/blueprint", { blueprint: importState.blueprint, confirm: $("import-blueprint-confirm")?.value ?? "" });
+    notify(data.message); renderBlueprintJob(data.job); await pollBlueprint();
+  },
+  "import-blueprint-status": () => pollBlueprint(),
+  "import-settings-run": async () => {
+    if (!importState.settings) throw new Error("Bitte zuerst die Einstellungs-Datei auswählen.");
+    const data = await post("/api/import/settings", { data: importState.settings, confirm: $("import-settings-confirm")?.value ?? "" });
+    notify(data.message, data.result.failed.length ? "error" : "success");
+    $("import-settings-result").innerHTML = `<p><b>${escapeHtml(data.message)}</b></p>
+      ${data.result.failed.length ? `<h3>Fehlgeschlagen</h3>${importList(data.result.failed.map(f => `<li><b>${escapeHtml(f.label)}</b>: ${escapeHtml(f.error)}</li>`), "")}` : ""}
+      <h3>Noch selbst einstellen (${data.missing.length})</h3>${importList(data.missing.map(m => `<li><b>${escapeHtml(m.label)}</b>: ${escapeHtml(m.reason)}</li>`), "Nichts offen.")}`;
+    if (data.settings && typeof settingsState !== "undefined") { settingsState.settings = data.settings; }
+  },
 });

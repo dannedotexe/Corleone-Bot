@@ -66,9 +66,10 @@ export function createDashboard({ db, client, config, settings = null, series = 
     return team || family ? { id: member.id, tag: member.user.tag, displayName: member.displayName, roles, owner, avatar, family, team } : null;
   };
   const can = (member, group) => member.owner || (config[group] ?? []).some(id => member.roles.includes(id));
-  const readBody = req => new Promise((resolve, reject) => {
+  // Import-Dateien (Server-Aufbau, Einstellungen) sind größer als normale Formulare.
+  const readBody = (req, limit = 20_000) => new Promise((resolve, reject) => {
     let raw = "";
-    req.on("data", chunk => { raw += chunk; if (raw.length > 20_000) { reject(new Error("Anfrage ist zu groß.")); req.destroy(); } });
+    req.on("data", chunk => { raw += chunk; if (raw.length > limit) { reject(new Error("Anfrage ist zu groß.")); req.destroy(); } });
     req.on("end", () => { try { resolve(JSON.parse(raw || "{}")); } catch { reject(new Error("Ungültige Anfrage.")); } });
     req.on("error", reject);
   });
@@ -201,7 +202,7 @@ export function createDashboard({ db, client, config, settings = null, series = 
           return send(res, 200, data);
         }
         if (req.method === "POST" && url.pathname.startsWith("/api/")) {
-          const body = await readBody(req);
+          const body = await readBody(req, url.pathname.startsWith("/api/import/") ? 3_000_000 : 20_000);
           const now = new Date().toISOString();
           let match;
           if ((match = /^\/api\/applications\/([\w-]+)\/(claim|decision)$/.exec(url.pathname))) {

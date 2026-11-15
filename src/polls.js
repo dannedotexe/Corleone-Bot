@@ -117,7 +117,7 @@ export function createPollService(db) {
 
 const NUMBERS = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"];
 const MEDALS = ["🥇", "🥈", "🥉"];
-const OPEN_COLOR = 0xc1121f, DONE_COLOR = 0x30d158, CANCEL_COLOR = 0x8e8e93;
+const OPEN_COLOR = 0xc9a24b, DONE_COLOR = 0x30d158, CANCEL_COLOR = 0x8e8e93;
 const bar = (share, width = 14) => { const n = Math.round(share * width); return "▰".repeat(n) + "▱".repeat(width - n); };
 const votes = n => `${n} ${n === 1 ? "Stimme" : "Stimmen"}`;
 

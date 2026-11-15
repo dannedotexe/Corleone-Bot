@@ -22,5 +22,5 @@ function fakeChannel(id, name, messages) {
 test("Info-Karte: Prüfung", () => {
   assert.throws(() => validateInfoCard({}), /Titel oder Text/);
   assert.throws(() => validateInfoCard({ description: "@everyone hallo" }), /everyone/);
-  assert.equal(validateInfoCard({ title: "a", color: "zzz" }).color, "#c1121f");
+  assert.equal(validateInfoCard({ title: "a", color: "zzz" }).color, "#c9a24b");
 });

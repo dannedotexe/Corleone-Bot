@@ -12,7 +12,7 @@ test("Bewerbung und Rang-Antrag zeigen unterschiedliche gezielte Fragen",()=>{
 
 test("Bewerbungs-Panel enthält zwei getrennte Antragsbuttons",()=>{
   const payload=buildApplicationPanelPayload();
-  assert.equal(payload.embeds[0].data.color,0xc1121f);
+  assert.equal(payload.embeds[0].data.color,0xc9a24b);
   assert.deepEqual(payload.components[0].components.map(button=>button.data.custom_id),["application:open:bewerbung","application:open:rang"]);
 });
 

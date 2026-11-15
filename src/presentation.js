@@ -1,6 +1,6 @@
 import { EmbedBuilder, MessageFlags } from "discord.js";
 
-export const BRAND_COLOR = 0xc1121f;
+export const BRAND_COLOR = 0xc9a24b;
 const COLORS = { success: 0x2ecc71, error: 0xe74c3c, warning: 0xf39c12, info: BRAND_COLOR };
 const shortReference = value => String(value).slice(0, 8).toUpperCase();
 

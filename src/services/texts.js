@@ -8,7 +8,7 @@ export const PANEL_TEXTS = {
   application: {
     label: "Bewerbungs-Panel", channelKey: "CHANNEL_APPLICATION_PANEL",
     fields: {
-      color: { label: "Farbe", type: "color", default: "#c1121f" },
+      color: { label: "Farbe", type: "color", default: "#c9a24b" },
       author: { label: "Kopfzeile", max: 256, default: "CORLEONE  •  BEWERBUNGEN" },
       title: { label: "Titel", max: 256, default: "📋  Bewerbungen & Rang-Anträge" },
       description: { label: "Beschreibung", max: 4000, multiline: true, default: "Wähle den passenden Antrag aus. Beide Formulare fragen gezielt die Informationen ab, die das Leitungsteam für die Entscheidung braucht." },
@@ -26,7 +26,7 @@ export const PANEL_TEXTS = {
   verification: {
     label: "Verifizierungs-Panel", channelKey: "CHANNEL_VERIFICATION_PANEL",
     fields: {
-      color: { label: "Farbe", type: "color", default: "#c1121f" },
+      color: { label: "Farbe", type: "color", default: "#c9a24b" },
       author: { label: "Kopfzeile", max: 256, default: "CORLEONE  •  VERIFIZIERUNG" },
       title: { label: "Titel", max: 256, default: "✅  Willkommen auf dem Corleone-Discord!" },
       description: { label: "Beschreibung", max: 4000, multiline: true, default: "Damit du im öffentlichen Chat schreiben kannst, verifiziere dich bitte einmal.\n\nKlicke auf **Verifizieren** und gib deine **Ingame-ID**, deinen **Vornamen** und **Nachnamen** aus Grand-RP an. Dein Discord-Name wird automatisch zu `Vorname Nachname | ID` geändert.\n\nℹ️ Das ist **keine** Bewerbung für die Familie – dafür gibt es das Bewerbungs-Panel." },
@@ -38,7 +38,7 @@ export const PANEL_TEXTS = {
   events: {
     label: "Event-Karten & Ankündigungen", channelKey: null,
     fields: {
-      color: { label: "Farbe", type: "color", default: "#c1121f" },
+      color: { label: "Farbe", type: "color", default: "#c9a24b" },
       author: { label: "Kopfzeile", max: 256, default: "CORLEONE  •  EVENTS" },
       footer: { label: "Fußzeile (normale Events)", max: 2048, default: "CORLEONE  •  Grand-RP" },
       seriesFooter: { label: "Fußzeile (Aktivitäten, + Zeitplan)", max: 200, default: "Wiederkehrende Aktivität" },
@@ -54,7 +54,7 @@ export const PANEL_TEXTS = {
   website: {
     label: "Website-Panel", channelKey: "CHANNEL_WEBSITE_PANEL",
     fields: {
-      color: { label: "Farbe", type: "color", default: "#c1121f" },
+      color: { label: "Farbe", type: "color", default: "#c9a24b" },
       author: { label: "Kopfzeile", max: 256, default: "CORLEONE  •  WEBSITE" },
       title: { label: "Titel", max: 256, default: "🌐  Corleone-Dashboard" },
       description: { label: "Beschreibung", max: 4000, multiline: true, default: "Alles an einem Ort – melde dich einfach mit Discord an:\n\n💰 **Familienkonto** – dein Guthaben und deine Buchungen\n📅 **Events** – Kalender, Anmeldungen und deine Bilanz\n🧾 **Aufgaben** – deine Logs, Stufe und Verdienst\n🚫 **Abmeldungen** – abmelden oder „kurz weg“\n\nWas du siehst, richtet sich nach deinem Rang. Ein Passwort brauchst du nicht." },
@@ -65,7 +65,7 @@ export const PANEL_TEXTS = {
   account: {
     label: "„Mein Konto“-Panel", channelKey: "CHANNEL_ACCOUNT_PANEL",
     fields: {
-      color: { label: "Farbe", type: "color", default: "#c1121f" },
+      color: { label: "Farbe", type: "color", default: "#c9a24b" },
       author: { label: "Kopfzeile", max: 256, default: "CORLEONE  •  FAMILIENKONTO" },
       title: { label: "Titel", max: 256, default: "💰  Dein Familienkonto" },
       description: { label: "Beschreibung", max: 4000, multiline: true, default: "Hier siehst du jederzeit, was die Familie dir noch auszahlt.\n\n**Guthaben** = Geld aus Events und Aktivitäten, das noch nicht ausgezahlt wurde.\n**Sanktionen** werden erst bei der nächsten Auszahlung abgezogen.\n\nDie Antworten sieht nur du." },
@@ -78,7 +78,7 @@ export const PANEL_TEXTS = {
   ticket: {
     label: "Ticket-Panel", channelKey: "CHANNEL_TICKET_PANEL",
     fields: {
-      color: { label: "Farbe", type: "color", default: "#c1121f" },
+      color: { label: "Farbe", type: "color", default: "#c9a24b" },
       author: { label: "Kopfzeile", max: 256, default: "CORLEONE  •  SUPPORT CENTER" },
       title: { label: "Titel", max: 256, default: "🎫  Wie können wir dir helfen?" },
       description: { label: "Beschreibung", max: 4000, multiline: true, default: "Wähle unten dein Anliegen. Der Bot öffnet einen privaten Channel für dich und das zuständige Team.\n\n🔒 Nur Beteiligte sehen dein Ticket.\n💬 Beschreibe dein Anliegen direkt im neuen Channel." },
@@ -89,7 +89,7 @@ export const PANEL_TEXTS = {
   activityBoard: {
     label: "Aktivitäten-Übersicht", channelKey: "CHANNEL_ACTIVITY_BOARD",
     fields: {
-      color: { label: "Farbe", type: "color", default: "#c1121f" },
+      color: { label: "Farbe", type: "color", default: "#c9a24b" },
       author: { label: "Kopfzeile", max: 256, default: "CORLEONE  •  AKTIVITÄTEN" },
       title: { label: "Titel", max: 256, default: "📆 Familien-Aktivitäten" },
       description: { label: "Beschreibung", max: 3000, multiline: true, default: "Feste Termine werden automatisch als Event mit Anmeldung angekündigt." },
@@ -101,7 +101,7 @@ export const PANEL_TEXTS = {
   absence: {
     label: "Abmeldungs-Panel", channelKey: "CHANNEL_ABSENCES",
     fields: {
-      color: { label: "Farbe", type: "color", default: "#c1121f" },
+      color: { label: "Farbe", type: "color", default: "#c9a24b" },
       author: { label: "Kopfzeile", max: 256, default: "CORLEONE  •  ABMELDUNGEN" },
       title: { label: "Titel", max: 256, default: "🚫  Abmeldung bei der Familie" },
       description: { label: "Beschreibung", max: 4000, multiline: true, default: "Du bist im Urlaub, krank oder brauchst eine Pause? Melde dich hier kurz ab.\n\n**Abmelden:** Zeitraum und Grund angeben (z. B. `heute` bis `20.10.`).\n**Kurz weg:** nur für ein paar Minuten oder Stunden (z. B. `30 min`, `2h` oder `bis 21:30`).\n**Wieder da:** beendet deine Abmeldung bzw. „Kurz weg“ vorzeitig.\n\nWährend einer Abmeldung zählst du nicht als inaktiv, und Fehlen bei Events gilt als entschuldigt." },
@@ -125,7 +125,7 @@ export const PANEL_TEXTS = {
   welcome: {
     label: "Willkommensnachricht", channelKey: "CHANNEL_WELCOME",
     fields: {
-      color: { label: "Farbe", type: "color", default: "#c1121f" },
+      color: { label: "Farbe", type: "color", default: "#c9a24b" },
       content: { label: "Text über der Karte (Platzhalter erlaubt)", max: 500, default: "{user}" },
       author: { label: "Kopfzeile", max: 256, default: "CORLEONE  •  WILLKOMMEN" },
       title: { label: "Titel", max: 256, default: "👋  Willkommen, {name}!" },
@@ -138,7 +138,7 @@ export const PANEL_TEXTS = {
   leaderboard: {
     label: "Rangliste", channelKey: "CHANNEL_LEADERBOARD",
     fields: {
-      color: { label: "Farbe", type: "color", default: "#c1121f" },
+      color: { label: "Farbe", type: "color", default: "#c9a24b" },
       author: { label: "Kopfzeile", max: 256, default: "CORLEONE  •  RANGLISTE" },
       title: { label: "Titel", max: 256, default: "🏆  Aktivste Familienmitglieder" },
       description: { label: "Beschreibung", max: 2000, multiline: true, default: "Gezählt werden Event-Teilnahmen (anwesend oder angemeldet und nicht als abwesend markiert). Aktualisiert sich automatisch." },
@@ -179,7 +179,7 @@ export function validateTexts(panel, input) {
     if (!field.multiline) value = value.replace(/\n/g, " ");
     value = value.trim();
     if (field.type === "color") {
-      if (!/^#?[0-9a-f]{6}$/i.test(value)) throw new Error(`${field.label}: bitte eine Farbe wie #c1121f angeben.`);
+      if (!/^#?[0-9a-f]{6}$/i.test(value)) throw new Error(`${field.label}: bitte eine Farbe wie #c9a24b angeben.`);
       value = `#${value.replace("#", "").toLowerCase()}`;
     } else {
       if (field.required && !value) throw new Error(`${field.label} darf nicht leer sein.`);
