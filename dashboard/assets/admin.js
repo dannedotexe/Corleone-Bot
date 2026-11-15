@@ -275,13 +275,13 @@ async function pollBlueprint() {
   if (job?.status === "running") importState.timer = setTimeout(() => pollBlueprint().catch(() => {}), 1500);
   else if (job?.status === "done") notify("Server-Aufbau fertig. Jetzt kannst du die Einstellungen hochladen.");
 }
-function renderSettingsPreview(p) {
-  $("import-settings-result").innerHTML = `<p><b>Einstellungen von „${escapeHtml(p.source)}“</b></p>
+function renderSettingsPreview(p, target = "import-settings-result", runAction = "import-settings-run", confirmId = "import-settings-confirm") {
+  $(target).innerHTML = `<p><b>Einstellungen von „${escapeHtml(p.source)}“</b></p>
     <h3>Wird übernommen (${p.changes.length} Einstellungen, ${p.texts.length} Panel-Texte)</h3>
     ${importList([...p.changes.map(c => `<li><b>${escapeHtml(c.label)}</b> → ${escapeHtml(c.display)}</li>`), ...p.texts.map(t => `<li><b>Texte: ${escapeHtml(t.label)}</b> (Nexus → Corleone, Farben bleiben)</li>`)], "Nichts Passendes gefunden.")}
     <h3>Nicht gefunden – bitte selbst einstellen (${p.missing.length})</h3>
     ${importList(p.missing.map(m => `<li><b>${escapeHtml(m.label)}</b>: ${escapeHtml(m.reason)}</li>`), "Alles gefunden.")}
-    ${p.changes.length || p.texts.length ? confirmRow("import-settings-confirm", p.confirmWord, "import-settings-run", "Übernehmen") : ""}`;
+    ${p.changes.length || p.texts.length ? confirmRow(confirmId, p.confirmWord, runAction, "Übernehmen") : ""}`;
 }
 document.addEventListener("change", async event => {
   const id = event.target?.id;
@@ -302,6 +302,13 @@ Object.assign(actions, {
     notify(data.message); renderBlueprintJob(data.job); await pollBlueprint();
   },
   "import-blueprint-status": () => pollBlueprint(),
+  "import-auto-preview": async () => { $("import-auto-result").innerHTML = '<p class="muted">Suche passende Channels …</p>'; renderSettingsPreview((await post("/api/import/auto/preview", {})).preview, "import-auto-result", "import-auto-run", "import-auto-confirm"); },
+  "import-auto-run": async () => {
+    const data = await post("/api/import/auto", { confirm: $("import-auto-confirm")?.value ?? "" });
+    notify(data.message, data.result.failed.length ? "error" : "success");
+    $("import-auto-result").innerHTML = `<p><b>${escapeHtml(data.message)}</b> Die Panels erscheinen jetzt in ihren Channels.</p>${data.missing.length ? `<h3>Noch selbst einstellen (${data.missing.length})</h3>${importList(data.missing.map(m => `<li><b>${escapeHtml(m.label)}</b>: ${escapeHtml(m.reason)}</li>`), "")}` : ""}`;
+    if (data.settings && typeof settingsState !== "undefined") settingsState.settings = data.settings;
+  },
   "import-settings-run": async () => {
     if (!importState.settings) throw new Error("Bitte zuerst die Einstellungs-Datei auswählen.");
     const data = await post("/api/import/settings", { data: importState.settings, confirm: $("import-settings-confirm")?.value ?? "" });

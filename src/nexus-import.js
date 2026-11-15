@@ -168,3 +168,66 @@ export function applySettingsImport({ resolved, settings, textsService, actorId,
   }
   return { applied, textsApplied, failed };
 }
+
+/**
+ * Ohne Einstellungs-Datei: Funktions-Channels anhand ihrer Namen erkennen (z. B. nach dem Server-Aufbau aus Nexus).
+ * Namen werden ohne Emoji/Trennzeichen verglichen; „Staff“-Channels müssen in einer Staff-/Leitungs-Kategorie liegen,
+ * öffentliche nicht. Übernommen werden nur eindeutige Treffer für noch leere Einstellungen – nichts wird überschrieben.
+ */
+const AUTO_RULES = {
+  CHANNEL_WELCOME: { name: /^willkommen$/ },
+  CHANNEL_VERIFICATION_PANEL: { name: /^(verifizier(en|ung)|neue-spieler)$/ },
+  CHANNEL_ACCOUNT_PANEL: { name: /^(mein-)?(familien)?konto$/ },
+  CHANNEL_WEBSITE_PANEL: { name: /^(dashboard|website)$/ },
+  CHANNEL_TICKET_PANEL: { name: /^(tickets?|ticket-erstellen|support)$/, staff: false },
+  CHANNEL_TICKET_CATEGORY: { name: /^(tickets?|support)$/, kind: "category" },
+  CHANNEL_TICKET_CLOSED_CATEGORY: { name: /(closed|geschlossen)/, kind: "category" },
+  CHANNEL_TICKET_LOG: { name: /^ticket-?logs?$/ },
+  CHANNEL_APPLICATION_PANEL: { name: /^bewerbung(en)?$/, staff: false },
+  CHANNEL_APPLICATION_REVIEW: { name: /^bewerbung(en)?(-prüfen)?$/, staff: true },
+  CHANNEL_RANK_REVIEW: { name: /^rang-?antr(ä|ae)ge$/ },
+  CHANNEL_EVENT_ANNOUNCEMENTS: { name: /^event-?ankündigungen$/ },
+  CHANNEL_EVENT_SIGNUP: { name: /^event-?anmeld(en|ung)$/ },
+  CHANNEL_ANNOUNCEMENTS: { name: /^ankündigungen$/ },
+  CHANNEL_BOT_SUGGESTIONS: { name: /^bot-?vorschl(ä|ae)ge$/ },
+  CHANNEL_POLLS: { name: /^abstimmung(en)?$/ },
+  CHANNEL_SANCTION_LIST: { name: /^sanktionsliste$/ },
+  CHANNEL_ABSENCES: { name: /^abmeldung(en)?$/ },
+  CHANNEL_LEADERBOARD: { name: /^(rangliste|leaderboard)$/ },
+  CHANNEL_ACTIVITY_BOARD: { name: /^(event-?infos|aktivitäten)$/ },
+  CHANNEL_EVENT_RESULTS: { name: /^event-?ergebnisse$/ },
+  CHANNEL_BOT_COMMANDS: { name: /^bot-?befehle$/ },
+  CHANNEL_EVENT_CHECK: { name: /^event-?check$/ },
+  CHANNEL_GIVEAWAYS: { name: /^giveaways?$/ },
+  CHANNEL_STAFF_DASHBOARD: { name: /^staff-?dashboard$/ },
+  CHANNEL_SANCTION_LOG: { name: /^sanktions?-?logs?$/ },
+  CHANNEL_PAYOUT_LIST: { name: /^auszahlungsliste$/ },
+  CHANNEL_TASK_REVIEW: { name: /^aufgaben-?pr(ü|ue)fung$/ },
+  CHANNEL_TASK_BOARD: { name: /^aufgaben$/ },
+  CHANNEL_TASK_FORUM: { name: /^aufgaben-?logs?$/, kind: "forum" },
+  CHANNEL_EVENT_FORUM: { name: /^event-?logs?$/, kind: "forum" },
+  CHANNEL_EVENT_LOG: { name: /^event-?logs?$/ },
+  CHANNEL_FINANCE_LOG: { name: /^(auszahlungen|finanz-?logs?)$/, staff: true },
+  CHANNEL_STATS: { name: /^(server-?)?statistik$/ },
+  CHANNEL_AUDIT_LOG: { name: /^(bot-?logs?|audit-?logs?)$/ },
+  CHANNEL_INVITE_TOURNAMENT: { name: /^invite-?turnier$/ },
+};
+const plainName = name => String(name ?? "").toLowerCase().normalize("NFC").replace(/^[^a-z0-9äöüß]+/u, "").replace(/[^a-z0-9äöüß-]+$/u, "").trim();
+const isStaffCategory = name => /(staff|leitung|team|intern|admin|moderation|verwaltung)/.test(plainName(name));
+
+export async function autoAssignChannels({ guild, config }) {
+  const channels = [...(await guild.channels.fetch()).values()].filter(Boolean);
+  const categoryName = new Map(channels.filter(isCategory).map(c => [c.id, c.name]));
+  const changes = [], missing = [];
+  for (const [key, rule] of Object.entries(AUTO_RULES)) {
+    const def = SETTINGS.find(s => s.key === key);
+    if (!def || config[key]) continue;
+    const kind = rule.kind ?? "channel";
+    let hits = channels.filter(c => (kind === "category" ? isCategory(c) : kind === "forum" ? isForum(c) : isTextLike(c) && c.type !== ChannelType.GuildVoice && c.type !== ChannelType.GuildStageVoice) && rule.name.test(plainName(c.name)));
+    if (rule.staff !== undefined) hits = hits.filter(c => isStaffCategory(categoryName.get(c.parentId)) === rule.staff);
+    if (hits.length === 1) changes.push({ key, label: def.label, value: hits[0].id, display: `${kind === "category" ? "📁 " : "#"}${hits[0].name}` });
+    else if (hits.length > 1) missing.push({ key, label: def.label, reason: `mehrere passende Channels (${hits.slice(0, 3).map(c => `#${c.name}`).join(", ")}) – bitte selbst wählen` });
+    else if (kind === "forum" && channels.some(c => rule.name.test(plainName(c.name)))) missing.push({ key, label: def.label, reason: "der Channel ist kein Forum (Forum gibt es nur mit aktiviertem Community-Modus)" });
+  }
+  return { source: "Channel-Namen", exportedAt: null, confirmWord: SETTINGS_CONFIRM_WORD, changes, missing, texts: [] };
+}

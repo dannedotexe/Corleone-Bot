@@ -98,3 +98,26 @@ test("Import: falsche Dateien werden abgelehnt, Aufbau-Vorschau zählt nur Neues
   assert.deepEqual([preview.roles.create, preview.categories.create, preview.channels.create], [1, 1, 1]);
   assert.equal(preview.confirmWord, "AUFBAUEN");
 });
+
+test("Channels per Name zuordnen: Emojis egal, Staff/Öffentlich getrennt, nichts überschreiben, Foren nur als Forum", async () => {
+  const { autoAssignChannels } = await import("../src/nexus-import.js");
+  const ch = (id, name, type, parentId = null) => [id, { id, name, type, parentId }];
+  const channels = new Map([
+    ch("61000000000000001", "📌・INFORMATION", ChannelType.GuildCategory),
+    ch("61000000000000002", "👔・STAFF", ChannelType.GuildCategory),
+    ch("61000000000000003", "🆕・verifizieren", ChannelType.GuildText, "61000000000000001"),
+    ch("61000000000000004", "📄・bewerbungen", ChannelType.GuildText, "61000000000000001"),
+    ch("61000000000000005", "📄・bewerbungen", ChannelType.GuildText, "61000000000000002"),
+    ch("61000000000000006", "📕・event-logs", ChannelType.GuildText, "61000000000000001"),
+    ch("61000000000000007", "👋・willkommen", ChannelType.GuildText, "61000000000000001"),
+  ]);
+  const guild = { id: G, channels: { fetch: async () => channels } };
+  const r = await autoAssignChannels({ guild, config: { CHANNEL_WELCOME: "61000000000000099" } });
+  const by = Object.fromEntries(r.changes.map(c => [c.key, c.value]));
+  assert.equal(by.CHANNEL_VERIFICATION_PANEL, "61000000000000003");
+  assert.equal(by.CHANNEL_APPLICATION_PANEL, "61000000000000004");
+  assert.equal(by.CHANNEL_APPLICATION_REVIEW, "61000000000000005");
+  assert.equal(by.CHANNEL_EVENT_LOG, "61000000000000006");
+  assert.equal(by.CHANNEL_WELCOME, undefined, "bereits eingestellt – bleibt");
+  assert.match(r.missing.find(m => m.key === "CHANNEL_EVENT_FORUM").reason, /kein Forum/);
+});

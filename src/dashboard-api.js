@@ -56,7 +56,7 @@ import { LOGBOOK_FORUMS, applyLogbookTemplate, createMissingLogbooks, logbookSta
 import { RESET_CONFIRM_WORD, backupBeforeReset, resetData, resetPreview } from "./services/reset.js";
 import { PANEL_TEXTS, createTextsService } from "./services/texts.js";
 import { applyBlueprint, copyJob } from "./server-copy.js";
-import { BLUEPRINT_CONFIRM_WORD, SETTINGS_CONFIRM_WORD, applySettingsImport, previewBlueprint, resolveSettingsImport, validateBlueprint } from "./nexus-import.js";
+import { BLUEPRINT_CONFIRM_WORD, SETTINGS_CONFIRM_WORD, applySettingsImport, autoAssignChannels, previewBlueprint, resolveSettingsImport, validateBlueprint } from "./nexus-import.js";
 import { eventButtons, eventEmbed, giveawayButtons, giveawayCard, parseEventDate, ticketActions, ticketCard } from "./commands.js";
 
 /** Fehler mit HTTP-Status und einer für Staff verständlichen Meldung. */
@@ -1024,17 +1024,18 @@ export function createDashboardApi({ db, client, config, settings = null, series
       audit(db, guildId, member.id, "admin.import", null, { name: "Server-Aufbau gestartet", source: String(body.blueprint.source ?? "").slice(0, 100) });
       return { message: "Der Aufbau läuft im Hintergrund – der Fortschritt erscheint unten.", job };
     }],
-    [/^\/api\/import\/settings(\/preview)?$/, async (member, body, [, preview]) => {
+    [/^\/api\/import\/(settings|auto)(\/preview)?$/, async (member, body, [, mode, preview]) => {
       needOwner(member);
       if (!settings || !texts) throw new HttpError(409, "Einstellungen über die Website brauchen DISCORD_GUILD_ID in der .env.");
       const g = await guild();
       let resolved;
-      try { resolved = await resolveSettingsImport({ data: body.data, guild: g }); } catch (error) { throw new HttpError(400, error.message); }
+      // „auto“: ohne Datei, Funktions-Channels anhand ihrer Namen (nur leere Einstellungen, nur eindeutige Treffer).
+      try { resolved = mode === "auto" ? await autoAssignChannels({ guild: g, config }) : await resolveSettingsImport({ data: body.data, guild: g }); } catch (error) { throw new HttpError(400, error.message); }
       const view = { ...resolved, changes: resolved.changes.map(({ key, label, display }) => ({ key, label, display })), texts: resolved.texts.map(({ panel, label }) => ({ panel, label })) };
       if (preview) return { preview: view };
       if (String(body.confirm ?? "").trim().toUpperCase() !== SETTINGS_CONFIRM_WORD) throw new HttpError(400, `Zur Bestätigung bitte genau „${SETTINGS_CONFIRM_WORD}“ eintippen.`);
       const result = applySettingsImport({ resolved, settings, textsService: texts, actorId: member.id, actorRoleIds: member.roles, actorIsOwner: member.owner });
-      audit(db, guildId, member.id, "admin.import", null, { name: "Einstellungen aus Nexus", applied: result.applied.length, texts: result.textsApplied.length, failed: result.failed.length, missing: resolved.missing.length });
+      audit(db, guildId, member.id, "admin.import", null, { name: mode === "auto" ? "Channels per Name zugeordnet" : "Einstellungen aus Nexus", applied: result.applied.length, texts: result.textsApplied.length, failed: result.failed.length, missing: resolved.missing.length });
       // Panels in den neu gesetzten Channels posten bzw. mit den neuen Texten aktualisieren.
       const panelKeys = [...new Set([...result.applied.filter(key => PANEL_CHANNEL_KEYS.includes(key)), ...result.textsApplied.map(panel => PANEL_TEXTS[panel]?.channelKey).filter(key => key && config[key])])];
       if (panelKeys.length) await ensurePanels({ db, client, config, series, only: panelKeys }).catch(() => []);
