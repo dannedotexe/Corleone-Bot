@@ -78,8 +78,8 @@ const schema = z.object({
   INVITE_TOURNAMENT_END: z.string().regex(/^(\d{4}-\d{2}-\d{2})?$/, "Datum als JJJJ-MM-TT").default(""),
   ROLE_SNAPSHOT_KEEP: z.coerce.number().int().min(3).max(90).default(14),
   // Rang-Namen der Familie (für /einstellungen raenge): „Nummer=Name“, kommagetrennt.
-  RANK_NAMES: z.string().default("10=EL PATRON,9=JEFE,8=CONSIGLIERE,7=PROMOTORE,6=MAESTRO,5=GLADIO,4=SOLDATO,3=PICCIOTTO,2=NOVIZIO,1=CENSORE").transform(csv)
-    .pipe(z.array(z.string().regex(/^\d{1,2}\s*=\s*[^,=]{1,60}$/, "Format: Nummer=Name, z. B. 10=EL PATRON")).max(25)),
+  RANK_NAMES: z.string().default("10=El Patron,9=Jefe,8=Consigliere,7=Promotore,6=Maestro,5=Gladio,4=Soldato,3=Picciotto,2=Novizio,1=Censore").transform(csv)
+    .pipe(z.array(z.string().regex(/^\d{1,2}\s*=\s*[^,=]{1,60}$/, "Format: Nummer=Name, z. B. 10=El Patron")).max(25)),
   RANK_ROLES_JSON: jsonValue("[]").pipe(z.array(z.object({ label: z.string().min(1).max(80), roleId: z.string().regex(SNOWFLAKE) })).max(25)),
   EVENT_MIN_PARTICIPANTS: z.coerce.number().int().min(0).max(500).default(0),
   EVENT_MIN_CHECK_MINUTES: z.coerce.number().int().min(5).max(1440).default(30),
