@@ -60,6 +60,7 @@ export function buildCommands() {
     .addSubcommand(s=>s.setName("anzeigen").setDescription("Aktive Rollen-, Channel- und Moduleinstellungen prüfen"))
     .addSubcommand(s=>s.setName("pruefen").setDescription("Prüft, ob alle Channels zu ihren Funktionen passen (Rechte, Sichtbarkeit, Name)"))
     .addSubcommand(s=>s.setName("panels").setDescription("Alle Panels in ihre Channels senden bzw. aktualisieren (Leitung)"))
+    .addSubcommand(s=>s.setName("raenge").setDescription("Rang-Rollen auf die Familien-Rangnamen umbenennen, fehlende anlegen (Leitung)"))
     .addSubcommand(s=>s.setName("kanal").setDescription("Funktions-Channel festlegen").addStringOption(o=>o.setName("schluessel").setDescription("Funktion (tippen zum Suchen)").setRequired(true).setAutocomplete(true)).addChannelOption(o=>o.setName("kanal").setDescription("Channel oder Kategorie").setRequired(true).addChannelTypes(ChannelType.GuildText,ChannelType.GuildCategory,ChannelType.GuildAnnouncement,ChannelType.GuildForum)));
   const automod = new SlashCommandBuilder().setName("automod").setDescription("AutoMod und Raid-Schutz")
     .addSubcommand(s=>s.setName("status").setDescription("AutoMod-Einstellungen und letzte Maßnahmen (Staff)"))

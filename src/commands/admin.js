@@ -2,6 +2,7 @@ import { CHANNEL_BINDINGS } from "../channel-setup.js";
 import { ChannelType, MessageFlags } from "discord.js";
 import { PANEL_CHANNEL_KEYS, ensurePanels, panelList } from "../panels.js";
 import { autoAssignChannels } from "../nexus-import.js";
+import { applyRankNames } from "../rank-names.js";
 import { PANEL_SETTING_KEY, VIEWS, buildPanelPayload, buildView } from "../staff-panel.js";
 import { audit, getSetting, setSetting } from "../database.js";
 import { checkChannels } from "../channel-check.js";
@@ -48,6 +49,13 @@ export function createAdminCommands({ answer, can, client, config, db, finance, 
         {name:"Module",value:`AutoMod: ${config.AUTOMOD_ENABLED?"aktiv":"aus"} · Raid-Aktionen: ${config.RAID_ACTIONS.join(", ")||"keine"}\nRang-Rollenvergabe: ${config.RANK_ROLE_ASSIGNMENT_ENABLED?"aktiv":"aus"} · Webdashboard: ${config.DASHBOARD_ENABLED?"aktiv":"aus"}\nZeitzone: ${config.TIMEZONE} · Erinnerungen: ${config.EVENT_REMINDER_MINUTES.join(", ")||"aus"} Min.\nAuszahlungs-Mindestbetrag: ${config.PAYOUT_MINIMUM_CENTS!=null?formatMoney(config.PAYOUT_MINIMUM_CENTS):"keiner"}`},
         {name:`Hinweise (${warnings.length})`,value:warnings.length?warnings.map(w=>`• ${w}`).join("\n").slice(0,1024):"Keine offenen Konfigurationspunkte."},
       ],"Rollen werden in der .env gepflegt. Funktions-Channels können mit `/einstellungen kanal` gesetzt werden."),ephemeral:true});
+    }
+    if(sub==="raenge"){
+      await i.deferReply({flags:MessageFlags.Ephemeral});
+      if(!i.guild)return i.editReply("Nur auf dem Server möglich.");
+      const r=await applyRankNames({guild:i.guild,config,settings,actorId:u,actorRoleIds:memberRoleIds(i),actorIsOwner:isOwner(i)}).catch(error=>({lines:[`❌ ${error.message}`],renamed:0,created:0}));
+      audit(db,g,u,"ranks.renamed",null,{renamed:r.renamed,created:r.created});
+      return i.editReply(presentInteractionPayload({embeds:[embed("🎖️ Rang-Rollen",`${r.lines.join("\n")}\n\nNamen ändern: Website → Einstellungen → Bewerbungen & Ränge → „Rang-Namen“.`.slice(0,4000))]}));
     }
     if(sub==="panels"){
       // Alle Panels in ihre eingestellten Channels senden bzw. aktualisieren (nie doppelt, siehe ensurePanels).
