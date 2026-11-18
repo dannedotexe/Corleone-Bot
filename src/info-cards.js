@@ -21,8 +21,10 @@ export function validateInfoCard(input) {
     title: str(input.title, 256, "Titel"),
     description: str(input.description, 4000, "Text"),
     footer: str(input.footer, 2048, "Fußzeile"),
+    imageUrl: str(input.imageUrl, 500, "Bild-Link"),
     color: COLOR.test(String(input.color ?? "")) ? `#${String(input.color).replace("#", "").toLowerCase()}` : DEFAULT_COLOR,
   };
+  if (card.imageUrl && !/^https:\/\/[^\s]+$/i.test(card.imageUrl)) throw new InfoCardError("Bild-Link: bitte eine https://-Adresse angeben.");
   if (!card.title && !card.description) throw new InfoCardError("Bitte einen Titel oder Text angeben.");
   if (/@(everyone|here)/i.test(card.description)) throw new InfoCardError("@everyone/@here ist in Info-Karten nicht erlaubt.");
   return card;
@@ -34,6 +36,7 @@ export function infoCardPayload(card) {
   if (card.title) embed.setTitle(card.title);
   if (card.description) embed.setDescription(card.description);
   if (card.footer) embed.setFooter({ text: card.footer });
+  if (card.imageUrl) embed.setImage(card.imageUrl);
   return { embeds: [embed], allowedMentions: { parse: [] } };
 }
 

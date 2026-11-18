@@ -24,3 +24,11 @@ test("Info-Karte: Prüfung", () => {
   assert.throws(() => validateInfoCard({ description: "@everyone hallo" }), /everyone/);
   assert.equal(validateInfoCard({ title: "a", color: "zzz" }).color, "#f2f2f2");
 });
+
+test("Info-Karte: optionales Bild (nur https)", async () => {
+  const { infoCardPayload } = await import("../src/info-cards.js");
+  const card = validateInfoCard({ title: "a", imageUrl: "https://example.org/banner.png" });
+  assert.equal(infoCardPayload(card).embeds[0].data.image.url, "https://example.org/banner.png");
+  assert.throws(() => validateInfoCard({ title: "a", imageUrl: "http://example.org/x.png" }), /https/);
+  assert.equal(infoCardPayload(validateInfoCard({ title: "a" })).embeds[0].data.image, undefined);
+});

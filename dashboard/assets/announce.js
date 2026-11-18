@@ -29,6 +29,7 @@ function infoCardForm(card = null) {
     { name: "title", label: "Titel", value: c.title, max: 256 },
     { name: "description", label: "Text", hint: "(**fett**, *kursiv*, Zeilenumbrüche wie in Discord)", type: "textarea", rows: 16, max: 4000, value: c.description },
     { name: "footer", label: "Fußzeile", hint: "(optional)", value: c.footer, max: 2048 },
+    { name: "imageUrl", label: "Bild", hint: "(optional, https-Link, z. B. euer Banner)", value: c.imageUrl ?? "", max: 500, placeholder: "https://…" },
     { name: "color", label: "Farbe", hint: "(z. B. #f2f2f2)", value: c.color ?? "#f2f2f2", max: 7 },
   ];
   openForm({ eyebrow: "INFO-KARTE", title: card ? "Info-Karte bearbeiten" : "Neue Info-Karte", wide: true, fields, submit: card ? "In Discord speichern" : "Posten",
