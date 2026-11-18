@@ -18,3 +18,14 @@ test("Rang-Namen: umbenennen, fehlenden Rang anlegen, Mehrdeutiges nur melden", 
   assert.deepEqual([r.renamed, r.created], [2, 1]);
   assert.equal(parseRankNames(["x", "3 = PICCIOTTO"]).get(3), "PICCIOTTO");
 });
+
+test("Rang-Namen: Rang-Rollen-Einstellung wird gefüllt (höchster zuerst)", async () => {
+  const G = "10000000000000001";
+  const r = (id, name, position) => ({ id, name, position, managed: false, setName: async () => {}, setPosition: async () => {} });
+  const roles = new Map([[G, { id: G, name: "@everyone" }], ["20000000000000010", r("20000000000000010", "| 10 - Boss", 10)], ["20000000000000009", r("20000000000000009", "| 9 - Jefe", 9)]]);
+  const guild = { id: G, roles: { fetch: async () => roles, create: async () => { throw new Error("nein"); } } };
+  let saved = null;
+  const settings = { update: ({ key, value }) => { saved = [key, value]; } };
+  await applyRankNames({ guild, config: { RANK_NAMES: ["10=El Patron", "9=Jefe"], RANK_ROLES_JSON: [] }, settings, actorId: "u" });
+  assert.deepEqual(saved, ["RANK_ROLES_JSON", [{ label: "10 - El Patron", roleId: "20000000000000010" }, { label: "9 - Jefe", roleId: "20000000000000009" }]]);
+});

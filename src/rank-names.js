@@ -24,7 +24,7 @@ export async function applyRankNames({ guild, config, settings = null, actorId, 
     const m = RANK_ROLE.exec(role.name);
     if (m) byNumber.set(Number(m[1]), [...(byNumber.get(Number(m[1])) ?? []), role]);
   }
-  const lines = [], newLabels = new Map();
+  const lines = [];
   let renamed = 0, created = 0;
   const reason = "Rang-Namen der Familie (/einstellungen raenge)";
   for (const [number, name] of [...names.entries()].sort((a, b) => b[0] - a[0])) {
@@ -32,7 +32,6 @@ export async function applyRankNames({ guild, config, settings = null, actorId, 
     if (hits.length > 1) { lines.push(`⚠️ Rang ${number}: ${hits.length} Rollen mit dieser Nummer – bitte selbst bereinigen`); continue; }
     if (hits.length === 1) {
       const role = hits[0];
-      newLabels.set(role.id, `${number} - ${name}`);
       if (role.name === wanted) { lines.push(`✅ ${wanted}`); continue; }
       const ok = await role.setName(wanted, reason).then(() => true).catch(error => { lines.push(`❌ ${role.name} → ${wanted}: ${error.message}`); return false; });
       if (ok) { lines.push(`✏️ ${role.name} → **${wanted}**`); renamed++; }
@@ -46,15 +45,19 @@ export async function applyRankNames({ guild, config, settings = null, actorId, 
       const role = await guild.roles.create({ name: wanted, color: model?.color ?? 0, hoist: model?.hoist ?? false, mentionable: false, permissions: 0n, reason });
       const position = above ? Math.max(1, above.position - 1) : below ? below.position + 1 : null;
       if (position != null) await role.setPosition(position, { reason }).catch(() => {});
-      byNumber.set(number, [role]); newLabels.set(role.id, `${number} - ${name}`);
+      byNumber.set(number, [role]);
       lines.push(`➕ **${wanted}** neu angelegt (ohne Server-Rechte)`); created++;
     } catch (error) { lines.push(`❌ ${wanted} konnte nicht angelegt werden: ${error.message}`); }
   }
-  // Bezeichnungen in den Rang-Rollen (Rang-Historie, Profil) mitziehen.
-  if (settings && Array.isArray(config.RANK_ROLES_JSON) && config.RANK_ROLES_JSON.length) {
-    const next = config.RANK_ROLES_JSON.map(r => (newLabels.has(r.roleId) ? { ...r, label: newLabels.get(r.roleId) } : r));
-    if (JSON.stringify(next) !== JSON.stringify(config.RANK_ROLES_JSON)) {
-      try { settings.update({ key: "RANK_ROLES_JSON", value: next, actorId, actorRoleIds, actorIsOwner }); lines.push("🔁 Bezeichnungen der Rang-Rollen in den Einstellungen angepasst"); }
+  // Rang-Rollen-Einstellung (Rang im Dashboard, Rang-Historie, Familienzugehörigkeit) mit allen Rängen füllen:
+  // höchster zuerst; andere, von Hand eingetragene Rollen bleiben dahinter erhalten.
+  if (settings) {
+    const ranks = [...byNumber.entries()].filter(([n, list]) => names.has(n) && list.length === 1).sort((a, b) => b[0] - a[0])
+      .map(([n, [role]]) => ({ label: `${n} - ${names.get(n)}`, roleId: role.id }));
+    const current = Array.isArray(config.RANK_ROLES_JSON) ? config.RANK_ROLES_JSON : [];
+    const next = [...ranks, ...current.filter(r => !ranks.some(x => x.roleId === r.roleId))].slice(0, 25);
+    if (ranks.length && JSON.stringify(next) !== JSON.stringify(current)) {
+      try { settings.update({ key: "RANK_ROLES_JSON", value: next, actorId, actorRoleIds, actorIsOwner }); lines.push(`🔁 ${ranks.length} Rang-Rollen in den Einstellungen hinterlegt (Rang im Dashboard, Rang-Historie)`); }
       catch (error) { lines.push(`⚠️ Rang-Rollen-Einstellung nicht angepasst: ${error.message}`); }
     }
   }
