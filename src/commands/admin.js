@@ -3,6 +3,7 @@ import { ChannelType, MessageFlags } from "discord.js";
 import { PANEL_CHANNEL_KEYS, ensurePanels, panelList } from "../panels.js";
 import { autoAssignChannels } from "../nexus-import.js";
 import { applyRankNames } from "../rank-names.js";
+import { mirrorFamilyAccess } from "../friend-access.js";
 import { PANEL_SETTING_KEY, VIEWS, buildPanelPayload, buildView } from "../staff-panel.js";
 import { audit, getSetting, setSetting } from "../database.js";
 import { checkChannels } from "../channel-check.js";
@@ -49,6 +50,16 @@ export function createAdminCommands({ answer, can, client, config, db, finance, 
         {name:"Module",value:`AutoMod: ${config.AUTOMOD_ENABLED?"aktiv":"aus"} · Raid-Aktionen: ${config.RAID_ACTIONS.join(", ")||"keine"}\nRang-Rollenvergabe: ${config.RANK_ROLE_ASSIGNMENT_ENABLED?"aktiv":"aus"} · Webdashboard: ${config.DASHBOARD_ENABLED?"aktiv":"aus"}\nZeitzone: ${config.TIMEZONE} · Erinnerungen: ${config.EVENT_REMINDER_MINUTES.join(", ")||"aus"} Min.\nAuszahlungs-Mindestbetrag: ${config.PAYOUT_MINIMUM_CENTS!=null?formatMoney(config.PAYOUT_MINIMUM_CENTS):"keiner"}`},
         {name:`Hinweise (${warnings.length})`,value:warnings.length?warnings.map(w=>`• ${w}`).join("\n").slice(0,1024):"Keine offenen Konfigurationspunkte."},
       ],"Rollen werden in der .env gepflegt. Funktions-Channels können mit `/einstellungen kanal` gesetzt werden."),ephemeral:true});
+    }
+    if(sub==="freunde"){
+      await i.deferReply({flags:MessageFlags.Ephemeral});
+      if(!i.guild)return i.editReply("Nur auf dem Server möglich.");
+      const friend=i.options.getRole("rolle",true),family=i.options.getRole("familienrolle")?.id??(config.ROLE_MEMBERS??[])[0];
+      if(!family)return i.editReply("Bitte bei „familienrolle“ eure Familienrolle (z. B. „| Corleone“) mit angeben – sie ist noch nicht eingestellt.");
+      if(friend.managed||friend.id===i.guild.id)return i.editReply("Diese Rolle kann nicht verwendet werden.");
+      const r=await mirrorFamilyAccess({guild:i.guild,familyRoleId:family,friendRoleId:friend.id}).catch(error=>({updated:0,failed:[error.message]}));
+      audit(db,g,u,"roles.friend_access",friend.id,{family,updated:r.updated,failed:r.failed.length});
+      return i.editReply(presentInteractionPayload({embeds:[embed("🤝 Freund-Rolle",`${friend} hat jetzt in **${r.updated}** Channels/Kategorien dieselben Rechte wie <@&${family}>.\nKein Konto, kein Logbuch, kein Rang.${r.failed.length?`\n\n⚠️ Nicht geklappt:\n${r.failed.join("\n")}`:""}\n\nNeue Channels? Befehl einfach nochmal ausführen.`)]}));
     }
     if(sub==="raenge"){
       await i.deferReply({flags:MessageFlags.Ephemeral});
