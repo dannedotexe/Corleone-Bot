@@ -3,7 +3,7 @@ import { ChannelType, MessageFlags } from "discord.js";
 import { PANEL_CHANNEL_KEYS, ensurePanels, panelList } from "../panels.js";
 import { autoAssignChannels } from "../nexus-import.js";
 import { applyRankNames } from "../rank-names.js";
-import { mirrorFamilyAccess } from "../friend-access.js";
+import { FRIEND_EXCLUDE_DEFAULT, mirrorFamilyAccess } from "../friend-access.js";
 import { PANEL_SETTING_KEY, VIEWS, buildPanelPayload, buildView } from "../staff-panel.js";
 import { audit, getSetting, setSetting } from "../database.js";
 import { checkChannels } from "../channel-check.js";
@@ -57,9 +57,10 @@ export function createAdminCommands({ answer, can, client, config, db, finance, 
       const friend=i.options.getRole("rolle",true),family=i.options.getRole("familienrolle")?.id??(config.ROLE_MEMBERS??[])[0];
       if(!family)return i.editReply("Bitte bei „familienrolle“ eure Familienrolle (z. B. „| Corleone“) mit angeben – sie ist noch nicht eingestellt.");
       if(friend.managed||friend.id===i.guild.id)return i.editReply("Diese Rolle kann nicht verwendet werden.");
-      const r=await mirrorFamilyAccess({guild:i.guild,familyRoleId:family,friendRoleId:friend.id}).catch(error=>({updated:0,failed:[error.message]}));
+      const ohne=(i.options.getString("ohne")??"").split(",").map(w=>w.trim()).filter(Boolean),exclude=ohne.length?ohne:FRIEND_EXCLUDE_DEFAULT;
+      const r=await mirrorFamilyAccess({guild:i.guild,familyRoleId:family,friendRoleId:friend.id,exclude}).catch(error=>({updated:0,excluded:0,failed:[error.message]}));
       audit(db,g,u,"roles.friend_access",friend.id,{family,updated:r.updated,failed:r.failed.length});
-      return i.editReply(presentInteractionPayload({embeds:[embed("🤝 Freund-Rolle",`${friend} hat jetzt in **${r.updated}** Channels/Kategorien dieselben Rechte wie <@&${family}>.\nKein Konto, kein Logbuch, kein Rang.${r.failed.length?`\n\n⚠️ Nicht geklappt:\n${r.failed.join("\n")}`:""}\n\nNeue Channels? Befehl einfach nochmal ausführen.`)]}));
+      return i.editReply(presentInteractionPayload({embeds:[embed("🤝 Freund-Rolle",`${friend} hat jetzt in **${r.updated}** Channels/Kategorien dieselben Rechte wie <@&${family}>.\nAusgelassen (bleibt für Freunde zu): **${r.excluded}** Channels mit ${exclude.map(w=>`„${w}“`).join(", ")} im Namen.\nKein Konto, kein Logbuch, kein Rang.${r.failed.length?`\n\n⚠️ Nicht geklappt:\n${r.failed.join("\n")}`:""}\n\nNeue Channels? Befehl einfach nochmal ausführen.`)]}));
     }
     if(sub==="raenge"){
       await i.deferReply({flags:MessageFlags.Ephemeral});
